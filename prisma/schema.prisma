@@ -1,0 +1,161 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+  output     = "./generated-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  PARTNER
+  CUSTOMER
+}
+
+enum TransactionType {
+  PIX_DEPOSIT
+  PIX_WITHDRAW
+  POINTS_PURCHASE
+  POINTS_SALE
+  MERCHANT_PAYMENT
+  CASHBACK
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum KycStatus {
+  NOT_STARTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String?
+  role          UserRole  @default(CUSTOMER)
+  
+  // Balance in points
+  pointsBalance Int       @default(0)
+  
+  // KYC Info
+  kycStatus     KycStatus @default(NOT_STARTED)
+  documentId    String?   @unique // CPF or CNPJ
+  phoneNumber   String?
+  
+  // Relationships
+  transactions  Transaction[]
+  partner       Partner?      @relation(name: "PartnerOwner")
+  carts         Cart[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Partner {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  logoUrl     String?
+  
+  ownerId     String   @unique
+  owner       User     @relation(name: "PartnerOwner", fields: [ownerId], references: [id])
+  
+  products    Product[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  pricePoints Int
+  imageUrl    String?
+  
+  partnerId   String
+  partner     Partner  @relation(fields: [partnerId], references: [id])
+  
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Transaction {
+  id            String            @id @default(cuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id])
+  
+  amount        Int               // Amount in points or BRL (depending on type)
+  currency      String            @default("POINTS") // POINTS or BRL
+  
+  type          TransactionType
+  status        TransactionStatus @default(PENDING)
+  
+  description   String?
+  externalId    String?           // For PIX e2eId or Crypto tx hash
+  
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([userId])
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  totalPoints Int
+  status      String      @default("PAID")
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  pricePaid Int
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}

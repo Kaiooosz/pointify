@@ -1,26 +1,122 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Tailwind 4 Variable Mappings (Automatic) */
+    --color-background: #ffffff;
+    --color-foreground: #020617;
+
+    --color-card: #ffffff;
+    --color-card-foreground: #020617;
+
+    --color-popover: #ffffff;
+    --color-popover-foreground: #020617;
+
+    --color-primary: #059669;
+    /* Emerald 600 */
+    --color-primary-foreground: #ffffff;
+
+    --color-secondary: #0ea5e9;
+    /* Sky 500 */
+    --color-secondary-foreground: #ffffff;
+
+    --color-muted: #f1f5f9;
+    --color-muted-foreground: #64748b;
+
+    --color-accent: #f1f5f9;
+    --color-accent-foreground: #0f172a;
+
+    --color-destructive: #ef4444;
+    --color-destructive-foreground: #ffffff;
+
+    --color-border: #e2e8f0;
+    --color-input: #e2e8f0;
+    --color-ring: #059669;
+
+    --radius-lg: 0.75rem;
+    --radius-md: calc(0.75rem - 2px);
+    --radius-sm: calc(0.75rem - 4px);
+
+    /* Font Mapping */
+    --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  }
+
+  .dark {
+    --color-background: #020617;
+    --color-foreground: #f8fafc;
+
+    --color-card: #0f172a;
+    --color-card-foreground: #f8fafc;
+
+    --color-popover: #020617;
+    --color-popover-foreground: #f8fafc;
+
+    --color-primary: #10b981;
+    /* Emerald 500 */
+    --color-primary-foreground: #020617;
+
+    --color-secondary: #0ea5e9;
+    --color-secondary-foreground: #020617;
+
+    --color-muted: #1e293b;
+    --color-muted-foreground: #94a3b8;
+
+    --color-accent: #1e293b;
+    --color-accent-foreground: #f8fafc;
+
+    --color-destructive: #7f1d1d;
+    --color-destructive-foreground: #f8fafc;
+
+    --color-border: #1e293b;
+    --color-input: #1e293b;
+    --color-ring: #10b981;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-sans);
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, #10b981, #0ea5e9);
+}
+
+.card-shadow {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+}
+
+/* Helper classes for consistency where Tailwind apply might fail or be unclear */
+.text-high-contrast {
+  color: var(--color-foreground);
+  font-weight: 700;
+}
+
+.text-muted-contrast {
+  color: var(--color-muted-foreground);
+  font-weight: 500;
 }
