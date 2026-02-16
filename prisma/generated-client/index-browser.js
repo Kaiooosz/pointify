@@ -126,7 +126,19 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  status: 'status',
+  instagram: 'instagram',
+  origin: 'origin',
+  riskScore: 'riskScore',
+  dailyLimit: 'dailyLimit',
+  monthlyLimit: 'monthlyLimit',
+  perTxLimit: 'perTxLimit',
   pointsBalance: 'pointsBalance',
+  blockedBalance: 'blockedBalance',
+  twoFactorEnabled: 'twoFactorEnabled',
+  twoFactorSecret: 'twoFactorSecret',
+  lastIp: 'lastIp',
+  lastLogin: 'lastLogin',
   kycStatus: 'kycStatus',
   documentId: 'documentId',
   phoneNumber: 'phoneNumber',
@@ -158,13 +170,51 @@ exports.Prisma.ProductScalarFieldEnum = {
 exports.Prisma.TransactionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  grossAmount: 'grossAmount',
+  spread: 'spread',
+  netAmount: 'netAmount',
   amount: 'amount',
   currency: 'currency',
+  method: 'method',
   type: 'type',
   status: 'status',
   description: 'description',
   externalId: 'externalId',
+  txid: 'txid',
+  liquidationDate: 'liquidationDate',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaymentLinkScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  description: 'description',
+  amount: 'amount',
+  quantity: 'quantity',
+  totalSales: 'totalSales',
+  active: 'active',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AdminLogScalarFieldEnum = {
+  id: 'id',
+  responsibleId: 'responsibleId',
+  targetUserId: 'targetUserId',
+  action: 'action',
+  details: 'details',
+  ip: 'ip',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SystemSettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  category: 'category',
   updatedAt: 'updatedAt'
 };
 
@@ -199,13 +249,6 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   pricePaid: 'pricePaid'
 };
 
-exports.Prisma.SystemSettingScalarFieldEnum = {
-  id: 'id',
-  key: 'key',
-  value: 'value',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -222,8 +265,20 @@ exports.Prisma.NullsOrder = {
 };
 exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN',
+  FINANCE: 'FINANCE',
+  COMPLIANCE: 'COMPLIANCE',
+  SUPPORT: 'SUPPORT',
+  OPERATIONAL: 'OPERATIONAL',
   PARTNER: 'PARTNER',
   CUSTOMER: 'CUSTOMER'
+};
+
+exports.UserStatus = exports.$Enums.UserStatus = {
+  ACTIVE: 'ACTIVE',
+  BLOCKED: 'BLOCKED',
+  PENDING: 'PENDING',
+  ANALYSIS: 'ANALYSIS',
+  TERMINATED: 'TERMINATED'
 };
 
 exports.KycStatus = exports.$Enums.KycStatus = {
@@ -236,17 +291,20 @@ exports.KycStatus = exports.$Enums.KycStatus = {
 exports.TransactionType = exports.$Enums.TransactionType = {
   PIX_DEPOSIT: 'PIX_DEPOSIT',
   PIX_WITHDRAW: 'PIX_WITHDRAW',
-  POINTS_PURCHASE: 'POINTS_PURCHASE',
-  POINTS_SALE: 'POINTS_SALE',
+  BOLETO_DEPOSIT: 'BOLETO_DEPOSIT',
   MERCHANT_PAYMENT: 'MERCHANT_PAYMENT',
-  CASHBACK: 'CASHBACK'
+  CASHBACK: 'CASHBACK',
+  TRANSFER: 'TRANSFER',
+  FEE: 'FEE'
 };
 
 exports.TransactionStatus = exports.$Enums.TransactionStatus = {
   PENDING: 'PENDING',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+  REFUNDED: 'REFUNDED',
+  LIQUIDATING: 'LIQUIDATING'
 };
 
 exports.Prisma.ModelName = {
@@ -254,11 +312,13 @@ exports.Prisma.ModelName = {
   Partner: 'Partner',
   Product: 'Product',
   Transaction: 'Transaction',
+  PaymentLink: 'PaymentLink',
+  AdminLog: 'AdminLog',
+  SystemSetting: 'SystemSetting',
   Cart: 'Cart',
   CartItem: 'CartItem',
   Order: 'Order',
-  OrderItem: 'OrderItem',
-  SystemSetting: 'SystemSetting'
+  OrderItem: 'OrderItem'
 };
 
 /**

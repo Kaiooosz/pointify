@@ -25,10 +25,10 @@ export default function PaymentLinksPage() {
     const [quantity, setQuantity] = useState(1);
 
     const summaryItems = [
-        { label: "Links criados", value: "0" },
-        { label: "Links ativos", value: "0" },
-        { label: "Pagamentos", value: "0" },
-        { label: "Total recebido", value: "R$ 0,00", isPrice: true },
+        { label: t("links_created").replace("{count}", "0"), value: "0" },
+        { label: t("links_active"), value: "0" },
+        { label: t("history"), value: "0" },
+        { label: t("total_received"), value: "R$ 0,00", isPrice: true },
     ];
 
     return (
@@ -40,17 +40,17 @@ export default function PaymentLinksPage() {
                         <div className="w-12 h-12 rounded-2xl bg-[#1DB954]/10 flex items-center justify-center border border-[#1DB954]/20 shadow-xl">
                             <LinkIcon className="w-6 h-6 text-[#1DB954]" />
                         </div>
-                        <h2 className="text-3xl font-black text-white tracking-tight uppercase leading-none">Links de Pagamento</h2>
+                        <h2 className="text-3xl font-black text-white tracking-tight uppercase leading-none">{t("payment_links")}</h2>
                     </div>
-                    <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] ml-16">Crie links e receba em DePix</p>
+                    <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] ml-16">{t("payment_links_desc")}</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="h-10 rounded-full border-white/10 bg-[#121212] hover:bg-[#181818] text-[#A7A7A7] font-black uppercase text-[9px] tracking-widest px-6">
-                        <Info className="w-3.5 h-3.5 mr-2" /> Ajuda
+                        <Info className="w-3.5 h-3.5 mr-2" /> {t("help")}
                     </Button>
                     <Button variant="outline" className="h-10 rounded-full border-white/10 bg-[#121212] hover:bg-[#181818] text-[#A7A7A7] font-black uppercase text-[9px] tracking-widest px-6">
-                        Configurações
+                        {t("settings_label")}
                     </Button>
                 </div>
             </div>
@@ -58,13 +58,13 @@ export default function PaymentLinksPage() {
             {/* Quick Actions Bar */}
             <div className="flex flex-wrap items-center gap-4 py-6 border-y border-white/5">
                 <Button className="h-12 px-10 rounded-full bg-[#1DB954] text-black hover:bg-[#1ED760] font-black uppercase text-[10px] tracking-widest shadow-lg">
-                    <Plus className="w-4 h-4 mr-2" /> Criar
+                    <Plus className="w-4 h-4 mr-2" /> {t("all")}
                 </Button>
                 <Button variant="ghost" className="h-12 px-8 rounded-full text-[#A7A7A7] hover:text-white hover:bg-white/5 font-black uppercase text-[10px] tracking-widest">
-                    <Share2 className="w-4 h-4 mr-2" /> Compartilhar
+                    <Share2 className="w-4 h-4 mr-2" /> {t("share_qr")}
                 </Button>
                 <Button variant="ghost" className="h-12 px-8 rounded-full text-[#A7A7A7] hover:text-white hover:bg-white/5 font-black uppercase text-[10px] tracking-widest">
-                    <Download className="w-4 h-4 mr-2" /> Receber
+                    <Download className="w-4 h-4 mr-2" /> {t("receive")}
                 </Button>
             </div>
 
@@ -76,15 +76,15 @@ export default function PaymentLinksPage() {
                             <div className="flex items-center justify-between">
                                 <CardTitle className="text-xs font-black uppercase tracking-[0.3em] text-white flex items-center gap-3">
                                     <Plus className="w-5 h-5 text-[#1DB954]" />
-                                    Criar Link
+                                    {t("create_link")}
                                 </CardTitle>
-                                <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">Min: R$ 20,00 | Max: R$ 3.000,00</p>
+                                <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{t("min_max")}</p>
                             </div>
                         </CardHeader>
                         <CardContent className="p-10 space-y-10">
                             {/* Value Input */}
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-4">Valor do Pagamento</label>
+                                <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-4">{t("payment_value")}</label>
                                 <div className="relative group">
                                     <div className="absolute left-8 top-1/2 -translate-y-1/2 text-2xl font-black text-[#1DB954]">R$</div>
                                     <Input
@@ -110,7 +110,7 @@ export default function PaymentLinksPage() {
 
                             {/* Quantity Counter */}
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-4">Quantidade de Pagamentos</label>
+                                <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-4">{t("payment_quantity")}</label>
                                 <div className="flex items-center gap-6">
                                     <div className="flex items-center bg-[#181818] p-2 rounded-full border border-white/5">
                                         <Button
@@ -131,13 +131,13 @@ export default function PaymentLinksPage() {
                                             <Plus className="w-5 h-5" />
                                         </Button>
                                     </div>
-                                    <p className="text-[9px] font-black text-[#A767A7] dark:text-[#A7A7A7] uppercase tracking-widest opacity-60">O link será fechado após esta quantidade</p>
+                                    <p className="text-[9px] font-black text-[#A767A7] dark:text-[#A7A7A7] uppercase tracking-widest opacity-60">{t("link_closed_after")}</p>
                                 </div>
                             </div>
 
                             {/* Description */}
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-4">Descrição (Opcional)</label>
+                                <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-4">{t("description_optional")}</label>
                                 <Input
                                     placeholder="Ex: Pedido #123, Produto XYZ..."
                                     className="h-16 px-8 rounded-[1.5rem] bg-[#181818] border-white/5 font-black text-xs text-white uppercase tracking-widest placeholder:text-white/10"
@@ -147,7 +147,7 @@ export default function PaymentLinksPage() {
                         <CardFooter className="p-10 pt-0">
                             <Button className="w-full h-16 rounded-full bg-white text-black hover:bg-white/90 font-black uppercase text-[11px] tracking-[0.3em] shadow-xl border-none">
                                 <LinkIcon className="w-4 h-4 mr-3" />
-                                Criar Link de Pagamento
+                                {t("create_link")}
                             </Button>
                         </CardFooter>
                     </Card>
@@ -160,7 +160,7 @@ export default function PaymentLinksPage() {
                         <CardHeader className="p-8 pb-4 border-b border-white/5 bg-white/[0.01]">
                             <CardTitle className="text-[10px] font-black text-white uppercase tracking-[0.3em] flex items-center gap-3">
                                 <BarChart3 className="w-4 h-4 text-[#1DB954]" />
-                                Resumo
+                                {t("summary")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 grid grid-cols-2 gap-8">
@@ -178,14 +178,14 @@ export default function PaymentLinksPage() {
                         <CardHeader className="p-8 pb-4">
                             <CardTitle className="text-[10px] font-black text-white uppercase tracking-[0.3em] flex items-center gap-3">
                                 <Plus className="w-4 h-4 text-[#1DB954]" />
-                                Como funciona
+                                {t("how_it_works")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 pt-0 space-y-8">
                             <div className="space-y-6">
                                 {[
-                                    { s: 1, t: "Crie o link", d: "Defina valor e quantidade de pagamentos" },
-                                    { s: 2, t: "Compartilhe", d: "Envie o link para seus clientes" },
+                                    { s: 1, t: t("create_link"), d: "Defina valor e quantidade de pagamentos" },
+                                    { s: 2, t: t("share_qr"), d: "Envie o link para seus clientes" },
                                     { s: 3, t: "Receba em DePix", d: "Pagamentos creditados automaticamente" }
                                 ].map((item) => (
                                     <div key={item.s} className="flex gap-4">
@@ -221,12 +221,12 @@ export default function PaymentLinksPage() {
                                     <LinkIcon className="w-5 h-5 text-[#A7A7A7]" />
                                 </div>
                                 <div>
-                                    <CardTitle className="text-sm font-black text-white uppercase tracking-widest">Meus Links</CardTitle>
-                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">0 links criados</p>
+                                    <CardTitle className="text-sm font-black text-white uppercase tracking-widest">{t("my_links")}</CardTitle>
+                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">{t("links_created").replace("{count}", "0")}</p>
                                 </div>
                             </div>
                             <Button variant="ghost" className="h-10 px-6 rounded-full text-[#A7A7A7] hover:text-[#1DB954] font-black uppercase text-[9px] tracking-widest">
-                                <RefreshCw className="w-4 h-4 mr-2" /> Atualizar
+                                <RefreshCw className="w-4 h-4 mr-2" /> {t("reset")}
                             </Button>
                         </CardHeader>
                         <CardContent className="p-24 flex flex-col items-center justify-center text-center space-y-8">
@@ -234,8 +234,8 @@ export default function PaymentLinksPage() {
                                 <LinkIcon className="w-10 h-10 text-white/10" />
                             </div>
                             <div className="space-y-2">
-                                <p className="text-xs font-black text-[#A7A7A7] uppercase tracking-[0.2em]">Nenhum link criado ainda</p>
-                                <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Crie seu primeiro link de pagamento acima</p>
+                                <p className="text-xs font-black text-[#A7A7A7] uppercase tracking-[0.2em]">{t("no_links_yet")}</p>
+                                <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{t("create_first_link_desc")}</p>
                             </div>
                         </CardContent>
                     </Card>

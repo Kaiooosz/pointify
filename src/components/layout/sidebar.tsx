@@ -20,7 +20,7 @@ import {
 import { ThemeAndLanguageToggle } from "./theme-language-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
 
-const menuItems = [
+const customerItems = [
     { name: "dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "send", href: "/dashboard/send", icon: Send },
     { name: "receive", href: "/dashboard/receive", icon: Download },
@@ -29,13 +29,20 @@ const menuItems = [
     { name: "profile", href: "/dashboard/profile", icon: User },
 ];
 
+const adminItems = [
+    { name: "backoffice", href: "/admin", icon: ShieldCheck },
+    { name: "users", href: "/admin", icon: Home },
+    { name: "finances", href: "/admin", icon: LayoutDashboard },
+];
+
 export function Sidebar({ isAdmin = false, mobile = false }: { isAdmin?: boolean, mobile?: boolean }) {
     const pathname = usePathname();
     const { t } = useLanguage();
+    const menuItems = isAdmin ? adminItems : customerItems;
 
     return (
         <aside className={cn(
-            "flex-col bg-slate-950 border-r border-white/5 z-40 transition-all duration-300 dark",
+            "flex-col bg-[#0B0B0B] border-r border-white/5 z-40 transition-all duration-300",
             mobile
                 ? "flex w-full h-full"
                 : "fixed left-0 top-0 bottom-0 w-64 hidden md:flex"
@@ -45,63 +52,48 @@ export function Sidebar({ isAdmin = false, mobile = false }: { isAdmin?: boolean
             </div>
 
             <nav className="flex-1 px-4 space-y-1.5 mt-4">
+                <p className="px-4 text-[9px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] mb-4">
+                    {isAdmin ? t("operational_system_label") : t("main_menu_label")}
+                </p>
                 {menuItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                         <Link
-                            key={item.href}
+                            key={item.href + item.name}
                             href={item.href}
                             className={cn(
-                                "flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all group",
+                                "flex items-center justify-between px-4 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all group",
                                 isActive
-                                    ? "bg-emerald-500/10 text-emerald-400"
-                                    : "text-slate-400 hover:bg-white/5 hover:text-white"
+                                    ? "bg-[#1DB954]/10 text-[#1DB954]"
+                                    : "text-[#A7A7A7] hover:bg-white/5 hover:text-white"
                             )}
                         >
                             <div className="flex items-center gap-3">
-                                <item.icon className={cn("w-5 h-5 transition-colors", isActive ? "text-emerald-400" : "text-slate-500 group-hover:text-white")} />
+                                <item.icon className={cn("w-4 h-4 transition-colors", isActive ? "text-[#1DB954]" : "text-[#A7A7A7] group-hover:text-white")} />
                                 {t(item.name)}
                             </div>
-                            {isActive && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]" />}
+                            {isActive && <div className="w-1.5 h-1.5 rounded-full bg-[#1DB954] shadow-[0_0_8px_#1DB954]" />}
                         </Link>
                     );
                 })}
-
-                {isAdmin && (
-                    <div className="pt-10 pb-2">
-                        <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">{t("administration")}</p>
-                        <Link
-                            href="/admin"
-                            className={cn(
-                                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all",
-                                pathname.startsWith("/admin")
-                                    ? "bg-sky-500/10 text-sky-400"
-                                    : "text-slate-400 hover:bg-white/5 hover:text-white"
-                            )}
-                        >
-                            <ShieldCheck className="w-5 h-5 transition-colors" />
-                            {t("admin_panel")}
-                        </Link>
-                    </div>
-                )}
             </nav>
 
             <div className="p-6 space-y-6 border-t border-white/5">
                 <ThemeAndLanguageToggle />
 
-                <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-900/20">
-                        K
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="w-9 h-9 rounded-xl bg-[#1DB954] flex items-center justify-center text-black font-black text-xs shadow-lg">
+                        {isAdmin ? "A" : "U"}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-white truncate">Kai Otsunokawa</p>
-                        <p className="text-[10px] text-slate-500 truncate">{t("managing_director")}</p>
+                        <p className="text-[10px] font-black text-white truncate uppercase tracking-tighter">{isAdmin ? t("admin_root") : t("pointify_user")}</p>
+                        <p className="text-[8px] text-[#A7A7A7] truncate font-black uppercase tracking-widest">{isAdmin ? t("total_control") : t("active_status")}</p>
                     </div>
                 </div>
 
-                <Link href="/login" className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-400 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all group">
-                    <LogOut className="w-4 h-4 text-slate-500 group-hover:text-red-400" />
-                    {t("logout")}
+                <Link href="/login" className="flex items-center gap-3 px-4 py-3 text-[10px] font-black text-[#A7A7A7] hover:text-rose-500 hover:bg-rose-500/5 rounded-2xl transition-all group uppercase tracking-widest">
+                    <LogOut className="w-4 h-4 text-[#A7A7A7] group-hover:text-rose-500" />
+                    {t("logout_label")}
                 </Link>
             </div>
         </aside>

@@ -17,16 +17,16 @@ export function ThemeAndLanguageToggle() {
     if (!mounted) return null;
 
     return (
-        <div className="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200/50 dark:border-white/10 backdrop-blur-md shadow-inner">
+        <div className="flex items-center gap-2 bg-[#121212] p-1 rounded-full border border-white/5 backdrop-blur-xl shadow-2xl">
             {/* Language Toggle */}
             <div className="flex gap-1">
                 {(["pt", "en", "es"] as Language[]).map((lang) => (
                     <button
                         key={lang}
                         onClick={() => setLanguage(lang)}
-                        className={`w-8 h-8 flex items-center justify-center text-[10px] font-black rounded-xl transition-all uppercase tracking-tighter ${language === lang
-                            ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 scale-105"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5"
+                        className={`w-9 h-9 flex items-center justify-center text-[10px] font-black rounded-full transition-all uppercase tracking-widest ${language === lang
+                            ? "bg-[#1DB954] text-black shadow-[0_0_20px_rgba(29,185,84,0.3)] scale-105"
+                            : "text-[#A7A7A7] hover:text-white hover:bg-white/5"
                             }`}
                     >
                         {lang}

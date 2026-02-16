@@ -10,17 +10,30 @@ datasource db {
 
 enum UserRole {
   ADMIN
+  FINANCE
+  COMPLIANCE
+  SUPPORT
+  OPERATIONAL
   PARTNER
   CUSTOMER
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  PENDING
+  ANALYSIS
+  TERMINATED
 }
 
 enum TransactionType {
   PIX_DEPOSIT
   PIX_WITHDRAW
-  POINTS_PURCHASE
-  POINTS_SALE
+  BOLETO_DEPOSIT
   MERCHANT_PAYMENT
   CASHBACK
+  TRANSFER
+  FEE
 }
 
 enum TransactionStatus {
@@ -28,6 +41,8 @@ enum TransactionStatus {
   COMPLETED
   FAILED
   CANCELLED
+  REFUNDED
+  LIQUIDATING
 }
 
 enum KycStatus {
@@ -43,9 +58,27 @@ model User {
   email         String    @unique
   password      String?
   role          UserRole  @default(CUSTOMER)
+  status        UserStatus @default(PENDING)
   
-  // Balance in points
+  // Custom Profile Info
+  instagram     String?
+  origin        String?    @default("ORGANIC")
+  riskScore     Int       @default(0) // 0-100
+  
+  // Financial Limits (in cents/points)
+  dailyLimit    Int       @default(1000000) // R$ 10.000,00
+  monthlyLimit  Int       @default(50000000) // R$ 500.000,00
+  perTxLimit    Int       @default(500000)   // R$ 5.000,00
+  
+  // Balance
   pointsBalance Int       @default(0)
+  blockedBalance Int      @default(0)
+  
+  // Auth & Security
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret  String?
+  lastIp          String?
+  lastLogin       DateTime?
   
   // KYC Info
   kycStatus     KycStatus @default(NOT_STARTED)
@@ -54,13 +87,17 @@ model User {
   
   // Relationships
   transactions  Transaction[]
+  adminLogs     AdminLog[]    @relation("ResponsibleAdmin")
+  actionLogs    AdminLog[]    @relation("TargetUser")
   partner       Partner?      @relation(name: "PartnerOwner")
   carts         Cart[]
+  paymentLinks  PaymentLink[]
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   @@index([email])
+  @@index([status])
 }
 
 model Partner {
@@ -100,19 +137,70 @@ model Transaction {
   userId        String
   user          User              @relation(fields: [userId], references: [id])
   
-  amount        Int               // Amount in points or BRL (depending on type)
-  currency      String            @default("POINTS") // POINTS or BRL
+  grossAmount   Int               // Raw value
+  spread        Int               @default(0) // Fee applied
+  netAmount     Int               // Final value after spread
+  amount        Int               // Field for backward compatibility or primary display
+  
+  currency      String            @default("BRL") // BRL or POINTS
+  method        String?           // PIX, BOLETO, LINK, INTERNAL
   
   type          TransactionType
   status        TransactionStatus @default(PENDING)
   
   description   String?
-  externalId    String?           // For PIX e2eId or Crypto tx hash
+  externalId    String?           // PIX E2E, TxHash, etc.
+  txid          String?           @unique // For Bolix/Pix
+  
+  liquidationDate DateTime?
   
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
   @@index([userId])
+  @@index([type])
+  @@index([status])
+}
+
+model PaymentLink {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  title       String
+  description String?
+  amount      Int
+  quantity    Int      @default(0) // 0 means unlimited
+  totalSales  Int      @default(0)
+  
+  active      Boolean  @default(true)
+  expiresAt   DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AdminLog {
+  id                String   @id @default(cuid())
+  responsibleId     String
+  responsible       User     @relation("ResponsibleAdmin", fields: [responsibleId], references: [id])
+  
+  targetUserId      String?
+  targetUser        User?    @relation("TargetUser", fields: [targetUserId], references: [id])
+  
+  action            String   // LOGIN, UPDATE_RATE, BLOCK_USER, APPROVE_KYC, etc.
+  details           String?  // JSON stringified details
+  ip                String?
+  
+  createdAt         DateTime @default(now())
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  category  String   @default("GENERAL") // FINANCIAL, SECURITY, etc.
+  updatedAt DateTime @updatedAt
 }
 
 model Cart {
@@ -151,11 +239,4 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   pricePaid Int
-}
-
-model SystemSetting {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     String
-  updatedAt DateTime @updatedAt
 }

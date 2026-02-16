@@ -98,7 +98,19 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  status: 'status',
+  instagram: 'instagram',
+  origin: 'origin',
+  riskScore: 'riskScore',
+  dailyLimit: 'dailyLimit',
+  monthlyLimit: 'monthlyLimit',
+  perTxLimit: 'perTxLimit',
   pointsBalance: 'pointsBalance',
+  blockedBalance: 'blockedBalance',
+  twoFactorEnabled: 'twoFactorEnabled',
+  twoFactorSecret: 'twoFactorSecret',
+  lastIp: 'lastIp',
+  lastLogin: 'lastLogin',
   kycStatus: 'kycStatus',
   documentId: 'documentId',
   phoneNumber: 'phoneNumber',
@@ -130,13 +142,51 @@ exports.Prisma.ProductScalarFieldEnum = {
 exports.Prisma.TransactionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  grossAmount: 'grossAmount',
+  spread: 'spread',
+  netAmount: 'netAmount',
   amount: 'amount',
   currency: 'currency',
+  method: 'method',
   type: 'type',
   status: 'status',
   description: 'description',
   externalId: 'externalId',
+  txid: 'txid',
+  liquidationDate: 'liquidationDate',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaymentLinkScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  description: 'description',
+  amount: 'amount',
+  quantity: 'quantity',
+  totalSales: 'totalSales',
+  active: 'active',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AdminLogScalarFieldEnum = {
+  id: 'id',
+  responsibleId: 'responsibleId',
+  targetUserId: 'targetUserId',
+  action: 'action',
+  details: 'details',
+  ip: 'ip',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SystemSettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  category: 'category',
   updatedAt: 'updatedAt'
 };
 
@@ -171,13 +221,6 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   pricePaid: 'pricePaid'
 };
 
-exports.Prisma.SystemSettingScalarFieldEnum = {
-  id: 'id',
-  key: 'key',
-  value: 'value',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -194,24 +237,39 @@ exports.Prisma.NullsOrder = {
 };
 exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN',
+  FINANCE: 'FINANCE',
+  COMPLIANCE: 'COMPLIANCE',
+  SUPPORT: 'SUPPORT',
+  OPERATIONAL: 'OPERATIONAL',
   PARTNER: 'PARTNER',
   CUSTOMER: 'CUSTOMER'
+};
+
+exports.UserStatus = exports.$Enums.UserStatus = {
+  ACTIVE: 'ACTIVE',
+  BLOCKED: 'BLOCKED',
+  PENDING: 'PENDING',
+  ANALYSIS: 'ANALYSIS',
+  TERMINATED: 'TERMINATED'
 };
 
 exports.TransactionType = exports.$Enums.TransactionType = {
   PIX_DEPOSIT: 'PIX_DEPOSIT',
   PIX_WITHDRAW: 'PIX_WITHDRAW',
-  POINTS_PURCHASE: 'POINTS_PURCHASE',
-  POINTS_SALE: 'POINTS_SALE',
+  BOLETO_DEPOSIT: 'BOLETO_DEPOSIT',
   MERCHANT_PAYMENT: 'MERCHANT_PAYMENT',
-  CASHBACK: 'CASHBACK'
+  CASHBACK: 'CASHBACK',
+  TRANSFER: 'TRANSFER',
+  FEE: 'FEE'
 };
 
 exports.TransactionStatus = exports.$Enums.TransactionStatus = {
   PENDING: 'PENDING',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+  REFUNDED: 'REFUNDED',
+  LIQUIDATING: 'LIQUIDATING'
 };
 
 exports.KycStatus = exports.$Enums.KycStatus = {
@@ -226,11 +284,13 @@ exports.Prisma.ModelName = {
   Partner: 'Partner',
   Product: 'Product',
   Transaction: 'Transaction',
+  PaymentLink: 'PaymentLink',
+  AdminLog: 'AdminLog',
+  SystemSetting: 'SystemSetting',
   Cart: 'Cart',
   CartItem: 'CartItem',
   Order: 'Order',
-  OrderItem: 'OrderItem',
-  SystemSetting: 'SystemSetting'
+  OrderItem: 'OrderItem'
 };
 /**
  * Create the Client
@@ -240,10 +300,10 @@ const config = {
   "clientVersion": "7.3.0",
   "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider   = \"prisma-client-js\"\n  engineType = \"library\"\n  output     = \"./generated-client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum UserRole {\n  ADMIN\n  PARTNER\n  CUSTOMER\n}\n\nenum TransactionType {\n  PIX_DEPOSIT\n  PIX_WITHDRAW\n  POINTS_PURCHASE\n  POINTS_SALE\n  MERCHANT_PAYMENT\n  CASHBACK\n}\n\nenum TransactionStatus {\n  PENDING\n  COMPLETED\n  FAILED\n  CANCELLED\n}\n\nenum KycStatus {\n  NOT_STARTED\n  PENDING\n  VERIFIED\n  REJECTED\n}\n\nmodel User {\n  id       String   @id @default(cuid())\n  name     String?\n  email    String   @unique\n  password String?\n  role     UserRole @default(CUSTOMER)\n\n  // Balance in points\n  pointsBalance Int @default(0)\n\n  // KYC Info\n  kycStatus   KycStatus @default(NOT_STARTED)\n  documentId  String?   @unique // CPF or CNPJ\n  phoneNumber String?\n\n  // Relationships\n  transactions Transaction[]\n  partner      Partner?      @relation(name: \"PartnerOwner\")\n  carts        Cart[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([email])\n}\n\nmodel Partner {\n  id          String  @id @default(cuid())\n  name        String\n  description String?\n  logoUrl     String?\n\n  ownerId String @unique\n  owner   User   @relation(name: \"PartnerOwner\", fields: [ownerId], references: [id])\n\n  products Product[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Product {\n  id          String  @id @default(cuid())\n  name        String\n  description String?\n  pricePoints Int\n  imageUrl    String?\n\n  partnerId String\n  partner   Partner @relation(fields: [partnerId], references: [id])\n\n  orderItems OrderItem[]\n  cartItems  CartItem[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Transaction {\n  id     String @id @default(cuid())\n  userId String\n  user   User   @relation(fields: [userId], references: [id])\n\n  amount   Int // Amount in points or BRL (depending on type)\n  currency String @default(\"POINTS\") // POINTS or BRL\n\n  type   TransactionType\n  status TransactionStatus @default(PENDING)\n\n  description String?\n  externalId  String? // For PIX e2eId or Crypto tx hash\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([userId])\n}\n\nmodel Cart {\n  id        String     @id @default(cuid())\n  userId    String     @unique\n  user      User       @relation(fields: [userId], references: [id])\n  items     CartItem[]\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n}\n\nmodel CartItem {\n  id        String  @id @default(cuid())\n  cartId    String\n  cart      Cart    @relation(fields: [cartId], references: [id])\n  productId String\n  product   Product @relation(fields: [productId], references: [id])\n  quantity  Int     @default(1)\n}\n\nmodel Order {\n  id          String      @id @default(cuid())\n  userId      String\n  totalPoints Int\n  status      String      @default(\"PAID\")\n  items       OrderItem[]\n  createdAt   DateTime    @default(now())\n  updatedAt   DateTime    @updatedAt\n}\n\nmodel OrderItem {\n  id        String  @id @default(cuid())\n  orderId   String\n  order     Order   @relation(fields: [orderId], references: [id])\n  productId String\n  product   Product @relation(fields: [productId], references: [id])\n  quantity  Int\n  pricePaid Int\n}\n\nmodel SystemSetting {\n  id        String   @id @default(cuid())\n  key       String   @unique\n  value     String\n  updatedAt DateTime @updatedAt\n}\n"
+  "inlineSchema": "generator client {\n  provider   = \"prisma-client-js\"\n  engineType = \"library\"\n  output     = \"./generated-client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum UserRole {\n  ADMIN\n  FINANCE\n  COMPLIANCE\n  SUPPORT\n  OPERATIONAL\n  PARTNER\n  CUSTOMER\n}\n\nenum UserStatus {\n  ACTIVE\n  BLOCKED\n  PENDING\n  ANALYSIS\n  TERMINATED\n}\n\nenum TransactionType {\n  PIX_DEPOSIT\n  PIX_WITHDRAW\n  BOLETO_DEPOSIT\n  MERCHANT_PAYMENT\n  CASHBACK\n  TRANSFER\n  FEE\n}\n\nenum TransactionStatus {\n  PENDING\n  COMPLETED\n  FAILED\n  CANCELLED\n  REFUNDED\n  LIQUIDATING\n}\n\nenum KycStatus {\n  NOT_STARTED\n  PENDING\n  VERIFIED\n  REJECTED\n}\n\nmodel User {\n  id       String     @id @default(cuid())\n  name     String?\n  email    String     @unique\n  password String?\n  role     UserRole   @default(CUSTOMER)\n  status   UserStatus @default(PENDING)\n\n  // Custom Profile Info\n  instagram String?\n  origin    String? @default(\"ORGANIC\")\n  riskScore Int     @default(0) // 0-100\n\n  // Financial Limits (in cents/points)\n  dailyLimit   Int @default(1000000) // R$ 10.000,00\n  monthlyLimit Int @default(50000000) // R$ 500.000,00\n  perTxLimit   Int @default(500000) // R$ 5.000,00\n\n  // Balance\n  pointsBalance  Int @default(0)\n  blockedBalance Int @default(0)\n\n  // Auth & Security\n  twoFactorEnabled Boolean   @default(false)\n  twoFactorSecret  String?\n  lastIp           String?\n  lastLogin        DateTime?\n\n  // KYC Info\n  kycStatus   KycStatus @default(NOT_STARTED)\n  documentId  String?   @unique // CPF or CNPJ\n  phoneNumber String?\n\n  // Relationships\n  transactions Transaction[]\n  adminLogs    AdminLog[]    @relation(\"ResponsibleAdmin\")\n  actionLogs   AdminLog[]    @relation(\"TargetUser\")\n  partner      Partner?      @relation(name: \"PartnerOwner\")\n  carts        Cart[]\n  paymentLinks PaymentLink[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([email])\n  @@index([status])\n}\n\nmodel Partner {\n  id          String  @id @default(cuid())\n  name        String\n  description String?\n  logoUrl     String?\n\n  ownerId String @unique\n  owner   User   @relation(name: \"PartnerOwner\", fields: [ownerId], references: [id])\n\n  products Product[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Product {\n  id          String  @id @default(cuid())\n  name        String\n  description String?\n  pricePoints Int\n  imageUrl    String?\n\n  partnerId String\n  partner   Partner @relation(fields: [partnerId], references: [id])\n\n  orderItems OrderItem[]\n  cartItems  CartItem[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Transaction {\n  id     String @id @default(cuid())\n  userId String\n  user   User   @relation(fields: [userId], references: [id])\n\n  grossAmount Int // Raw value\n  spread      Int @default(0) // Fee applied\n  netAmount   Int // Final value after spread\n  amount      Int // Field for backward compatibility or primary display\n\n  currency String  @default(\"BRL\") // BRL or POINTS\n  method   String? // PIX, BOLETO, LINK, INTERNAL\n\n  type   TransactionType\n  status TransactionStatus @default(PENDING)\n\n  description String?\n  externalId  String? // PIX E2E, TxHash, etc.\n  txid        String? @unique // For Bolix/Pix\n\n  liquidationDate DateTime?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([userId])\n  @@index([type])\n  @@index([status])\n}\n\nmodel PaymentLink {\n  id     String @id @default(cuid())\n  userId String\n  user   User   @relation(fields: [userId], references: [id])\n\n  title       String\n  description String?\n  amount      Int\n  quantity    Int     @default(0) // 0 means unlimited\n  totalSales  Int     @default(0)\n\n  active    Boolean   @default(true)\n  expiresAt DateTime?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel AdminLog {\n  id            String @id @default(cuid())\n  responsibleId String\n  responsible   User   @relation(\"ResponsibleAdmin\", fields: [responsibleId], references: [id])\n\n  targetUserId String?\n  targetUser   User?   @relation(\"TargetUser\", fields: [targetUserId], references: [id])\n\n  action  String // LOGIN, UPDATE_RATE, BLOCK_USER, APPROVE_KYC, etc.\n  details String? // JSON stringified details\n  ip      String?\n\n  createdAt DateTime @default(now())\n}\n\nmodel SystemSetting {\n  id        String   @id @default(cuid())\n  key       String   @unique\n  value     String\n  category  String   @default(\"GENERAL\") // FINANCIAL, SECURITY, etc.\n  updatedAt DateTime @updatedAt\n}\n\nmodel Cart {\n  id        String     @id @default(cuid())\n  userId    String     @unique\n  user      User       @relation(fields: [userId], references: [id])\n  items     CartItem[]\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n}\n\nmodel CartItem {\n  id        String  @id @default(cuid())\n  cartId    String\n  cart      Cart    @relation(fields: [cartId], references: [id])\n  productId String\n  product   Product @relation(fields: [productId], references: [id])\n  quantity  Int     @default(1)\n}\n\nmodel Order {\n  id          String      @id @default(cuid())\n  userId      String\n  totalPoints Int\n  status      String      @default(\"PAID\")\n  items       OrderItem[]\n  createdAt   DateTime    @default(now())\n  updatedAt   DateTime    @updatedAt\n}\n\nmodel OrderItem {\n  id        String  @id @default(cuid())\n  orderId   String\n  order     Order   @relation(fields: [orderId], references: [id])\n  productId String\n  product   Product @relation(fields: [productId], references: [id])\n  quantity  Int\n  pricePaid Int\n}\n"
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"pointsBalance\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"kycStatus\",\"kind\":\"enum\",\"type\":\"KycStatus\"},{\"name\":\"documentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phoneNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"transactions\",\"kind\":\"object\",\"type\":\"Transaction\",\"relationName\":\"TransactionToUser\"},{\"name\":\"partner\",\"kind\":\"object\",\"type\":\"Partner\",\"relationName\":\"PartnerOwner\"},{\"name\":\"carts\",\"kind\":\"object\",\"type\":\"Cart\",\"relationName\":\"CartToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Partner\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logoUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ownerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"owner\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PartnerOwner\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"PartnerToProduct\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"pricePoints\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"partnerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"partner\",\"kind\":\"object\",\"type\":\"Partner\",\"relationName\":\"PartnerToProduct\"},{\"name\":\"orderItems\",\"kind\":\"object\",\"type\":\"OrderItem\",\"relationName\":\"OrderItemToProduct\"},{\"name\":\"cartItems\",\"kind\":\"object\",\"type\":\"CartItem\",\"relationName\":\"CartItemToProduct\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Transaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TransactionToUser\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"TransactionType\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"TransactionStatus\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"externalId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Cart\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CartToUser\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"CartItem\",\"relationName\":\"CartToCartItem\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"CartItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cartId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cart\",\"kind\":\"object\",\"type\":\"Cart\",\"relationName\":\"CartToCartItem\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CartItemToProduct\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"totalPoints\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"OrderItem\",\"relationName\":\"OrderToOrderItem\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"OrderItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"orderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToOrderItem\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"OrderItemToProduct\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"pricePaid\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"SystemSetting\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"key\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"instagram\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"origin\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"riskScore\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"dailyLimit\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"monthlyLimit\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"perTxLimit\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"pointsBalance\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"blockedBalance\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"twoFactorEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"twoFactorSecret\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastIp\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"kycStatus\",\"kind\":\"enum\",\"type\":\"KycStatus\"},{\"name\":\"documentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phoneNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"transactions\",\"kind\":\"object\",\"type\":\"Transaction\",\"relationName\":\"TransactionToUser\"},{\"name\":\"adminLogs\",\"kind\":\"object\",\"type\":\"AdminLog\",\"relationName\":\"ResponsibleAdmin\"},{\"name\":\"actionLogs\",\"kind\":\"object\",\"type\":\"AdminLog\",\"relationName\":\"TargetUser\"},{\"name\":\"partner\",\"kind\":\"object\",\"type\":\"Partner\",\"relationName\":\"PartnerOwner\"},{\"name\":\"carts\",\"kind\":\"object\",\"type\":\"Cart\",\"relationName\":\"CartToUser\"},{\"name\":\"paymentLinks\",\"kind\":\"object\",\"type\":\"PaymentLink\",\"relationName\":\"PaymentLinkToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Partner\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logoUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ownerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"owner\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PartnerOwner\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"PartnerToProduct\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"pricePoints\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"partnerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"partner\",\"kind\":\"object\",\"type\":\"Partner\",\"relationName\":\"PartnerToProduct\"},{\"name\":\"orderItems\",\"kind\":\"object\",\"type\":\"OrderItem\",\"relationName\":\"OrderItemToProduct\"},{\"name\":\"cartItems\",\"kind\":\"object\",\"type\":\"CartItem\",\"relationName\":\"CartItemToProduct\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Transaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TransactionToUser\"},{\"name\":\"grossAmount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"spread\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"netAmount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"method\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"TransactionType\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"TransactionStatus\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"externalId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"txid\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"liquidationDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"PaymentLink\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PaymentLinkToUser\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalSales\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"active\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"AdminLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"responsibleId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"responsible\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ResponsibleAdmin\"},{\"name\":\"targetUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"targetUser\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TargetUser\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"details\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ip\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"SystemSetting\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"key\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Cart\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CartToUser\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"CartItem\",\"relationName\":\"CartToCartItem\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"CartItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cartId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cart\",\"kind\":\"object\",\"type\":\"Cart\",\"relationName\":\"CartToCartItem\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CartItemToProduct\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"totalPoints\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"OrderItem\",\"relationName\":\"OrderToOrderItem\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"OrderItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"orderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToOrderItem\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"OrderItemToProduct\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"pricePaid\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.compilerWasm = {
   getRuntime: async () => require('./query_compiler_fast_bg.js'),
