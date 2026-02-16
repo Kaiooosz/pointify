@@ -5,12 +5,39 @@ import prisma from "@/lib/prisma";
 export async function getAdminStats() {
     try {
         const totalUsers = await prisma.user.count();
-        const totalVolume = await prisma.transaction.aggregate({
+        const activeUsersLast24h = await prisma.user.count({
+            where: {
+                updatedAt: {
+                    gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+                }
+            }
+        });
+
+        const completedTransactions = await prisma.transaction.aggregate({
             _sum: {
                 amount: true
             },
             where: {
-                currency: "POINTS",
+                status: "COMPLETED"
+            }
+        });
+
+        const inflow = await prisma.transaction.aggregate({
+            _sum: {
+                amount: true
+            },
+            where: {
+                type: "PIX_DEPOSIT",
+                status: "COMPLETED"
+            }
+        });
+
+        const outflow = await prisma.transaction.aggregate({
+            _sum: {
+                amount: true
+            },
+            where: {
+                type: "PIX_WITHDRAW",
                 status: "COMPLETED"
             }
         });
@@ -21,22 +48,57 @@ export async function getAdminStats() {
             }
         });
 
-        // Revenue calculation: Sum of MERCHANT_PAYMENT fees (if we had a fee field)
-        // For now, let's pretend revenue is 1% of all transaction volume
-        const revenue = (totalVolume._sum.amount || 0) * 0.01;
+        // Revenue calculation: 1.5% of all MERCHANT_PAYMENT transactions
+        const merchantVol = await prisma.transaction.aggregate({
+            _sum: { amount: true },
+            where: { type: "MERCHANT_PAYMENT", status: "COMPLETED" }
+        });
+
+        const totalPointsVolume = completedTransactions._sum.amount || 0;
+        const totalInflow = inflow._sum.amount || 0;
+        const totalOutflow = outflow._sum.amount || 0;
+        const revenue = (merchantVol._sum.amount || 0) * 0.015;
 
         return {
             success: true,
             stats: {
                 totalUsers,
-                totalVolume: totalVolume._sum.amount || 0,
+                activeUsersLast24h,
+                totalVolume: totalPointsVolume,
+                totalInflow,
+                totalOutflow,
                 pendingKyc,
-                revenue
+                revenue,
+                netMovement: totalInflow - totalOutflow
             }
         };
     } catch (error) {
         console.error("Error fetching admin stats:", error);
         return { success: false, error: "Failed to fetch stats" };
+    }
+}
+
+export async function getAdminUsers() {
+    try {
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                pointsBalance: true,
+                kycStatus: true,
+                createdAt: true,
+                _count: {
+                    select: { transactions: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+        return { success: true, users };
+    } catch (error) {
+        console.error("Error fetching admin users:", error);
+        return { success: false, error: "Failed to fetch users" };
     }
 }
 

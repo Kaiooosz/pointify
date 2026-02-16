@@ -19,13 +19,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         const Comp = asChild ? Slot : "button"
 
         const variants = {
-            default: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-500/20",
+            default: "bg-[#00CC99] text-white hover:bg-[#00FFCC] hover:text-[#003322] shadow-lg shadow-[#00CC99]/20",
             destructive: "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20",
-            outline: "border border-border bg-transparent hover:bg-accent hover:text-accent-foreground",
-            secondary: "bg-sky-500 text-white hover:bg-sky-600 shadow-lg shadow-sky-500/20",
-            ghost: "hover:bg-accent hover:text-accent-foreground",
-            link: "text-emerald-600 underline-offset-4 hover:underline",
+            outline: "border border-[#FFFFFF]/10 bg-transparent hover:bg-white/5 hover:text-white",
+            secondary: "bg-[#00DDDD] text-white hover:bg-[#00FFCC] hover:text-[#003322] shadow-lg shadow-[#00DDDD]/20",
+            ghost: "hover:bg-white/5 hover:text-white",
+            link: "text-[#00FFCC] underline-offset-4 hover:underline",
         }
+
 
         const sizes = {
             default: "h-10 px-4 py-2",

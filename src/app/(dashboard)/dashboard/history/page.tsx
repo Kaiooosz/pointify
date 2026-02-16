@@ -35,30 +35,30 @@ export default function HistoryPage() {
     const [dateTo, setDateTo] = useState("");
 
     return (
-        <div className="max-w-6xl mx-auto space-y-10">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-2">
-                <div className="space-y-2">
-                    <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{t("full_statement")}</h2>
-                    <p className="text-lg text-slate-500 dark:text-slate-400 font-bold tracking-tight">{t("monitor_desc")}</p>
+        <div className="max-w-[1400px] mx-auto space-y-8 pb-32">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4 md:px-8 mt-6">
+                <div className="space-y-1">
+                    <h2 className="text-3xl font-black text-white tracking-tight uppercase leading-none">{t("full_statement")}</h2>
+                    <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">{t("monitor_desc")}</p>
                 </div>
-                <Button className="h-14 px-8 rounded-2xl font-black bg-emerald-500 hover:bg-emerald-600 shadow-xl shadow-emerald-500/20 border-none">
-                    <Download className="w-5 h-5 mr-3" />
+                <Button className="h-12 px-8 rounded-full font-black text-[10px] uppercase tracking-widest bg-[#1DB954] hover:bg-[#1ED760] text-black border-none shadow-[0_10px_30px_rgba(29,185,84,0.2)] transition-all animate-fade-in">
+                    <Download className="w-4 h-4 mr-2" />
                     {t("export_pdf")}
                 </Button>
             </div>
 
-            <Card className="border border-slate-100 dark:border-white/10 rounded-[2.5rem] shadow-2xl shadow-slate-200/50 dark:shadow-none bg-white dark:bg-slate-900 overflow-hidden">
-                <CardHeader className="p-10 pb-6 space-y-8">
-                    <div className="flex flex-col xl:flex-row gap-6">
+            <Card className="border border-white/5 rounded-[2rem] bg-[#121212] overflow-hidden shadow-2xl mx-4 md:mx-8">
+                <CardHeader className="p-8 pb-4 space-y-6">
+                    <div className="flex flex-col xl:flex-row gap-4">
                         <div className="relative flex-1 group">
-                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A7A7A7] group-focus-within:text-[#1DB954] transition-colors" />
                             <Input
                                 placeholder={t("search_tx")}
-                                className="pl-14 h-16 rounded-[1.25rem] border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-slate-800/50 font-bold text-base focus-visible:ring-emerald-500/20"
+                                className="pl-12 h-12 rounded-full border-white/5 bg-[#181818] font-black text-xs uppercase tracking-widest focus-visible:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/40"
                             />
                         </div>
-                        <div className="flex flex-wrap gap-3">
-                            <div className="flex p-1.5 bg-slate-50 dark:bg-slate-800/50 rounded-[1.25rem] border border-slate-100 dark:border-white/5">
+                        <div className="flex flex-wrap gap-2">
+                            <div className="flex p-1 bg-[#181818] rounded-full border border-white/5">
                                 {[
                                     { id: "all", label: t("all") },
                                     { id: "entry", label: t("entries") },
@@ -67,9 +67,9 @@ export default function HistoryPage() {
                                     <button
                                         key={tab.id}
                                         onClick={() => setFilterType(tab.id)}
-                                        className={`px-8 h-12 rounded-xl text-sm font-black transition-all ${filterType === tab.id
-                                                ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
-                                                : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                                        className={`px-6 h-10 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${filterType === tab.id
+                                            ? "bg-[#282828] text-[#1DB954] shadow-sm"
+                                            : "text-[#A7A7A7] hover:text-white"
                                             }`}
                                     >
                                         {tab.label}
@@ -78,10 +78,10 @@ export default function HistoryPage() {
                             </div>
                             <Button
                                 variant="outline"
-                                className={`h-[calc(4rem-0.375rem)] px-8 rounded-[1.25rem] font-black border-slate-100 dark:border-white/5 transition-all ${showDateFilters ? "bg-emerald-500 text-white border-emerald-500" : "hover:bg-slate-50"}`}
+                                className={`h-12 px-6 rounded-full text-[9px] font-black uppercase tracking-widest border-white/5 transition-all ${showDateFilters ? "bg-[#1DB954] text-black border-[#1DB954]" : "bg-[#181818] text-[#A7A7A7] hover:bg-[#282828]"}`}
                                 onClick={() => setShowDateFilters(!showDateFilters)}
                             >
-                                <Filter className="w-5 h-5 mr-3" />
+                                <Filter className="w-4 h-4 mr-2" />
                                 {t("filters")}
                             </Button>
                         </div>
@@ -95,44 +95,44 @@ export default function HistoryPage() {
                                 exit={{ height: 0, opacity: 0 }}
                                 className="overflow-hidden"
                             >
-                                <div className="p-8 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10 grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
-                                    <div className="space-y-3">
-                                        <label className="text-xs font-black uppercase tracking-widest text-emerald-600 px-1">{t("date_from")}</label>
+                                <div className="p-6 rounded-2xl bg-[#181818] border border-white/5 grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                                    <div className="space-y-2">
+                                        <label className="text-[9px] font-black uppercase tracking-widest text-[#A7A7A7] px-1">{t("date_from")}</label>
                                         <div className="relative">
-                                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
+                                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#1DB954]" />
                                             <Input
                                                 type="date"
                                                 value={dateFrom}
                                                 onChange={(e) => setDateFrom(e.target.value)}
-                                                className="pl-12 h-14 rounded-2xl border-emerald-500/20 bg-white dark:bg-slate-900 font-bold"
+                                                className="pl-12 h-11 rounded-full border-white/5 bg-[#121212] font-black text-xs text-white uppercase"
                                             />
                                         </div>
                                     </div>
-                                    <div className="space-y-3">
-                                        <label className="text-xs font-black uppercase tracking-widest text-emerald-600 px-1">{t("date_to")}</label>
+                                    <div className="space-y-2">
+                                        <label className="text-[9px] font-black uppercase tracking-widest text-[#A7A7A7] px-1">{t("date_to")}</label>
                                         <div className="relative">
-                                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
+                                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#1DB954]" />
                                             <Input
                                                 type="date"
                                                 value={dateTo}
                                                 onChange={(e) => setDateTo(e.target.value)}
-                                                className="pl-12 h-14 rounded-2xl border-emerald-500/20 bg-white dark:bg-slate-900 font-bold"
+                                                className="pl-12 h-11 rounded-full border-white/5 bg-[#121212] font-black text-xs text-white uppercase"
                                             />
                                         </div>
                                     </div>
-                                    <div className="flex gap-4">
-                                        <Button className="flex-1 h-14 rounded-2xl font-black bg-emerald-500 hover:bg-emerald-600 border-none">
+                                    <div className="flex gap-2">
+                                        <Button className="flex-1 h-11 rounded-full font-black text-[9px] uppercase tracking-widest bg-[#1DB954] hover:bg-[#1ED760] text-black border-none transition-all">
                                             {t("apply_filters")}
                                         </Button>
                                         <Button
                                             variant="ghost"
-                                            className="h-14 w-14 rounded-2xl text-slate-400 hover:text-red-500 hover:bg-red-50"
+                                            className="h-11 w-11 rounded-full text-[#A7A7A7] hover:text-white hover:bg-white/5 transition-all"
                                             onClick={() => {
                                                 setDateFrom("");
                                                 setDateTo("");
                                             }}
                                         >
-                                            <X className="w-5 h-5" />
+                                            <X className="w-4 h-4" />
                                         </Button>
                                     </div>
                                 </div>
@@ -145,42 +145,41 @@ export default function HistoryPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="bg-slate-50 dark:bg-white/5 border-y border-slate-100 dark:border-white/5">
-                                    <th className="text-left p-6 font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">{t("transaction")}</th>
-                                    <th className="text-left p-6 font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">{t("date")}</th>
-                                    <th className="text-left p-6 font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">{t("status")}</th>
-                                    <th className="text-right p-6 font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">{t("value")}</th>
+                                <tr className="bg-[#181818]/50 border-y border-white/5">
+                                    <th className="text-left p-6 font-black text-[9px] uppercase tracking-[0.3em] text-[#A7A7A7]">{t("transaction")}</th>
+                                    <th className="text-left p-6 font-black text-[9px] uppercase tracking-[0.3em] text-[#A7A7A7]">{t("date")}</th>
+                                    <th className="text-left p-6 font-black text-[9px] uppercase tracking-[0.3em] text-[#A7A7A7]">{t("status")}</th>
+                                    <th className="text-right p-6 font-black text-[9px] uppercase tracking-[0.3em] text-[#A7A7A7]">{t("value")}</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50 dark:divide-white/5">
+                            <tbody className="divide-y divide-white/5">
                                 {mockTransactions.map((tx) => (
-                                    <tr key={tx.id} className="group hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer">
+                                    <tr key={tx.id} className="group hover:bg-white/[0.03] transition-colors cursor-pointer">
                                         <td className="p-6">
-                                            <div className="flex items-center gap-5">
-                                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${tx.type === "entry" ? "bg-emerald-500/10 text-emerald-500 shadow-sm shadow-emerald-500/10" : "bg-red-500/10 text-red-500 shadow-sm shadow-red-500/10"}`}>
-                                                    {tx.type === "entry" ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all group-hover:bg-[#1DB954] group-hover:text-black ${tx.type === "entry" ? "bg-[#1DB954]/10 text-[#1DB954] border border-[#1DB954]/20" : "bg-[#181818] text-[#A7A7A7] border border-white/5"}`}>
+                                                    {tx.type === "entry" ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
                                                 </div>
                                                 <div className="space-y-1">
-                                                    <p className="font-black text-slate-900 dark:text-white text-lg tracking-tight">{tx.name}</p>
-                                                    <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{tx.type === "entry" ? t("entry") : t("exit")}</p>
+                                                    <p className="font-black text-white text-xs tracking-tight uppercase leading-none">{tx.name}</p>
+                                                    <p className="text-[8px] font-black text-[#A7A7A7] uppercase tracking-widest">{tx.type === "entry" ? t("entry") : t("exit")}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="p-6">
-                                            <span className="text-slate-500 dark:text-slate-400 font-bold tracking-tight">{tx.date}</span>
+                                            <span className="text-[#A7A7A7] font-black text-[10px] uppercase tracking-tight">{tx.date}</span>
                                         </td>
                                         <td className="p-6">
-                                            <div className={`inline-flex items-center px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${tx.status === "Completed" ? "bg-emerald-500/10 text-emerald-600" :
-                                                tx.status === "Pending" ? "bg-amber-500/10 text-amber-600" :
-                                                    "bg-red-500/10 text-red-600"
-                                                }`}>
-                                                <div className={`w-1.5 h-1.5 rounded-full mr-2 ${tx.status === "Completed" ? "bg-emerald-600" : tx.status === "Pending" ? "bg-amber-600" : "bg-red-600"}`} />
-                                                {tx.status}
+                                            <div className="inline-flex items-center text-[8px] font-black uppercase tracking-widest">
+                                                <div className={`w-1.5 h-1.5 rounded-full mr-2 shadow-[0_0_8px_currentColor] ${tx.status === "Completed" ? "text-[#1DB954] bg-[#1DB954]" : tx.status === "Pending" ? "text-amber-500 bg-amber-500" : "text-rose-500 bg-rose-500"}`} />
+                                                <span className={tx.status === "Completed" ? "text-[#1DB954]" : tx.status === "Pending" ? "text-amber-500" : "text-rose-500"}>
+                                                    {tx.status}
+                                                </span>
                                             </div>
                                         </td>
                                         <td className="p-6 text-right">
-                                            <p className={`text-2xl font-black ${tx.type === "entry" ? "text-emerald-500" : "text-slate-900 dark:text-white"}`}>
-                                                {tx.amount} <span className="text-xs uppercase tracking-widest ml-1 opacity-50">pts</span>
+                                            <p className={`text-sm font-black ${tx.type === "entry" ? "text-[#1DB954]" : "text-white"}`}>
+                                                {tx.amount} <span className="text-[8px] uppercase tracking-widest ml-1 opacity-40">pts</span>
                                             </p>
                                         </td>
                                     </tr>

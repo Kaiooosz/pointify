@@ -19,41 +19,45 @@ export default function ReceivePage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-10">
-            <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight px-2">{t("receive_points")}</h2>
+        <div className="max-w-[1400px] mx-auto space-y-10 pb-32 px-4 md:px-8">
+            <div className="flex flex-col gap-1 mt-6">
+                <h2 className="text-3xl font-black text-white tracking-tight uppercase leading-none">{t("receive_points")}</h2>
+                <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.3em]">Direct Peer-to-Peer Reception Hub</p>
+            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                <Card className="flex flex-col items-center justify-center p-12 bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 rounded-[2.5rem] shadow-2xl shadow-slate-200/50 dark:shadow-none backdrop-blur-xl">
-                    <div className="relative group mb-10">
-                        <div className="absolute inset-0 bg-emerald-500/20 rounded-[2.5rem] blur-2xl group-hover:bg-emerald-500/30 transition-all" />
-                        <div className="relative w-56 h-56 bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] border border-slate-100 dark:border-white/5 flex items-center justify-center shadow-inner">
-                            <QrCode className="w-40 h-40 text-slate-900 dark:text-white" />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <Card className="lg:col-span-5 flex flex-col items-center justify-center p-12 bg-[#121212] border-white/5 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+                    <div className="relative group mb-12">
+                        <div className="absolute inset-0 bg-[#1DB954]/10 rounded-[3rem] blur-[60px] group-hover:bg-[#1DB954]/20 transition-all duration-700" />
+                        <div className="relative w-72 h-72 bg-white p-8 rounded-[3rem] border border-[#1DB954]/20 shadow-2xl flex items-center justify-center overflow-hidden">
+                            <QrCode className="w-56 h-56 text-black" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
                         </div>
                     </div>
-                    <p className="text-base text-center text-slate-500 dark:text-slate-400 font-bold leading-relaxed mb-8 max-w-[280px]">
+                    <p className="text-[10px] text-center text-[#A7A7A7] font-black leading-relaxed mb-10 max-w-[240px] uppercase tracking-[0.2em]">
                         {t("scan_qr_desc")}
                     </p>
-                    <Button variant="outline" className="w-full h-14 rounded-2xl font-black border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm">
-                        <Share2 className="w-5 h-5 mr-3" />
+                    <Button className="w-full h-14 rounded-full font-black bg-white text-black hover:bg-white/90 shadow-xl transition-all uppercase text-[10px] tracking-[0.2em] border-none">
+                        <Share2 className="w-4 h-4 mr-3" />
                         {t("share_qr")}
                     </Button>
                 </Card>
 
-                <div className="space-y-8">
-                    <Card className="border border-slate-100 dark:border-white/10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-none bg-white dark:bg-slate-900/50 backdrop-blur-xl">
-                        <CardHeader className="pt-10 px-8 pb-4">
-                            <CardTitle className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-wider">{t("your_id")}</CardTitle>
+                <div className="lg:col-span-7 space-y-8">
+                    <Card className="bg-[#121212] border-white/5 rounded-[3rem] shadow-2xl overflow-hidden">
+                        <CardHeader className="pt-10 px-10 pb-4 border-b border-white/5 bg-white/[0.02]">
+                            <CardTitle className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em]">{t("your_id")}</CardTitle>
                         </CardHeader>
-                        <CardContent className="px-8 pb-10">
-                            <div className="flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-white/5 shadow-inner group">
-                                <code className="flex-1 font-mono text-xl text-emerald-500 font-black tracking-tighter truncate">{userId}</code>
+                        <CardContent className="p-10">
+                            <div className="flex items-center gap-4 p-6 bg-[#181818] rounded-full border border-white/5 shadow-2xl group hover:border-[#1DB954]/30 transition-all">
+                                <code className="flex-1 font-black text-2xl text-[#1DB954] tracking-tighter truncate px-4">{userId}</code>
                                 <Button
                                     size="icon"
-                                    variant="ghost"
-                                    className={`w-12 h-12 rounded-2xl transition-all ${copied ? "bg-emerald-500 text-white" : "hover:bg-emerald-500/10 hover:text-emerald-500 text-slate-400"}`}
+                                    className={`w-14 h-14 rounded-full transition-all border-none ${copied ? "bg-[#1DB954] text-black" : "bg-white/5 text-[#A7A7A7] hover:bg-[#1DB954] hover:text-black"}`}
                                     onClick={copyToClipboard}
                                 >
-                                    {copied ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                                    {copied ? <CheckCircle2 className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
                                 </Button>
                             </div>
                             <AnimatePresence>
@@ -62,38 +66,41 @@ export default function ReceivePage() {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0 }}
-                                        className="text-sm text-emerald-500 mt-4 font-black uppercase tracking-widest text-center"
+                                        className="text-[9px] text-[#1DB954] mt-6 font-black uppercase tracking-[0.3em] text-center"
                                     >
-                                        {t("copied_success")}
+                                        ID Copiado com Sucesso
                                     </motion.p>
                                 )}
                             </AnimatePresence>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-emerald-500/5 dark:bg-emerald-500/[0.02] border border-emerald-500/10 rounded-[2.5rem] shadow-sm relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+                    <Card className="bg-[#121212] border border-white/5 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                        <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#1DB954]/5 rounded-full translate-y-1/2 translate-x-1/2 blur-[80px]" />
                         <CardContent className="p-10">
-                            <div className="flex gap-6">
+                            <div className="flex gap-8">
                                 <div className="mt-1 flex-shrink-0">
-                                    <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center">
-                                        <Info className="w-6 h-6 text-emerald-500" />
+                                    <div className="w-14 h-14 bg-[#1DB954]/10 rounded-2xl flex items-center justify-center border border-[#1DB954]/20 shadow-xl">
+                                        <Info className="w-6 h-6 text-[#1DB954]" />
                                     </div>
                                 </div>
-                                <div className="space-y-6">
-                                    <h4 className="font-black text-lg text-slate-900 dark:text-white uppercase tracking-wider">{t("how_to_receive")}</h4>
-                                    <ul className="space-y-4">
+                                <div className="space-y-8">
+                                    <div>
+                                        <h4 className="font-black text-sm text-white uppercase tracking-[0.3em] mb-2">{t("how_to_receive")}</h4>
+                                        <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.2em] opacity-60">Segurança de Rede Pointify v4.0</p>
+                                    </div>
+                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {[
                                             t("receive_step1"),
                                             t("receive_step2"),
                                             t("receive_step3"),
                                             t("receive_step4")
                                         ].map((step, i) => (
-                                            <li key={i} className="flex items-start gap-4 text-sm font-bold text-slate-500 dark:text-slate-400 leading-relaxed uppercase tracking-tight">
-                                                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] flex items-center justify-center font-black">
-                                                    {i + 1}
+                                            <li key={i} className="flex items-start gap-4">
+                                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1DB954] text-black text-[10px] flex items-center justify-center font-black shadow-lg">
+                                                    0{i + 1}
                                                 </span>
-                                                {step}
+                                                <p className="text-[10px] font-black text-[#A7A7A7] leading-relaxed uppercase tracking-wider mt-1.5">{step}</p>
                                             </li>
                                         ))}
                                     </ul>

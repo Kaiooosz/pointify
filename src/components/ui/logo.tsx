@@ -11,7 +11,7 @@ interface LogoProps {
 export function Logo({ className, width = 40, height = 40, withText = true }: LogoProps) {
   return (
     <Link href="/" className={`flex items-center gap-3 ${className}`}>
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500 to-sky-500 p-1 shadow-lg">
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#00FFCC] to-[#00CC99] p-1 shadow-lg">
         <Image
           src="/logo-pointify.jpg"
           alt="Pointify Logo"
@@ -21,10 +21,11 @@ export function Logo({ className, width = 40, height = 40, withText = true }: Lo
         />
       </div>
       {withText && (
-        <span className="text-xl font-black tracking-tighter text-emerald-600 dark:text-white">
-          Pointify<span className="text-emerald-500">.</span>
+        <span className="text-xl font-black tracking-tighter text-[#00FFCC] dark:text-white">
+          Pointify<span className="text-[#00CC99]">.</span>
         </span>
       )}
     </Link>
+
   );
 }

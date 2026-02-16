@@ -2,75 +2,80 @@
 
 @layer base {
   :root {
-    /* Tailwind 4 Variable Mappings (Automatic) */
-    --color-background: #ffffff;
-    --color-foreground: #020617;
+    /* Base Palette from Image */
+    --vibrante-verde-agua: #00FFCC;
+    --esmeralda: #00CC99;
+    --turquesa: #00DDDD;
+    --profundo: #003322;
+    --tecnologico: #2A2A2A;
+    --branco-puro: #FFFFFF;
+    --metalico-prata: #C0C0C0;
 
-    --color-card: #ffffff;
-    --color-card-foreground: #020617;
+    /* Theme Variable Mappings */
+    --color-background: var(--branco-puro);
+    --color-foreground: var(--tecnologico);
 
-    --color-popover: #ffffff;
-    --color-popover-foreground: #020617;
+    --color-card: var(--branco-puro);
+    --color-card-foreground: var(--tecnologico);
 
-    --color-primary: #059669;
-    /* Emerald 600 */
-    --color-primary-foreground: #ffffff;
+    --color-popover: var(--branco-puro);
+    --color-popover-foreground: var(--tecnologico);
 
-    --color-secondary: #0ea5e9;
-    /* Sky 500 */
-    --color-secondary-foreground: #ffffff;
+    --color-primary: var(--esmeralda);
+    --color-primary-foreground: var(--branco-puro);
 
-    --color-muted: #f1f5f9;
-    --color-muted-foreground: #64748b;
+    --color-secondary: var(--turquesa);
+    --color-secondary-foreground: var(--branco-puro);
 
-    --color-accent: #f1f5f9;
-    --color-accent-foreground: #0f172a;
+    --color-muted: #F4F4F5;
+    --color-muted-foreground: #71717A;
 
-    --color-destructive: #ef4444;
-    --color-destructive-foreground: #ffffff;
+    --color-accent: var(--vibrante-verde-agua);
+    --color-accent-foreground: var(--profundo);
 
-    --color-border: #e2e8f0;
-    --color-input: #e2e8f0;
-    --color-ring: #059669;
+    --color-destructive: #EF4444;
+    --color-destructive-foreground: var(--branco-puro);
 
-    --radius-lg: 0.75rem;
-    --radius-md: calc(0.75rem - 2px);
-    --radius-sm: calc(0.75rem - 4px);
+    --color-border: #E4E4E7;
+    --color-input: #E4E4E7;
+    --color-ring: var(--esmeralda);
 
-    /* Font Mapping */
+    --radius-lg: 1.5rem;
+    --radius-md: 1rem;
+    --radius-sm: 0.5rem;
+
     --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
   }
 
   .dark {
-    --color-background: #020617;
-    --color-foreground: #f8fafc;
+    --color-background: var(--profundo);
+    --color-foreground: var(--branco-puro);
 
-    --color-card: #0f172a;
-    --color-card-foreground: #f8fafc;
+    --color-card: var(--tecnologico);
+    --color-card-foreground: var(--branco-puro);
 
-    --color-popover: #020617;
-    --color-popover-foreground: #f8fafc;
+    --color-popover: var(--tecnologico);
+    --color-popover-foreground: var(--branco-puro);
 
-    --color-primary: #10b981;
-    /* Emerald 500 */
-    --color-primary-foreground: #020617;
+    --color-primary: var(--vibrante-verde-agua);
+    --color-primary-foreground: var(--profundo);
 
-    --color-secondary: #0ea5e9;
-    --color-secondary-foreground: #020617;
+    --color-secondary: var(--esmeralda);
+    --color-secondary-foreground: var(--branco-puro);
 
-    --color-muted: #1e293b;
-    --color-muted-foreground: #94a3b8;
+    --color-muted: #18181B;
+    --color-muted-foreground: var(--metalico-prata);
 
-    --color-accent: #1e293b;
-    --color-accent-foreground: #f8fafc;
+    --color-accent: var(--tecnologico);
+    --color-accent-foreground: var(--vibrante-verde-agua);
 
-    --color-destructive: #7f1d1d;
-    --color-destructive-foreground: #f8fafc;
+    --color-destructive: #7F1D1D;
+    --color-destructive-foreground: var(--branco-puro);
 
-    --color-border: #1e293b;
-    --color-input: #1e293b;
-    --color-ring: #10b981;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-input: rgba(255, 255, 255, 0.1);
+    --color-ring: var(--vibrante-verde-agua);
   }
 }
 
@@ -89,13 +94,8 @@
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.dark .glass {
-  background: rgba(15, 23, 42, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -103,20 +103,23 @@
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  background-image: linear-gradient(to right, #10b981, #0ea5e9);
+  background-image: linear-gradient(to right, var(--vibrante-verde-agua), var(--turquesa));
 }
 
 .card-shadow {
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.2);
 }
 
-/* Helper classes for consistency where Tailwind apply might fail or be unclear */
-.text-high-contrast {
-  color: var(--color-foreground);
-  font-weight: 700;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-.text-muted-contrast {
-  color: var(--color-muted-foreground);
-  font-weight: 500;
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.premium-gradient {
+  background: radial-gradient(circle at top left, var(--vibrante-verde-agua), transparent),
+    radial-gradient(circle at bottom right, var(--profundo), transparent);
 }

@@ -221,3 +221,7 @@ faz o produto parecer confiável e premium,
 reduz suporte só com bom design,
 
 e eleva o padrão do time inteiro.
+
+deve utilizar informações dessa biblioteca
+
+https://reactbits.dev/get-started/introduction
