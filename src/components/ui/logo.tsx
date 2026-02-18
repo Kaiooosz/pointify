@@ -13,11 +13,18 @@ export function Logo({ className, width = 40, height = 40, withText = true }: Lo
     <Link href="/" className={`flex items-center gap-3 group ${className}`}>
       <div className="relative overflow-hidden transition-transform duration-500 group-hover:scale-105">
         <Image
+          src="/logo-preto.jpg"
+          alt="Pointify Logo"
+          width={width}
+          height={height}
+          className="object-contain dark:hidden"
+        />
+        <Image
           src="/logo-branco.jpg"
           alt="Pointify Logo"
           width={width}
           height={height}
-          className="object-contain" // Changed to contain to respect aspect ratio
+          className="object-contain hidden dark:block"
         />
       </div>
       {withText && (
