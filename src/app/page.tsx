@@ -129,6 +129,38 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Security */}
+      <section id="security" className="py-24 md:py-40 bg-[#121212]">
+        <div className="container mx-auto px-6 max-w-[1400px]">
+          <div className="text-center max-w-4xl mx-auto mb-20 md:mb-32">
+            <h2 className="text-5xl md:text-7xl font-black text-white mb-6 md:mb-8 tracking-tighter uppercase leading-none">{t("security_title")}</h2>
+            <div className="flex flex-col items-center">
+              <p className="text-[10px] md:text-xl text-[#1DB954] font-black uppercase tracking-[0.2em] md:tracking-[0.3em]">{t("custody_subtitle")}</p>
+              <p className="mt-8 text-sm md:text-lg text-[#A7A7A7] max-w-2xl text-center leading-relaxed font-black tracking-tight uppercase opacity-50">{t("custody_desc")}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            {[
+              { title: t("no_central_custody_title"), description: t("no_central_custody_desc"), icon: Wallet },
+              { title: t("on_chain_transparency_title"), description: t("on_chain_transparency_desc"), icon: CheckCircle2 },
+              { title: t("no_counterparty_risk_title"), description: t("no_counterparty_risk_desc"), icon: ShieldCheck },
+              { title: t("elite_security"), description: t("security_desc"), icon: Zap }
+            ].map((item, i) => (
+              <div key={i} className="group p-10 md:p-16 rounded-[2.5rem] bg-[#181818] border border-white/5 hover:bg-[#222222] transition-all duration-500 hover:-translate-y-2">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-[#1DB954]/10 flex items-center justify-center mb-8 md:mb-10 transition-all group-hover:bg-[#1DB954] group-hover:text-black duration-500 border border-[#1DB954]/20">
+                  <item.icon className="w-8 h-8 md:w-10 md:h-10 text-[#1DB954] group-hover:text-black transition-colors" />
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tighter uppercase leading-none">{item.title}</h3>
+                  <p className="text-sm md:text-lg text-[#A7A7A7] leading-relaxed font-black tracking-tight uppercase opacity-50">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-20 md:py-32 border-t border-white/5 mt-auto bg-[#0B0B0B]">
         <div className="container mx-auto px-6 max-w-[1400px]">
