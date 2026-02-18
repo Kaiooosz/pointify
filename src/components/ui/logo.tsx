@@ -17,14 +17,14 @@ export function Logo({ className, width = 40, height = 40, withText = true }: Lo
           alt="Pointify Logo"
           width={width}
           height={height}
-          className="object-contain dark:hidden"
+          className="object-contain dark:hidden rounded-xl"
         />
         <Image
           src="/p-icone-claro.jpg"
           alt="Pointify Logo"
           width={width}
           height={height}
-          className="object-contain hidden dark:block"
+          className="object-contain hidden dark:block rounded-xl"
         />
       </div>
       {withText && (
