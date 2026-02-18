@@ -10,19 +10,19 @@ interface LogoProps {
 
 export function Logo({ className, width = 40, height = 40, withText = true }: LogoProps) {
   return (
-    <Link href="/" className={`flex items-center gap-3 ${className}`}>
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#00FFCC] to-[#00CC99] p-1 shadow-lg">
+    <Link href="/" className={`flex items-center gap-3 group ${className}`}>
+      <div className="relative overflow-hidden transition-transform duration-500 group-hover:scale-105">
         <Image
-          src="/logo-pointify.jpg"
+          src="/logo-branco.jpg"
           alt="Pointify Logo"
           width={width}
           height={height}
-          className="rounded-lg object-cover"
+          className="object-contain" // Changed to contain to respect aspect ratio
         />
       </div>
       {withText && (
-        <span className="text-xl font-black tracking-tighter text-[#00FFCC] dark:text-white">
-          Pointify<span className="text-[#00CC99]">.</span>
+        <span className="text-xl font-black tracking-tighter text-white">
+          Pointify<span className="text-[#1DB954]">.</span>
         </span>
       )}
     </Link>
