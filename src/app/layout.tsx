@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Pointify - Pagamentos por Pontos",
   description: "A plataforma de pagamentos baseada em pontos integrada ao PIX e Cripto.",
+  icons: {
+    icon: "/p-icone-escuro.jpg",
+  },
 };
 
 export default function RootLayout({
