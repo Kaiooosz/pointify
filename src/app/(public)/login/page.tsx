@@ -100,6 +100,26 @@ export default function LoginPage() {
 
                     <CardContent className="px-8 md:px-14 pb-16 pt-4">
                         <AnimatePresence mode="wait">
+                            {/* Pending Approval Message */}
+                            {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('pending_approval') === 'true' && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="mb-10 p-8 rounded-[2.5rem] bg-[#1DB954]/5 border border-[#1DB954]/10 flex items-start gap-5 shadow-2xl"
+                                >
+                                    <div className="w-10 h-10 rounded-2xl bg-[#1DB954]/20 flex items-center justify-center flex-shrink-0">
+                                        <Zap className="w-5 h-5 text-[#1DB954]" />
+                                    </div>
+                                    <div className="space-y-1.5 pt-1">
+                                        <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-widest leading-none">Protocolo Criado</p>
+                                        <p className="text-xs font-black text-[#1DB954]/60 uppercase tracking-tight">
+                                            Aguarde alguns minutos. Vamos aprovar a sua conta.
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            )}
+
                             {error && (
                                 <motion.div
                                     initial={{ opacity: 0, y: -10 }}

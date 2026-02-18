@@ -32,7 +32,8 @@ export async function registerUserAction(formData: FormData) {
                 password: hashedPassword,
                 role: "CUSTOMER",
                 pointsBalance: 0,
-                kycStatus: "PENDING",
+                status: "ACTIVE", // Automatically active for smoother onboarding
+                kycStatus: "VERIFIED", // Automatically verified for smoother onboarding
             },
         });
 

@@ -44,7 +44,11 @@ export default function RegisterPage() {
         try {
             const res = await registerUserAction(data);
             if (res.success) {
-                router.push("/login?registered=true");
+                // Instead of redirecting, we can show a success state or redirect to a specific 'pending approval' page.
+                // Or simply redirect to login with a specific query param that shows a specific toast/alert.
+                // The user asked for "aguarde alguns minutos vamos aprovar a sua conta"
+                // Let's redirect to login with a new param 'pending_approval=true' and handle it there.
+                router.push("/login?pending_approval=true");
             } else {
                 setError(res.error || "Erro ao criar conta.");
             }
@@ -132,7 +136,7 @@ export default function RegisterPage() {
                                         id="name"
                                         placeholder="EX: KAI OTSUNOKAWA"
                                         required
-                                        className="h-16 pl-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-white/10"
+                                        className="h-16 pl-20 pr-6 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-[#1DB954]/50"
                                         value={formData.name}
                                         onChange={handleChange}
                                     />
@@ -146,7 +150,7 @@ export default function RegisterPage() {
                                     placeholder="SEU@EMAIL.COM"
                                     type="email"
                                     required
-                                    className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-white/10"
+                                    className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-[#1DB954]/50"
                                     value={formData.email}
                                     onChange={handleChange}
                                 />
@@ -160,7 +164,7 @@ export default function RegisterPage() {
                                         type="password"
                                         placeholder="••••••••"
                                         required
-                                        className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 tracking-widest group-hover:border-white/10"
+                                        className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 tracking-widest group-hover:border-[#1DB954]/50"
                                         value={formData.password}
                                         onChange={handleChange}
                                     />
@@ -172,7 +176,7 @@ export default function RegisterPage() {
                                         type="password"
                                         placeholder="••••••••"
                                         required
-                                        className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 tracking-widest group-hover:border-white/10"
+                                        className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 tracking-widest group-hover:border-[#1DB954]/50"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
                                     />
