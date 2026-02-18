@@ -619,7 +619,6 @@ const translations: Record<Language, TranslationMap> = {
         total_points: "TOTAL DE PONTOS",
         approve: "APROVAR",
         terminate: "ENCERRAR",
-        session_secure: "Sessão Segura",
     },
     es: {
         dashboard: "Panel",
