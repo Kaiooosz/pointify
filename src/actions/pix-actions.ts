@@ -21,13 +21,15 @@ export async function createPixDeposit(amountBrl: number) {
         const pixData = await pixProvider.createCharge(amountBrl, user.id);
 
         // 2. Create Transaction Record (Pending)
+        const amountInCents = Math.round(amountBrl * 100);
+
         const transaction = await prisma.transaction.create({
             data: {
                 userId: user.id,
-                amount: amountBrl * 1, // Store request in BRL or Points? Schema says amount Int, currency string.
-                // Decision: Store as BRL amount in the amount field, currency="BRL".
-                // When sending points later, we create a new POINTS transaction or update this one?
-                // Better: Create this as a "PIX_DEPOSIT".
+                amount: amountInCents,
+                grossAmount: amountInCents,
+                netAmount: amountInCents,
+                spread: 0,
                 currency: "BRL",
                 type: "PIX_DEPOSIT",
                 status: "PENDING",
