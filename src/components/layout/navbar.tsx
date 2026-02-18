@@ -48,7 +48,7 @@ export function Navbar() {
                             </Button>
                         </Link>
                         <Link href="/register">
-                            <Button className="font-black uppercase text-[11px] tracking-widest px-8 h-12 rounded-2xl shadow-xl shadow-[#00CC99]/20 transition-all hover:scale-105 active:scale-95">
+                            <Button className="font-black uppercase text-[11px] tracking-widest px-8 h-12 rounded-2xl bg-[#1DB954] hover:bg-[#1ED760] text-black shadow-xl shadow-[#1DB954]/20 transition-all hover:scale-105 active:scale-95">
                                 {t("create_account")}
                             </Button>
                         </Link>
