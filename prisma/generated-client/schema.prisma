@@ -240,3 +240,12 @@ model OrderItem {
   quantity  Int
   pricePaid Int
 }
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+  createdAt  DateTime @default(now())
+
+  @@unique([identifier, token])
+}

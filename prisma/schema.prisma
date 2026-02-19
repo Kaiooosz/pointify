@@ -1,7 +1,6 @@
 generator client {
   provider   = "prisma-client-js"
   engineType = "library"
-  output     = "./generated-client"
 }
 
 datasource db {
@@ -239,4 +238,13 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   pricePaid Int
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+  createdAt  DateTime @default(now())
+
+  @@unique([identifier, token])
 }

@@ -7,30 +7,101 @@ import { Logo } from "@/components/ui/logo";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, ShieldCheck, AlertCircle, RefreshCw, Zap, User } from "lucide-react";
+import { Loader2, ArrowLeft, ShieldCheck, AlertCircle, RefreshCw, Zap, User, Mail, Smartphone, Instagram, Send, CheckCircle2, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { registerUserAction } from "@/actions/register-actions";
+import { sendVerificationCode, verifyCode } from "@/actions/verification-actions";
 import { motion, AnimatePresence } from "framer-motion";
 import SpotlightCard from "@/components/ui/react-bits/SpotlightCard";
+import { ThemeAndLanguageToggle } from "@/components/layout/theme-language-toggle";
 
 export default function RegisterPage() {
     const { t } = useLanguage();
+    const router = useRouter();
+
+    const [step, setStep] = useState(1); // 1: Name/Phone, 2: Email, 3: Code, 4: Social/Password
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
+        phone: "",
+        instagram: "",
+        code: "",
         password: "",
         confirmPassword: ""
     });
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.id]: e.target.value });
+        setError(null);
+    };
+
+    // Step 1: Name & Phone
+    const handleStep1 = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        if (!formData.name || !formData.phone) {
+            setError(t("reg_error_fields"));
+            return;
+        }
+        setStep(2);
+    };
+
+    // Step 2: Send Verification Code
+    const handleSendCode = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        setIsLoading(true);
+
+        try {
+            const res = await sendVerificationCode(formData.email);
+            if (res.success) {
+                setSuccessMessage(t("reg_success_code_sent"));
+                setStep(3);
+            } else {
+                setError(res.error || t("send_code_error"));
+            }
+        } catch (err) {
+            setError(t("connection_error"));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Step 3: Verify Code
+    const handleVerifyCode = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        setIsLoading(true);
+
+        try {
+            const res = await verifyCode(formData.email, formData.code);
+            if (res.success) {
+                setSuccessMessage(t("reg_success_verified"));
+                setTimeout(() => {
+                    setSuccessMessage(null);
+                    setStep(4);
+                }, 1000);
+            } else {
+                setError(res.error || t("reg_error_code_invalid"));
+            }
+        } catch (err) {
+            setError(t("verification_failed") || "Verification failed");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Step 4: Complete Registration
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
         if (formData.password !== formData.confirmPassword) {
-            setError("As senhas não coincidem.");
+            setError(t("reg_error_pass_match"));
             return;
         }
 
@@ -39,28 +110,22 @@ export default function RegisterPage() {
         const data = new FormData();
         data.append("name", formData.name);
         data.append("email", formData.email);
+        data.append("phone", formData.phone);
+        data.append("instagram", formData.instagram);
         data.append("password", formData.password);
 
         try {
             const res = await registerUserAction(data);
             if (res.success) {
-                // Instead of redirecting, we can show a success state or redirect to a specific 'pending approval' page.
-                // Or simply redirect to login with a specific query param that shows a specific toast/alert.
-                // The user asked for "aguarde alguns minutos vamos aprovar a sua conta"
-                // Let's redirect to login with a new param 'pending_approval=true' and handle it there.
                 router.push("/login?pending_approval=true");
             } else {
-                setError(res.error || "Erro ao criar conta.");
+                setError(res.error || t("create_account_error"));
             }
         } catch (err) {
-            setError("Falha na conexão.");
+            setError(t("connection_error"));
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
     };
 
     return (
@@ -81,27 +146,36 @@ export default function RegisterPage() {
                 </Link>
             </div>
 
+            <div className="absolute top-10 right-10 z-50 hidden md:block">
+                <ThemeAndLanguageToggle />
+            </div>
+
             <div className="w-full max-w-[640px] relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="flex flex-col items-center mb-10"
                 >
-                    <div className="p-4 rounded-[2rem] bg-[#121212] border border-white/5 shadow-2xl group hover:border-[#1DB954]/40 transition-all duration-700">
+                    <div className="p-4 rounded-[2rem] bg-[#0F0F0F] border border-white/5 shadow-2xl group hover:border-[#1DB954]/40 transition-all duration-700">
                         <Logo width={40} height={40} />
                     </div>
                 </motion.div>
 
-                <SpotlightCard className="border border-white/5 shadow-2xl rounded-[3.5rem] overflow-hidden bg-[#121212] p-2">
+                <SpotlightCard className="border border-white/5 shadow-2xl rounded-[3.5rem] overflow-hidden bg-[#0F0F0F] p-2">
                     <CardHeader className="space-y-4 text-center pt-14 pb-8 px-10">
                         <div className="flex justify-center mb-2">
                             <span className="px-6 py-2 rounded-full bg-[#1DB954]/10 text-[#1DB954] text-[9px] font-black uppercase tracking-[0.4em] border border-[#1DB954]/20">
-                                Digital Onboarding
+                                {t("step_indicator").replace("{current}", step.toString()).replace("{total}", "4")}
                             </span>
                         </div>
-                        <CardTitle className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none uppercase">{t("create_account")}</CardTitle>
+                        <CardTitle className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none uppercase">
+                            {step === 1 && t("reg_step1_label")}
+                            {step === 2 && t("reg_step2_label")}
+                            {step === 3 && t("reg_step3_label")}
+                            {step === 4 && t("reg_step4_label")}
+                        </CardTitle>
                         <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.4em] opacity-60">
-                            Protocolo de Acesso Pointify Network
+                            {t("reg_protocol_subtitle")}
                         </p>
                     </CardHeader>
 
@@ -118,96 +192,239 @@ export default function RegisterPage() {
                                         <AlertCircle className="w-5 h-5 text-rose-500" />
                                     </div>
                                     <div className="space-y-1.5 pt-1">
-                                        <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest leading-none">Falha no Registro</p>
+                                        <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest leading-none">{t("reg_alert_title")}</p>
                                         <p className="text-xs font-black text-rose-500/60 uppercase tracking-tight">{error}</p>
+                                    </div>
+                                </motion.div>
+                            )}
+                            {successMessage && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="mb-10 p-8 rounded-[2.5rem] bg-[#1DB954]/5 border border-[#1DB954]/10 flex items-start gap-5 shadow-2xl"
+                                >
+                                    <div className="w-10 h-10 rounded-2xl bg-[#1DB954]/20 flex items-center justify-center flex-shrink-0">
+                                        <CheckCircle2 className="w-5 h-5 text-[#1DB954]" />
+                                    </div>
+                                    <div className="space-y-1.5 pt-1">
+                                        <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-widest leading-none">{t("reg_success_title")}</p>
+                                        <p className="text-xs font-black text-[#1DB954]/60 uppercase tracking-tight">{successMessage}</p>
                                     </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
 
-                        <form onSubmit={handleRegister} className="space-y-8">
-                            <div className="space-y-4 group">
-                                <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="name">Nome Completo</label>
-                                <div className="relative">
-                                    <div className="absolute left-8 top-1/2 -translate-y-1/2 text-[#A7A7A7]/40 group-focus-within:text-[#1DB954] transition-colors">
-                                        <User className="w-5 h-5" />
-                                    </div>
-                                    <Input
-                                        id="name"
-                                        placeholder="EX: KAI OTSUNOKAWA"
-                                        required
-                                        className="h-16 pl-20 pr-6 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-[#1DB954]/50"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-4 group">
-                                <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="email">Identificador Principal (Email)</label>
-                                <Input
-                                    id="email"
-                                    placeholder="SEU@EMAIL.COM"
-                                    type="email"
-                                    required
-                                    className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-[#1DB954]/50"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {step === 1 && (
+                            <form onSubmit={handleStep1} className="space-y-8">
                                 <div className="space-y-4 group">
-                                    <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="password">{t("password")}</label>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        required
-                                        className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 tracking-widest group-hover:border-[#1DB954]/50"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                    />
+                                    <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="name">{t("reg_name_label")}</label>
+                                    <div className="relative">
+                                        <div className="absolute left-8 top-1/2 -translate-y-1/2 text-[#A7A7A7]/40 group-focus-within:text-[#1DB954] transition-colors">
+                                            <User className="w-5 h-5" />
+                                        </div>
+                                        <Input
+                                            id="name"
+                                            placeholder={t("reg_name_ph")}
+                                            required
+                                            className="h-16 pl-20 pr-6 rounded-[2rem] bg-[#050505] border-white/5 font-black text-xs focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
                                 </div>
+
                                 <div className="space-y-4 group">
-                                    <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="confirmPassword">Confirmar Chave</label>
-                                    <Input
-                                        id="confirmPassword"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        required
-                                        className="h-16 rounded-[2rem] bg-[#181818] border-white/5 font-black text-xs px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 tracking-widest group-hover:border-[#1DB954]/50"
-                                        value={formData.confirmPassword}
-                                        onChange={handleChange}
-                                    />
+                                    <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="phone">{t("reg_phone_label")}</label>
+                                    <div className="relative">
+                                        <div className="absolute left-8 top-1/2 -translate-y-1/2 text-[#A7A7A7]/40 group-focus-within:text-[#1DB954] transition-colors">
+                                            <Smartphone className="w-5 h-5" />
+                                        </div>
+                                        <Input
+                                            id="phone"
+                                            placeholder={t("reg_phone_ph")}
+                                            type="tel"
+                                            required
+                                            className="h-16 pl-20 pr-6 rounded-[2rem] bg-[#050505] border-white/5 font-black text-xs focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
+                                            value={formData.phone}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="flex items-start gap-4 bg-[#1DB954]/5 p-8 rounded-[2.5rem] border border-[#1DB954]/10">
-                                <ShieldCheck className="w-6 h-6 text-[#1DB954] mt-0.5 flex-shrink-0" />
-                                <p className="text-[9px] font-black text-[#A7A7A7] leading-relaxed uppercase tracking-[0.2em] opacity-60">
-                                    Ao protocolar este registro, você assume total responsabilidade pelas operações e concorda com as diretrizes de compliance da Pointify Global.
-                                </p>
-                            </div>
+                                <Button
+                                    type="submit"
+                                    className="w-full h-20 rounded-full font-black text-[11px] uppercase tracking-[0.4em] bg-[#1DB954] text-black hover:bg-[#1ED760] shadow-[0_20px_40px_rgba(29,185,84,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98] border-none group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        {t("continue")}
+                                        <ArrowRight className="w-5 h-5" />
+                                    </div>
+                                </Button>
+                            </form>
+                        )}
 
-                            <Button
-                                type="submit"
-                                className="w-full h-20 rounded-full font-black text-[11px] uppercase tracking-[0.4em] bg-[#1DB954] text-black hover:bg-[#1ED760] shadow-[0_20px_40px_rgba(29,185,84,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98] border-none group"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <div className="flex items-center gap-3">
-                                        <RefreshCw className="w-5 h-5 animate-spin" />
-                                        Criando Protocolo...
+                        {step === 2 && (
+                            <form onSubmit={handleSendCode} className="space-y-8">
+                                <div className="space-y-4 group">
+                                    <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="email">{t("reg_email_label")}</label>
+                                    <div className="relative">
+                                        <div className="absolute left-8 top-1/2 -translate-y-1/2 text-[#A7A7A7]/40 group-focus-within:text-[#1DB954] transition-colors">
+                                            <Mail className="w-5 h-5" />
+                                        </div>
+                                        <Input
+                                            id="email"
+                                            placeholder={t("reg_email_ph")}
+                                            type="email"
+                                            required
+                                            className="h-16 pl-24 pr-10 rounded-[2rem] bg-[#050505] border-white/5 font-black text-xs focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                        />
                                     </div>
-                                ) : (
-                                    <div className="flex items-center gap-3">
-                                        <Zap className="w-5 h-5 fill-current" />
-                                        Criar Identidade Pointify
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <Button
+                                        type="submit"
+                                        className="w-full h-20 rounded-full font-black text-[11px] uppercase tracking-[0.4em] bg-[#1DB954] text-black hover:bg-[#1ED760] shadow-[0_20px_40px_rgba(29,185,84,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98] border-none group"
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <div className="flex items-center gap-3">
+                                                <RefreshCw className="w-5 h-5 animate-spin" />
+                                                {t("reg_btn_sending")}
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-3">
+                                                <Send className="w-5 h-5 fill-current" />
+                                                {t("reg_btn_send")}
+                                            </div>
+                                        )}
+                                    </Button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setStep(1)}
+                                        className="text-[10px] font-black text-[#A7A7A7] hover:text-white uppercase tracking-widest py-4 transition-colors"
+                                    >
+                                        {t("back")}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+
+                        {step === 3 && (
+                            <form onSubmit={handleVerifyCode} className="space-y-8">
+                                <div className="space-y-4 group">
+                                    <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="code">{t("reg_code_label")}</label>
+                                    <div className="relative">
+                                        <Input
+                                            id="code"
+                                            placeholder={t("reg_code_ph")}
+                                            maxLength={6}
+                                            required
+                                            className="h-16 text-center text-2xl tracking-[0.5em] rounded-[2rem] bg-[#050505] border-white/5 font-black focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
+                                            value={formData.code}
+                                            onChange={handleChange}
+                                        />
                                     </div>
-                                )}
-                            </Button>
-                        </form>
+                                    <p className="text-center text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest px-6">
+                                        {t("reg_sent_to")} <span className="text-white">{formData.email}</span>
+                                    </p>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <Button
+                                        type="submit"
+                                        className="w-full h-20 rounded-full font-black text-[11px] uppercase tracking-[0.4em] bg-[#1DB954] text-black hover:bg-[#1ED760] shadow-[0_20px_40px_rgba(29,185,84,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98] border-none group"
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <div className="flex items-center gap-3">
+                                                <RefreshCw className="w-5 h-5 animate-spin" />
+                                                {t("reg_btn_verifying")}
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-3">
+                                                <ShieldCheck className="w-5 h-5" />
+                                                {t("reg_btn_verify")}
+                                            </div>
+                                        )}
+                                    </Button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setStep(2)}
+                                        className="text-[10px] font-black text-[#A7A7A7] hover:text-white uppercase tracking-widest py-4 transition-colors"
+                                    >
+                                        {t("reg_change_email")}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+
+                        {step === 4 && (
+                            <form onSubmit={handleRegister} className="space-y-8">
+                                <div className="space-y-4 group">
+                                    <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="instagram">{t("reg_instagram_label")}</label>
+                                    <div className="relative">
+                                        <div className="absolute left-8 top-1/2 -translate-y-1/2 text-[#A7A7A7]/40 group-focus-within:text-[#1DB954] transition-colors">
+                                            <Instagram className="w-5 h-5" />
+                                        </div>
+                                        <Input
+                                            id="instagram"
+                                            placeholder={t("reg_instagram_ph")}
+                                            required
+                                            className="h-16 pl-20 pr-6 rounded-[2rem] bg-[#050505] border-white/5 font-black text-xs focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
+                                            value={formData.instagram}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-4 group">
+                                        <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="password">{t("reg_pass_label")}</label>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            placeholder={t("reg_pass_ph")}
+                                            required
+                                            className="h-16 rounded-[2rem] bg-[#050505] border-white/5 font-black text-xs px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 tracking-widest group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="space-y-4 group">
+                                        <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-6" htmlFor="confirmPassword">{t("reg_confirm_pass_label")}</label>
+                                        <Input
+                                            id="confirmPassword"
+                                            type="password"
+                                            placeholder={t("reg_confirm_pass_ph")}
+                                            required
+                                            className="h-16 rounded-[2rem] bg-[#050505] border-white/5 font-black text-xs px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 tracking-widest group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
+                                            value={formData.confirmPassword}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                <Button
+                                    type="submit"
+                                    className="w-full h-20 rounded-full font-black text-[11px] uppercase tracking-[0.4em] bg-[#1DB954] text-black hover:bg-[#1ED760] shadow-[0_20px_40px_rgba(29,185,84,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98] border-none group"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <div className="flex items-center gap-3">
+                                            <RefreshCw className="w-5 h-5 animate-spin" />
+                                            {t("reg_btn_creating")}
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-3">
+                                            <Zap className="w-5 h-5 fill-current" />
+                                            {t("reg_btn_create")}
+                                        </div>
+                                    )}
+                                </Button>
+                            </form>
+                        )}
 
                         <div className="mt-14 text-center border-t border-white/5 pt-12">
                             <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">

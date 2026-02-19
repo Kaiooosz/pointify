@@ -249,6 +249,13 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   pricePaid: 'pricePaid'
 };
 
+exports.Prisma.VerificationTokenScalarFieldEnum = {
+  identifier: 'identifier',
+  token: 'token',
+  expires: 'expires',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -318,7 +325,8 @@ exports.Prisma.ModelName = {
   Cart: 'Cart',
   CartItem: 'CartItem',
   Order: 'Order',
-  OrderItem: 'OrderItem'
+  OrderItem: 'OrderItem',
+  VerificationToken: 'VerificationToken'
 };
 
 /**

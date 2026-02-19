@@ -7,9 +7,11 @@ export async function registerUserAction(formData: FormData) {
     try {
         const name = formData.get("name") as string;
         const email = formData.get("email") as string;
+        const phone = formData.get("phone") as string;
+        const instagram = formData.get("instagram") as string;
         const password = formData.get("password") as string;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !phone) {
             return { success: false, error: "Preencha todos os campos obrigatórios." };
         }
 
@@ -29,6 +31,8 @@ export async function registerUserAction(formData: FormData) {
             data: {
                 name,
                 email,
+                phoneNumber: phone,
+                instagram: instagram || null,
                 password: hashedPassword,
                 role: "CUSTOMER",
                 pointsBalance: 0,

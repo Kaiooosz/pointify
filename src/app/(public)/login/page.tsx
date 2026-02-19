@@ -80,12 +80,12 @@ export default function LoginPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="flex flex-col items-center mb-12"
                 >
-                    <div className="p-5 rounded-[2.5rem] bg-[#121212] border border-white/5 shadow-2xl mb-8 group hover:border-[#1DB954]/40 transition-all duration-700">
+                    <div className="p-5 rounded-[2.5rem] bg-[#0F0F0F] border border-white/5 shadow-2xl mb-8 group hover:border-[#1DB954]/40 transition-all duration-700">
                         <Logo width={48} height={48} />
                     </div>
                 </motion.div>
 
-                <SpotlightCard className="border border-white/5 shadow-2xl rounded-[3.5rem] overflow-hidden bg-[#121212] p-2">
+                <SpotlightCard className="border border-white/5 shadow-2xl rounded-[3.5rem] overflow-hidden bg-[#0F0F0F] p-2">
                     <CardHeader className="space-y-4 text-center pt-14 pb-8">
                         <div className="flex justify-center mb-2">
                             <span className="px-6 py-2 rounded-full bg-[#1DB954]/10 text-[#1DB954] text-[9px] font-black uppercase tracking-[0.4em] border border-[#1DB954]/20 shadow-[0_0_20px_rgba(29,185,84,0.1)]">
@@ -151,7 +151,7 @@ export default function LoginPage() {
                                     placeholder="USUARIO@NETWORK.COM"
                                     type="email"
                                     required
-                                    className="h-20 rounded-[2rem] bg-[#181818] border-white/5 font-black text-sm px-10 focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest shadow-inner group-hover:border-white/10"
+                                    className="h-20 rounded-[2rem] bg-[#050505] border-[#1DB954]/20 font-black text-sm px-10 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 uppercase tracking-widest shadow-inner group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -168,7 +168,7 @@ export default function LoginPage() {
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
                                         required
-                                        className="h-20 rounded-[2rem] bg-[#181818] border-white/5 font-black text-sm px-10 pr-20 focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 shadow-inner group-hover:border-white/10"
+                                        className="h-20 rounded-[2rem] bg-[#050505] border-[#1DB954]/20 font-black text-sm px-10 pr-20 focus:border-[#1DB954] focus:ring-[#1DB954]/20 transition-all text-white placeholder:text-[#A7A7A7]/10 shadow-inner group-hover:border-[#1DB954]/50 [&:-webkit-autofill]:shadow-[0_0_0px_1000px_#050505_inset] [&:-webkit-autofill]:-webkit-text-fill-color:white"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
