@@ -12,7 +12,7 @@
     "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-neon": "^7.3.0",
     "@prisma/adapter-pg": "^7.3.0",
-    "@prisma/client": "^7.3.0",
+    "@prisma/client": "^7.4.0",
     "@radix-ui/react-slot": "^1.2.4",
     "@types/uuid": "^10.0.0",
     "axios": "^1.13.5",

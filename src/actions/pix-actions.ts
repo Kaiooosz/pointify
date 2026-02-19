@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { pixProvider } from "@/lib/pix";
 import { auth } from "@/lib/auth";
+import { TransactionType, TransactionStatus } from "../../prisma/generated-client";
 
 export async function createPixDeposit(amountBrl: number) {
     try {
@@ -31,8 +32,8 @@ export async function createPixDeposit(amountBrl: number) {
                 netAmount: amountInCents,
                 spread: 0,
                 currency: "BRL",
-                type: "PIX_DEPOSIT",
-                status: "PENDING",
+                type: TransactionType.PIX_DEPOSIT,
+                status: TransactionStatus.PENDING,
                 description: "Deposit via PIX",
                 externalId: pixData.transactionId
             }

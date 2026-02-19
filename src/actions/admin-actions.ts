@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { UserRole, UserStatus, KycStatus, TransactionType } from "../../prisma/generated-client";
+import { UserRole, UserStatus, KycStatus, TransactionType, Transaction } from "../../prisma/generated-client";
 
 // --- AUDIT LOGGING ---
 async function logAdminAction(responsibleId: string, action: string, details: any, targetUserId?: string) {
@@ -22,41 +22,35 @@ async function logAdminAction(responsibleId: string, action: string, details: an
 // --- DASHBOARD ANALYTICS ---
 export async function getAdminStats() {
     try {
-        const now = new Date();
-        const startOfDay = new Date(now.setHours(0, 0, 0, 0));
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
         const [
             totalUsers,
             activeUsers24h,
             allTx,
-            merchantTx,
             pendingKyc
         ] = await Promise.all([
             prisma.user.count(),
             prisma.user.count({ where: { updatedAt: { gte: new Date(Date.now() - 86400000) } } }),
             prisma.transaction.findMany({ where: { status: "COMPLETED" } }),
-            prisma.transaction.findMany({ where: { type: "MERCHANT_PAYMENT", status: "COMPLETED" } }),
             prisma.user.count({ where: { kycStatus: "PENDING" } })
         ]);
 
-        const totalVolume = allTx.reduce((acc: number, tx) => acc + tx.grossAmount, 0);
-        const totalSpread = allTx.reduce((acc: number, tx) => acc + tx.spread, 0);
+        const totalVolume = allTx.reduce((acc: number, tx: Transaction) => acc + tx.grossAmount, 0);
+        const totalSpread = allTx.reduce((acc: number, tx: Transaction) => acc + tx.spread, 0);
 
         // Temporal Segmentation
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
         const txToday = allTx.filter(tx => tx.createdAt >= today);
-        const volToday = txToday.reduce((acc: number, tx) => acc + tx.grossAmount, 0);
-        const spreadToday = txToday.reduce((acc: number, tx) => acc + tx.spread, 0);
+        const volToday = txToday.reduce((acc: number, tx: Transaction) => acc + tx.grossAmount, 0);
+        const spreadToday = txToday.reduce((acc: number, tx: Transaction) => acc + tx.spread, 0);
 
         // Volume by Method
-        const volumeByMethod = allTx.reduce((acc: any, tx) => {
+        const volumeByMethod = allTx.reduce((acc: Record<string, number>, tx: Transaction) => {
             const method = tx.method || "OTHER";
             acc[method] = (acc[method] || 0) + tx.grossAmount;
             return acc;
-        }, {});
+        }, {} as Record<string, number>);
 
         return {
             success: true,

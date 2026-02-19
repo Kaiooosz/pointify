@@ -209,7 +209,7 @@ export default function DepositPage() {
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">Data e Hora</span>
-                                            <span className="text-[10px] font-black text-white uppercase tracking-widest">{new Date().toLocaleString()}</span>
+                                            <span className="text-[10px] font-black text-white uppercase tracking-widest">{new Date().toLocaleDateString("pt-BR")}</span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">Protocolo</span>
