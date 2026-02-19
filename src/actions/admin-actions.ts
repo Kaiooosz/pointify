@@ -40,16 +40,16 @@ export async function getAdminStats() {
             prisma.user.count({ where: { kycStatus: "PENDING" } })
         ]);
 
-        const totalVolume = allTx.reduce((acc, tx) => acc + tx.grossAmount, 0);
-        const totalSpread = allTx.reduce((acc, tx) => acc + tx.spread, 0);
+        const totalVolume = allTx.reduce((acc: number, tx) => acc + tx.grossAmount, 0);
+        const totalSpread = allTx.reduce((acc: number, tx) => acc + tx.spread, 0);
 
         // Temporal Segmentation
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
         const txToday = allTx.filter(tx => tx.createdAt >= today);
-        const volToday = txToday.reduce((acc, tx) => acc + tx.grossAmount, 0);
-        const spreadToday = txToday.reduce((acc, tx) => acc + tx.spread, 0);
+        const volToday = txToday.reduce((acc: number, tx) => acc + tx.grossAmount, 0);
+        const spreadToday = txToday.reduce((acc: number, tx) => acc + tx.spread, 0);
 
         // Volume by Method
         const volumeByMethod = allTx.reduce((acc: any, tx) => {
