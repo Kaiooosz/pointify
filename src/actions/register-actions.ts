@@ -2,6 +2,8 @@
 
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { clearVerificationToken } from "@/actions/verification-actions";
+
 
 export async function registerUserAction(formData: FormData) {
     try {
@@ -41,8 +43,11 @@ export async function registerUserAction(formData: FormData) {
             },
         });
 
+        // Limpar token de verificação usado no cadastro
+        await clearVerificationToken(email);
 
         return { success: true };
+
     } catch (error: any) {
         console.error("Error registering user:", error);
         return { success: false, error: "Ocorreu um erro ao criar a conta. Tente novamente." };
