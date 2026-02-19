@@ -19,6 +19,8 @@ import { useState } from "react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { motion, AnimatePresence } from "framer-motion";
 
+export const dynamic = "force-dynamic";
+
 export default function PaymentLinksPage() {
     const { t } = useLanguage();
     const [amount, setAmount] = useState("20,00");

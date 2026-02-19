@@ -21,6 +21,8 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default function PayBillsPage() {
     const { t } = useLanguage();
     const [step, setStep] = useState(1);
@@ -59,10 +61,10 @@ export default function PayBillsPage() {
                     {steps.map((s, i) => (
                         <div key={s.id} className="flex items-center">
                             <div className={`flex items-center gap-3 px-6 py-2.5 rounded-full transition-all ${step === s.id
-                                    ? "bg-[#1DB954] text-black shadow-[0_0_20px_rgba(29,185,84,0.3)]"
-                                    : step > s.id
-                                        ? "text-[#1DB954]"
-                                        : "text-[#A7A7A7]"
+                                ? "bg-[#1DB954] text-black shadow-[0_0_20px_rgba(29,185,84,0.3)]"
+                                : step > s.id
+                                    ? "text-[#1DB954]"
+                                    : "text-[#A7A7A7]"
                                 }`}>
                                 <s.icon className="w-4 h-4" />
                                 <span className="text-[10px] font-black uppercase tracking-widest leading-none">{s.label}</span>

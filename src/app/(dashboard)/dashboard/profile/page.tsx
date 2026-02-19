@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { User, Mail, Shield, CheckCircle2, AlertCircle } from "lucide-react";
 import { useState } from "react";
 
+export const dynamic = "force-dynamic";
+
 export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false);
 

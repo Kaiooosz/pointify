@@ -39,6 +39,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "@/components/ui/react-bits/CountUp";
 import { useLanguage } from "@/components/providers/language-provider";
 
+export const dynamic = "force-dynamic";
+
 export default function AdminDashboardPage() {
     const { t } = useLanguage();
     const [stats, setStats] = useState<any>(null);

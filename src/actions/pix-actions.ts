@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { pixProvider } from "@/lib/pix";
 import { auth } from "@/lib/auth";
-import { TransactionType, TransactionStatus } from "../../prisma/generated-client";
+import { TransactionType, TransactionStatus } from "@prisma/client";
 
 export async function createPixDeposit(amountBrl: number) {
     try {

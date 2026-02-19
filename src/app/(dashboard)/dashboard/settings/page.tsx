@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Bell, Globe, Moon, CreditCard, Laptop, Smartphone } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 
+export const dynamic = "force-dynamic";
+
 export default function SettingsPage() {
     const { t } = useLanguage();
 

@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { createPixDeposit } from "@/actions/pix-actions";
 
+export const dynamic = "force-dynamic";
+
 export default function DepositPage() {
     const { t } = useLanguage();
     const [step, setStep] = useState(1); // 1: Input, 2: PIX Display, 3: Receipt

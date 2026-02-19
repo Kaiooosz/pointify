@@ -17,6 +17,8 @@ import { useState } from "react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { motion, AnimatePresence } from "framer-motion";
 
+export const dynamic = "force-dynamic";
+
 export default function PixKeysPage() {
     const { t } = useLanguage();
     const [receivingKeys, setReceivingKeys] = useState<any[]>([]);

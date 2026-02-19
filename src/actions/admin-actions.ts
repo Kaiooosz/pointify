@@ -1,10 +1,13 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { UserRole, UserStatus, KycStatus, TransactionType, Transaction } from "../../prisma/generated-client";
+
+// Tipagem inferida diretamente do Prisma (compatível com v7)
+type TransactionRow = Awaited<ReturnType<typeof prisma.transaction.findMany>>[number];
+type UserStatusValue = "ACTIVE" | "BLOCKED" | "PENDING" | "ANALYSIS" | "TERMINATED";
 
 // --- AUDIT LOGGING ---
-async function logAdminAction(responsibleId: string, action: string, details: any, targetUserId?: string) {
+async function logAdminAction(responsibleId: string, action: string, details: unknown, targetUserId?: string) {
     try {
         await prisma.adminLog.create({
             data: {
@@ -34,19 +37,19 @@ export async function getAdminStats() {
             prisma.user.count({ where: { kycStatus: "PENDING" } })
         ]);
 
-        const totalVolume = allTx.reduce((acc: number, tx: Transaction) => acc + tx.grossAmount, 0);
-        const totalSpread = allTx.reduce((acc: number, tx: Transaction) => acc + tx.spread, 0);
+        const totalVolume = allTx.reduce((acc: number, tx: TransactionRow) => acc + tx.grossAmount, 0);
+        const totalSpread = allTx.reduce((acc: number, tx: TransactionRow) => acc + tx.spread, 0);
 
         // Temporal Segmentation
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const txToday = allTx.filter(tx => tx.createdAt >= today);
-        const volToday = txToday.reduce((acc: number, tx: Transaction) => acc + tx.grossAmount, 0);
-        const spreadToday = txToday.reduce((acc: number, tx: Transaction) => acc + tx.spread, 0);
+        const txToday = allTx.filter((tx: TransactionRow) => tx.createdAt >= today);
+        const volToday = txToday.reduce((acc: number, tx: TransactionRow) => acc + tx.grossAmount, 0);
+        const spreadToday = txToday.reduce((acc: number, tx: TransactionRow) => acc + tx.spread, 0);
 
         // Volume by Method
-        const volumeByMethod = allTx.reduce((acc: Record<string, number>, tx: Transaction) => {
+        const volumeByMethod = allTx.reduce((acc: Record<string, number>, tx: TransactionRow) => {
             const method = tx.method || "OTHER";
             acc[method] = (acc[method] || 0) + tx.grossAmount;
             return acc;
@@ -88,7 +91,7 @@ export async function getAdminUsers() {
     }
 }
 
-export async function updateUserStatus(adminId: string, userId: string, status: UserStatus) {
+export async function updateUserStatus(adminId: string, userId: string, status: UserStatusValue) {
     try {
         const user = await prisma.user.update({
             where: { id: userId },

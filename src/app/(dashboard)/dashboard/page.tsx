@@ -29,6 +29,8 @@ import CountUp from "@/components/ui/react-bits/CountUp";
 import ShinyText from "@/components/ui/react-bits/ShinyText";
 import SpotlightCard from "@/components/ui/react-bits/SpotlightCard";
 
+export const dynamic = "force-dynamic";
+
 export default function DashboardPage() {
     const { t } = useLanguage();
     const [balance, setBalance] = useState<number | null>(null);

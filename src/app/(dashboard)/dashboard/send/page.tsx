@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useLanguage } from "@/components/providers/language-provider";
 import { sendPoints } from "@/actions/user-actions";
 
+export const dynamic = "force-dynamic";
+
 export default function SendPage() {
     const { t } = useLanguage();
     const [step, setStep] = useState(1);

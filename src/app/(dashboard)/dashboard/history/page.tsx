@@ -27,6 +27,8 @@ const mockTransactions = [
     { id: "7", name: "Pagamento de Aluguel", type: "exit", amount: "-2.500", date: "2026-01-25 08:00", status: "Completed" },
 ];
 
+export const dynamic = "force-dynamic";
+
 export default function HistoryPage() {
     const { t } = useLanguage();
     const [filterType, setFilterType] = useState("all");

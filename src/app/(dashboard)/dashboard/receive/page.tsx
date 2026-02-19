@@ -7,6 +7,8 @@ import { useState } from "react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { motion, AnimatePresence } from "framer-motion";
 
+export const dynamic = "force-dynamic";
+
 export default function ReceivePage() {
     const { t } = useLanguage();
     const [copied, setCopied] = useState(false);

@@ -3,12 +3,19 @@ import { auth } from "@/lib/auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { AdminHeader } from "../../components/layout/admin-header";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const session = await auth();
+    let session: any = null;
+    try {
+        session = await auth();
+    } catch {
+        redirect("/login");
+    }
     const user = session?.user as any;
 
     // STRICT ACCESS CONTROL
