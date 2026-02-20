@@ -3,7 +3,7 @@
 import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, Zap, ShieldCheck, ArrowRight, Wallet, RefreshCw, Smartphone } from "lucide-react";
+import { CheckCircle2, Zap, ShieldCheck, ArrowRight, Wallet, RefreshCw, Smartphone, Bitcoin, ArrowUpDown, Landmark } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
 import Link from "next/link";
@@ -158,6 +158,111 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ══ Para Quem ═══════════════════════════════════════════════════ */}
+      <section id="for-whom" className="py-24 md:py-40 bg-[#0B0B0B]">
+        <div className="container mx-auto px-6 max-w-[1400px]">
+
+          {/* Heading */}
+          <div className="text-center max-w-3xl mx-auto mb-20 md:mb-32">
+            <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.5em] mb-4">Público-Alvo</p>
+            <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase leading-none">
+              Para quem é o Pointify?
+            </h2>
+            <p className="mt-6 text-sm md:text-lg text-[#A7A7A7] font-black uppercase tracking-tight opacity-50 leading-relaxed">
+              Liberdade total para gerir seus fundos — sem precisar converter tudo de volta para fiat.
+            </p>
+          </div>
+
+          {/* Perfis */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16">
+            {[
+              {
+                icon: Landmark, color: "#1DB954",
+                tag: "Recebimento",
+                title: "Quem recebe em Fiat e quer cripto",
+                desc: "Receba em BRL, converta para USDT ou BTC com rapidez e proteja seu valor contra flutuações da moeda tradicional.",
+                checks: ["Pagamentos em BRL", "Conversão para USDT ou BTC", "Proteção cambial instantânea"]
+              },
+              {
+                icon: ArrowUpDown, color: "#26A17B",
+                tag: "Swap",
+                title: "Quem quer comprar USDT com facilidade",
+                desc: "Use sua conta Pointify para comprar USDT diretamente. Um token estável ligado ao dólar — ideal para reservas ou transações rápidas.",
+                checks: ["USDT indexado ao dólar", "Ideal para reservas de valor", "Transações rápidas e baratas"]
+              },
+              {
+                icon: Wallet, color: "#60A5FA",
+                tag: "Custódia",
+                title: "Hot Wallet ou Cold Wallet",
+                desc: "Você escolhe onde guardar seus ativos. Hot wallet para acesso rápido no dia a dia. Cold wallet para armazenamento seguro a longo prazo.",
+                checks: ["Hot Wallet — acesso rápido", "Cold Wallet — máxima segurança", "Você é o único dono"]
+              },
+              {
+                icon: Bitcoin, color: "#F7931A",
+                tag: "Múltiplas Redes",
+                title: "Receba USDT e BTC em qualquer rede",
+                desc: "Escolha a rede que preferir: TRC20, ERC20, BEP20, Polygon, Solana e Bitcoin. Total flexibilidade para enviar e receber.",
+                checks: ["USDT: TRC20, ERC20, BEP20, Polygon", "BTC: Bitcoin, Solana (wBTC), ERC20", "Sem rede obrigatória"]
+              },
+            ].map((card, i) => (
+              <div key={i} className="group p-10 md:p-12 rounded-[2.5rem] bg-[#121212] border border-white/5 hover:border-white/10 transition-all duration-500 hover:-translate-y-2 flex flex-col gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500 group-hover:scale-110"
+                    style={{ backgroundColor: `${card.color}15`, border: `1px solid ${card.color}30` }}>
+                    <card.icon className="w-6 h-6" style={{ color: card.color }} />
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-[0.4em] px-4 py-2 rounded-full border" style={{ color: card.color, borderColor: `${card.color}30`, backgroundColor: `${card.color}10` }}>
+                    {card.tag}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-xl md:text-2xl font-black text-white tracking-tighter uppercase leading-tight mb-3">{card.title}</h3>
+                  <p className="text-sm text-[#A7A7A7] font-black uppercase tracking-tight opacity-50 leading-relaxed">{card.desc}</p>
+                </div>
+                <ul className="space-y-3 mt-auto">
+                  {card.checks.map((c, j) => (
+                    <li key={j} className="flex items-center gap-3 text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">
+                      <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: card.color }} />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Resumo CTA */}
+          <div className="relative rounded-[3rem] bg-[#121212] border border-[#1DB954]/10 p-12 md:p-16 overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#1DB954]/5 blur-[100px] rounded-full" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+              <div className="max-w-2xl">
+                <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.5em] mb-4">Resumo do Valor</p>
+                <h3 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-tight">Pointify é para quem busca liberdade financeira digital</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                  {[
+                    "Recebe pagamento em fiat e quer converter em cripto",
+                    "Quer pagar ou receber em stablecoins (USDT)",
+                    "Deseja controlar ativos em carteiras próprias",
+                    "Busca transações seguras, rápidas e rastreáveis",
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <CheckCircle2 className="w-4 h-4 text-[#1DB954] flex-shrink-0 mt-0.5" />
+                      <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-wider opacity-70 leading-relaxed">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <a href="/register" className="flex-shrink-0">
+                <button className="h-16 px-12 rounded-full font-black text-[11px] uppercase tracking-[0.3em] bg-[#1DB954] text-black hover:bg-[#1ED760] hover:scale-105 transition-all shadow-[0_20px_40px_rgba(29,185,84,0.25)] whitespace-nowrap">
+                  Criar Conta Grátis <ArrowRight className="inline ml-3 w-4 h-4" />
+                </button>
+              </a>
+            </div>
+          </div>
+
         </div>
       </section>
 

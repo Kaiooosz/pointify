@@ -272,6 +272,7 @@ const translations: Record<Language, TranslationMap> = {
         no_counterparty_risk_desc: "We do not hold client balances. This eliminates risks of hacks, insolvency, or frozen funds.",
         // ── Swap
         swap: "Swap",
+        withdraw: "Withdraw",
         swap_title: "Swap",
         swap_subtitle: "Convert Points to Crypto",
         swap_rate: "Rate",
@@ -555,6 +556,7 @@ const translations: Record<Language, TranslationMap> = {
         no_counterparty_risk_desc: "Não mantemos saldos de clientes. Isso elimina riscos de hacks, insolvência ou congelamento de fundos.",
         // ── Swap
         swap: "Swap",
+        withdraw: "Pagamentos",
         swap_title: "Swap",
         swap_subtitle: "Converta Pontos em Cripto",
         swap_rate: "Taxa de Câmbio",
@@ -838,6 +840,7 @@ const translations: Record<Language, TranslationMap> = {
         no_counterparty_risk_desc: "No mantenemos saldos de clientes. Esto elimina riesgos de hacks, insolvencia o congelación de fondos.",
         // ── Swap
         swap: "Swap",
+        withdraw: "Pagos",
         swap_title: "Swap",
         swap_subtitle: "Convierte Puntos en Cripto",
         swap_rate: "Tipo de Cambio",
