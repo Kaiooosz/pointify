@@ -68,15 +68,17 @@ export async function sendVerificationCode(email: string) {
         // Envia o email de verificação
         const emailResult = await sendVerificationEmail(normalizedEmail, code);
 
-        if (!emailResult.success) {
-            console.error("[Verification] Falha no envio do email:", emailResult.error);
-            // Ainda retorna sucesso para não vazar informação sobre o sistema de email
-            // mas loga o erro para diagnóstico
-        }
-
-        // Para debug em desenvolvimento: imprime o código no console
+        // Para debug em desenvolvimento: imprime o código no console mesmo se o email falhar
         if (process.env.NODE_ENV === "development") {
             console.log(`\n🔑 [DEV] Código de verificação para ${normalizedEmail}: ${code}\n`);
+        }
+
+        if (!emailResult.success) {
+            console.error("[Verification] Falha no envio do email:", emailResult.error);
+            return {
+                success: false,
+                error: `Falha ao enviar e-mail de verificação. Verifique sua RESEND_API_KEY e RESEND_FROM_EMAIL. Detalhe: ${emailResult.error}`,
+            };
         }
 
         return {
