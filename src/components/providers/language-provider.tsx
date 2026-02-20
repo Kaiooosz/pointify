@@ -301,6 +301,7 @@ const translations: Record<Language, TranslationMap> = {
     pt: {
         dashboard: "Painel",
         send: "Enviar",
+        receive: "Receber",
 
         // Registration
         reg_step1_label: "Identificação",
@@ -583,6 +584,7 @@ const translations: Record<Language, TranslationMap> = {
     es: {
         dashboard: "Panel",
         send: "Enviar",
+        receive: "Recibir",
 
         // Registration
         reg_step1_label: "Identificación",

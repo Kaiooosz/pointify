@@ -11,13 +11,9 @@ import {
     Key,
     Link as LinkIcon,
     ListFilter,
-    Users,
-    Terminal,
     Bell,
-    Moon,
-    User,
-    Settings,
-    ChevronDown
+    ChevronDown,
+    ArrowUpDown
 } from "lucide-react";
 import { cn } from "@/components/ui/button";
 
@@ -29,6 +25,7 @@ const navItems = (t: (key: string) => string) => [
     { name: t("dashboard"), href: "/dashboard", icon: Home },
     { name: t("receive"), href: "/dashboard/receive", icon: Download },
     { name: t("send"), href: "/dashboard/send", icon: Send },
+    { name: t("swap"), href: "/dashboard/swap", icon: ArrowUpDown },
     { name: t("pay_bills"), href: "/dashboard/pay", icon: FileIcon },
     { name: t("pix_keys"), href: "/dashboard/keys", icon: Key },
     { name: t("payment_links"), href: "/dashboard/links", icon: LinkIcon },

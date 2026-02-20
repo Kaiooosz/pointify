@@ -6,6 +6,7 @@ import {
     ArrowUpDown, Wallet, AlertCircle, CheckCircle2,
     RefreshCw, Shield, Info, ExternalLink, ChevronDown, Bitcoin, Coins
 } from "lucide-react";
+import { calcSwapFeePercent, FEES } from "@/lib/fees";
 import { useLanguage } from "@/components/providers/language-provider";
 
 // ─── Tokens & Redes disponíveis ───────────────────────────────────────────────
@@ -44,7 +45,6 @@ type Network = typeof TOKENS[TokenKey]["networks"][number];
 type Step = "form" | "confirm" | "success";
 
 const MIN_PTS = 100;
-const FEE_PERCENT = 0.5;
 
 export default function SwapPage() {
     const { t } = useLanguage();
@@ -63,6 +63,7 @@ export default function SwapPage() {
     const userBalance = 12500;
 
     const token = TOKENS[selectedToken];
+    const FEE_PERCENT = calcSwapFeePercent(selectedToken as "USDT" | "BTC");
     const ptsValue = parseFloat(ptsAmount) || 0;
     const cryptoRaw = ptsValue * token.ratePerPts;
     const fee = cryptoRaw * (FEE_PERCENT / 100);
@@ -132,7 +133,7 @@ export default function SwapPage() {
                         <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">
                             {t("swap_rate")}: <span className="text-white">1.000 PTS = {selectedToken === "USDT" ? "1 USDT" : "0.0001 BTC"}</span>
                             &nbsp;·&nbsp;
-                            {t("swap_fee")}: <span className="text-white">{FEE_PERCENT}%</span>
+                            {t("swap_fee")}: <span className="text-white">{selectedToken === "USDT" ? FEES.SWAP_USDT.PERCENT : FEES.SWAP_BTC.PERCENT}%</span>
                         </p>
                     </div>
                 </motion.div>
