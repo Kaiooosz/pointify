@@ -85,12 +85,13 @@ model User {
   phoneNumber String?
 
   // Relationships
-  transactions Transaction[]
-  adminLogs    AdminLog[]    @relation("ResponsibleAdmin")
-  actionLogs   AdminLog[]    @relation("TargetUser")
-  partner      Partner?      @relation(name: "PartnerOwner")
-  carts        Cart[]
-  paymentLinks PaymentLink[]
+  transactions  Transaction[]
+  adminLogs     AdminLog[]     @relation("ResponsibleAdmin")
+  actionLogs    AdminLog[]     @relation("TargetUser")
+  partner       Partner?       @relation(name: "PartnerOwner")
+  carts         Cart[]
+  paymentLinks  PaymentLink[]
+  notifications Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -247,4 +248,19 @@ model VerificationToken {
   createdAt  DateTime @default(now())
 
   @@unique([identifier, token])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String? // null = evento global (visível para admins)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // TRANSFER_IN, TRANSFER_OUT, DEPOSIT, SWAP, WITHDRAW, KYC_APPROVED, KYC_REJECTED, SYSTEM
+  title     String
+  body      String
+  isRead    Boolean  @default(false)
+  refId     String? // ID da transação relacionada
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
 }

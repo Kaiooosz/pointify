@@ -256,6 +256,17 @@ exports.Prisma.VerificationTokenScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  title: 'title',
+  body: 'body',
+  isRead: 'isRead',
+  refId: 'refId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -326,7 +337,8 @@ exports.Prisma.ModelName = {
   CartItem: 'CartItem',
   Order: 'Order',
   OrderItem: 'OrderItem',
-  VerificationToken: 'VerificationToken'
+  VerificationToken: 'VerificationToken',
+  Notification: 'Notification'
 };
 
 /**

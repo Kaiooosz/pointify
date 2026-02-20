@@ -11,12 +11,12 @@ import {
     Key,
     Link as LinkIcon,
     ListFilter,
-    Bell,
     ChevronDown,
     ArrowUpDown,
     ArrowUpRight
 } from "lucide-react";
 import { cn } from "@/components/ui/button";
+import { NotificationBell } from "@/components/ui/notification-bell";
 
 import { useLanguage } from "@/components/providers/language-provider";
 import { ThemeAndLanguageToggle } from "./theme-language-toggle";
@@ -73,9 +73,7 @@ export function DashboardNavbar() {
                 <div className="flex items-center gap-4">
                     <ThemeAndLanguageToggle />
 
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full">
-                        <Bell className="w-5 h-5" />
-                    </Button>
+                    <NotificationBell />
 
                     <Link href="/dashboard/profile">
                         <div className="flex items-center gap-4 pl-4 border-l border-slate-100 dark:border-white/5 ml-2">
