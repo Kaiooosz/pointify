@@ -16,8 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SpotlightCard from "@/components/ui/react-bits/SpotlightCard";
 import { ThemeAndLanguageToggle } from "@/components/layout/theme-language-toggle";
 
-// ── Componente interno que usa useSearchParams ────────────────────────────────
-function RegisterContent() {
+function RegisterPageContent() {
     const { t } = useLanguage();
     const router = useRouter();
 
@@ -453,7 +452,6 @@ function RegisterContent() {
     );
 }
 
-// ── Export default com Suspense boundary (obrigatório pelo Next.js App Router) ─
 export default function RegisterPage() {
     return (
         <Suspense fallback={
@@ -461,7 +459,7 @@ export default function RegisterPage() {
                 <div className="w-8 h-8 rounded-full border-2 border-[#1DB954] border-t-transparent animate-spin" />
             </div>
         }>
-            <RegisterContent />
+            <RegisterPageContent />
         </Suspense>
     );
 }
