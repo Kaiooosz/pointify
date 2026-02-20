@@ -223,18 +223,31 @@ export async function terminateUser(adminId: string, userId: string) {
 // ─── FINANCIAL LEDGER ────────────────────────────────────────────────────────
 export async function getGlobalActivity(filters?: { method?: string; status?: string; search?: string }) {
     try {
+        // Monta filtros de forma segura
+        const where: Record<string, any> = {};
+
+        if (filters?.method && filters.method !== "ALL") {
+            where.method = filters.method;
+        }
+        if (filters?.status && filters.status !== "ALL") {
+            where.status = filters.status;
+        }
+        // Busca por email sem mode insensitive (compatível com Neon/Postgres)
+        if (filters?.search?.trim()) {
+            where.user = {
+                email: { contains: filters.search.trim().toLowerCase() }
+            };
+        }
+
         const transactions = await prisma.transaction.findMany({
             take: 100,
-            orderBy: { createdAt: 'desc' },
-            where: {
-                ...(filters?.method && filters.method !== "ALL" ? { method: filters.method } : {}),
-                ...(filters?.status && filters.status !== "ALL" ? { status: filters.status } : {}),
-                ...(filters?.search ? { user: { email: { contains: filters.search, mode: "insensitive" } } } : {}),
-            },
+            orderBy: { createdAt: "desc" },
+            where,
             include: { user: { select: { email: true, name: true } } }
         });
         return { success: true, transactions };
     } catch (error) {
+        console.error("getGlobalActivity error:", error);
         return { success: false, error: "Failed to fetch activity" };
     }
 }
