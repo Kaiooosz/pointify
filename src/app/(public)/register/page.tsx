@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/ui/logo";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import SpotlightCard from "@/components/ui/react-bits/SpotlightCard";
 import { ThemeAndLanguageToggle } from "@/components/layout/theme-language-toggle";
 
-export default function RegisterPage() {
+// ── Componente interno que usa useSearchParams ────────────────────────────────
+function RegisterContent() {
     const { t } = useLanguage();
     const router = useRouter();
 
@@ -449,5 +450,18 @@ export default function RegisterPage() {
                 </SpotlightCard>
             </div>
         </div>
+    );
+}
+
+// ── Export default com Suspense boundary (obrigatório pelo Next.js App Router) ─
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#0B0B0B] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border-2 border-[#1DB954] border-t-transparent animate-spin" />
+            </div>
+        }>
+            <RegisterContent />
+        </Suspense>
     );
 }
