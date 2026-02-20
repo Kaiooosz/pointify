@@ -14,7 +14,8 @@ import {
     ShieldCheck,
     LogOut,
     ChevronRight,
-    LayoutDashboard
+    LayoutDashboard,
+    ArrowUpDown
 } from "lucide-react";
 
 import { ThemeAndLanguageToggle } from "./theme-language-toggle";
@@ -24,6 +25,7 @@ const customerItems = [
     { name: "dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "send", href: "/dashboard/send", icon: Send },
     { name: "receive", href: "/dashboard/receive", icon: Download },
+    { name: "swap", href: "/dashboard/swap", icon: ArrowUpDown },
     { name: "history", href: "/dashboard/history", icon: History },
     { name: "settings", href: "/dashboard/settings", icon: Settings },
     { name: "profile", href: "/dashboard/profile", icon: User },
