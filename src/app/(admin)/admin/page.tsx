@@ -1,45 +1,28 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
-    Users,
-    Activity,
-    ShieldCheck,
-    Search,
-    TrendingUp,
-    Download,
-    Settings,
-    AlertTriangle,
-    UserMinus,
-    DollarSign,
-    Lock,
-    ChevronRight,
-    RefreshCw,
-    Instagram,
-    FileText,
-    History,
-    Zap,
-    Filter,
-    ArrowUpRight,
-    ArrowDownRight,
-    Calendar,
-    ArrowRight
+    Users, Activity, ShieldCheck, Search, TrendingUp, TrendingDown,
+    Download, Settings, DollarSign, RefreshCw, Zap, Filter,
+    ArrowUpRight, ArrowDownRight, Calendar, ArrowUpDown, Bitcoin,
+    Clock, CheckCircle2, XCircle, AlertCircle, UserCheck
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
-    getAdminStats,
-    getAdminUsers,
-    getGlobalActivity,
-    getAdminLogs,
-    updateUserStatus,
-    approveUserKyc
+    getAdminStats, getAdminUsers, getGlobalActivity,
+    getAdminLogs, approveUserKyc, approveUser, terminateUser
 } from "@/actions/admin-actions";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "@/components/ui/react-bits/CountUp";
 import { useLanguage } from "@/components/providers/language-provider";
+import { FEES } from "@/lib/fees";
 
 export const dynamic = "force-dynamic";
+
+type Tab = "overview" | "users" | "financial" | "fees" | "logs";
+
+const ADMIN_ID = "SUPER_ADMIN";
 
 export default function AdminDashboardPage() {
     const { t } = useLanguage();
@@ -48,361 +31,495 @@ export default function AdminDashboardPage() {
     const [activity, setActivity] = useState<any[]>([]);
     const [logs, setLogs] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [tab, setTab] = useState<"overview" | "users" | "financial" | "logs">("overview");
-
-    // Filters
-    const [filterMethod, setFilterMethod] = useState<string>("ALL");
-    const [filterStatus, setFilterStatus] = useState<string>("ALL");
+    const [tab, setTab] = useState<Tab>("overview");
+    const [filterMethod, setFilterMethod] = useState("ALL");
+    const [filterStatus, setFilterStatus] = useState("ALL");
     const [searchQuery, setSearchQuery] = useState("");
 
-    const refreshData = async () => {
+    const refresh = async () => {
         setIsLoading(true);
-        const [statsRes, usersRes, activityRes, logsRes] = await Promise.all([
+        const [sRes, uRes, aRes, lRes] = await Promise.all([
             getAdminStats(),
             getAdminUsers(),
             getGlobalActivity(),
-            getAdminLogs()
+            getAdminLogs(),
         ]);
-
-        if (statsRes.success) setStats(statsRes.stats);
-        if (usersRes.success && usersRes.users) setUsers(usersRes.users);
-        if (activityRes.success && activityRes.transactions) setActivity(activityRes.transactions);
-        if (logsRes.success && logsRes.logs) setLogs(logsRes.logs);
+        if (sRes.success) setStats(sRes.stats);
+        if (uRes.success && uRes.users) setUsers(uRes.users);
+        if (aRes.success && aRes.transactions) setActivity(aRes.transactions);
+        if (lRes.success && lRes.logs) setLogs(lRes.logs);
         setIsLoading(false);
     };
 
-    useEffect(() => {
-        refreshData();
-    }, []);
+    useEffect(() => { refresh(); }, []);
 
-    const filteredTransactions = activity.filter(tx => {
+    const filteredTx = activity.filter(tx => {
         if (filterMethod !== "ALL" && tx.method !== filterMethod) return false;
         if (filterStatus !== "ALL" && tx.status !== filterStatus) return false;
-        if (searchQuery && !tx.user.email.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+        if (searchQuery && !tx.user?.email?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
         return true;
     });
 
+    const fmt = (v: number) => `R$ ${(v / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+    const fmtN = (v: number) => v?.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) ?? "0,00";
+    const growth = (v: number) => v > 0 ? `+${v.toFixed(1)}%` : `${v.toFixed(1)}%`;
+
+    const tabs: { id: Tab; label: string; icon: any }[] = [
+        { id: "overview", label: "Visão Geral", icon: Activity },
+        { id: "users", label: "Membros", icon: Users },
+        { id: "financial", label: "Ledger", icon: DollarSign },
+        { id: "fees", label: "Taxas", icon: Zap },
+        { id: "logs", label: "Auditoria", icon: ShieldCheck },
+    ];
+
     return (
-        <div className="space-y-12 max-w-[1700px] mx-auto pb-32 px-4 md:px-8 bg-[#0B0B0B]">
-            {/* Header */}
+        <div className="space-y-10 max-w-[1700px] mx-auto pb-32 px-4 md:px-8">
+            {/* ── Header ─────────────────────────────────────────────────── */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pt-12">
                 <div>
-                    <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">{t("command_center")}</h2>
+                    <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Command Center</h2>
                     <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.5em] mt-3 flex items-center gap-2">
                         <ShieldCheck className="w-3.5 h-3.5" /> Core Infrastructure: Active & Shielded
                     </p>
                 </div>
-
-                <div className="flex items-center gap-2 bg-[#121212] p-1.5 rounded-full border border-white/5 shadow-2xl">
-                    {[
-                        { id: "overview", label: t("overview"), icon: Activity },
-                        { id: "users", label: t("members"), icon: Users },
-                        { id: "financial", label: t("financial_ledger"), icon: DollarSign },
-                        { id: "logs", label: t("auditing"), icon: History },
-                    ].map((tItem) => (
-                        <button
-                            key={tItem.id}
-                            onClick={() => setTab(tItem.id as any)}
-                            className={`h-12 px-8 rounded-full font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-3 ${tab === tItem.id ? "bg-[#1DB954] text-black shadow-[0_0_20px_rgba(29,185,84,0.3)]" : "text-[#A7A7A7] hover:text-white hover:bg-white/5"
-                                }`}
-                        >
-                            <tItem.icon className="w-4 h-4" />
-                            {tItem.label}
+                <div className="flex items-center gap-2 bg-[#121212] p-1.5 rounded-full border border-white/5 shadow-2xl flex-wrap">
+                    {tabs.map((tItem) => (
+                        <button key={tItem.id} onClick={() => setTab(tItem.id)}
+                            className={`h-11 px-6 rounded-full font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-2 ${tab === tItem.id ? "bg-[#1DB954] text-black shadow-[0_0_20px_rgba(29,185,84,0.3)]" : "text-[#A7A7A7] hover:text-white hover:bg-white/5"}`}>
+                            <tItem.icon className="w-3.5 h-3.5" />{tItem.label}
                         </button>
                     ))}
-                    <Button variant="ghost" className="w-12 h-12 rounded-full p-0 text-[#A7A7A7] hover:text-white" onClick={refreshData}>
-                        <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                    </Button>
+                    <button onClick={refresh} className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-[#A7A7A7] hover:text-white transition-all">
+                        <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+                    </button>
                 </div>
             </div>
 
             <AnimatePresence mode="wait">
+
+                {/* ══ OVERVIEW ══════════════════════════════════════════════ */}
                 {tab === "overview" && (
-                    <motion.div key="overview" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-10">
-                        {/* Macro Metrics */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+
+                        {/* KPIs principais */}
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
                             {[
-                                { label: t("gross_volume"), value: stats?.totalVolume || 0, sub: t("processado_total"), icon: Activity, trend: "up" },
-                                { label: t("revenue_spread"), value: stats?.netRevenue || 0, sub: t("captura_pointify"), icon: DollarSign, trend: "up" },
-                                { label: t("avg_ticket"), value: stats?.ticketMedio || 0, sub: t("valor_por_ordem"), icon: TrendingUp, trend: "neutral" },
-                                { label: t("daily_flow"), value: stats?.volToday || 0, sub: t("fluxo_diario"), icon: Zap, trend: "up" },
+                                {
+                                    label: "Volume Total", value: (stats?.totalVolume || 0) / 100,
+                                    sub: `${stats?.txCount || 0} transações`, icon: Activity,
+                                    growth: stats?.volGrowth, prefix: "R$"
+                                },
+                                {
+                                    label: "Receita (Taxas)", value: (stats?.netRevenue || 0) / 100,
+                                    sub: `Spread capturado`, icon: DollarSign,
+                                    growth: stats?.spreadGrowth, prefix: "R$"
+                                },
+                                {
+                                    label: "Ticket Médio", value: (stats?.ticketMedio || 0) / 100,
+                                    sub: `por operação`, icon: TrendingUp,
+                                    growth: null, prefix: "R$"
+                                },
+                                {
+                                    label: "Liquidado Hoje", value: (stats?.volToday || 0) / 100,
+                                    sub: `${stats?.txToday || 0} ops hoje`, icon: Zap,
+                                    growth: null, prefix: "R$"
+                                },
                             ].map((s, i) => (
-                                <Card key={i} className="bg-[#121212] border-white/5 rounded-[2.5rem] p-10 hover:border-[#1DB954]/20 transition-all group overflow-hidden relative">
+                                <Card key={i} className="bg-[#121212] border-white/5 rounded-[2.5rem] p-8 hover:border-[#1DB954]/20 transition-all group relative overflow-hidden">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#1DB954]/[0.02] rounded-full translate-x-1/2 -translate-y-1/2" />
-                                    <div className="flex items-center justify-between mb-8">
-                                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-[#A7A7A7] group-hover:text-[#1DB954] transition-colors border border-white/5">
-                                            <s.icon className="w-6 h-6" />
+                                    <div className="flex items-start justify-between mb-6">
+                                        <div className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center text-[#A7A7A7] group-hover:text-[#1DB954] transition-colors border border-white/5">
+                                            <s.icon className="w-5 h-5" />
                                         </div>
-                                        {s.trend === "up" && <ArrowUpRight className="w-5 h-5 text-[#1DB954]" />}
+                                        {s.growth !== null && s.growth !== undefined && (
+                                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border ${s.growth >= 0 ? "text-[#1DB954] bg-[#1DB954]/5 border-[#1DB954]/10" : "text-rose-500 bg-rose-500/5 border-rose-500/10"}`}>
+                                                {growth(s.growth)}
+                                            </span>
+                                        )}
                                     </div>
-                                    <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] mb-3">{s.label}</p>
-                                    <h3 className="text-4xl font-black text-white tracking-tighter tabular-nums">
-                                        R$ <CountUp to={s.value} decimals={2} />
+                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mb-2">{s.label}</p>
+                                    <h3 className="text-3xl font-black text-white tracking-tighter tabular-nums">
+                                        {s.prefix} <CountUp to={s.value} decimals={2} />
                                     </h3>
-                                    <p className="text-[9px] font-black text-[#1DB954] uppercase tracking-widest mt-6 opacity-60">{s.sub}</p>
+                                    <p className="text-[9px] font-black text-[#1DB954]/60 uppercase tracking-widest mt-4">{s.sub}</p>
                                 </Card>
                             ))}
                         </div>
 
-                        {/* Visual Sales Dashboard */}
-                        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-                            <Card className="xl:col-span-8 bg-[#121212] border-white/5 rounded-[3rem] p-12 overflow-hidden relative">
-                                <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(29,185,84,0.05),transparent_50%)]" />
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-12">
-                                        <div>
-                                            <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">{t("sales_performance")}</h3>
-                                            <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest mt-2">{t("sales_desc")}</p>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <Button variant="ghost" className="h-10 px-6 rounded-full text-[9px] font-black text-white uppercase bg-white/5 border border-white/10">7 Dias</Button>
-                                            <Button variant="ghost" className="h-10 px-6 rounded-full text-[9px] font-black text-[#A7A7A7] uppercase hover:text-white">30 Dias</Button>
-                                        </div>
+                        {/* Métricas de usuários */}
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+                            {[
+                                { label: "Total Usuários", value: stats?.totalUsers || 0, icon: Users, color: "text-sky-400" },
+                                { label: "Novos Hoje", value: stats?.newUsersToday || 0, icon: UserCheck, color: "text-[#1DB954]" },
+                                { label: "Novos no Mês", value: stats?.newUsersMonth || 0, icon: TrendingUp, color: "text-amber-400" },
+                                { label: "Aguardando Aprovação", value: stats?.pendingKyc || 0, icon: Clock, color: "text-rose-400" },
+                            ].map((s, i) => (
+                                <Card key={i} className="bg-[#121212] border-white/5 rounded-[2.5rem] p-8 flex items-center gap-5">
+                                    <div className={`w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center flex-shrink-0 border border-white/5 ${s.color}`}>
+                                        <s.icon className="w-5 h-5" />
                                     </div>
-
-                                    {/* Mock Graph visualization using simple bars for high visual impact */}
-                                    <div className="flex items-end justify-between h-64 gap-3 mt-10">
-                                        {[60, 40, 85, 30, 95, 55, 75, 50, 90, 65, 45, 80].map((h, i) => (
-                                            <div key={i} className="flex-1 group relative">
-                                                <motion.div
-                                                    initial={{ height: 0 }}
-                                                    animate={{ height: `${h}%` }}
-                                                    transition={{ duration: 1, delay: i * 0.05 }}
-                                                    className={`w-full bg-gradient-to-t ${i === 4 || i === 8 ? 'from-[#1DB954] to-[#1ED760]' : 'from-white/5 to-white/10'} rounded-t-xl group-hover:from-[#1DB954] group-hover:to-[#1ED760] transition-all`}
-                                                />
-                                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[8px] font-black text-[#A7A7A7] uppercase opacity-0 group-hover:opacity-100 transition-all">Day {i + 1}</div>
-                                            </div>
-                                        ))}
+                                    <div>
+                                        <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{s.label}</p>
+                                        <p className={`text-2xl font-black ${s.color} tabular-nums`}>{s.value}</p>
                                     </div>
-                                    <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-white/5 pt-10">
-                                        {[
-                                            { label: "PIX", val: stats?.volumeByMethod?.PIX || 0, p: "72%", sub: t("pix_instant") },
-                                            { label: "BOLETO", val: stats?.volumeByMethod?.BOLETO || 0, p: "18%", sub: t("boleto_d2") },
-                                            { label: "LINK", val: stats?.volumeByMethod?.LINK || 0, p: "10%", sub: t("pointify_links") },
-                                        ].map((item, i) => (
-                                            <div key={i}>
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{item.label}</p>
-                                                    <p className="text-[9px] font-black text-[#1DB954] uppercase">{item.p}</p>
-                                                </div>
-                                                <h4 className="text-xl font-black text-white tabular-nums">R$ <CountUp to={item.val} decimals={2} /></h4>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </Card>
-
-                            <Card className="xl:col-span-4 bg-[#121212] border-white/5 rounded-[3rem] p-10 flex flex-col justify-between">
-                                <div className="space-y-10">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-14 h-14 rounded-3xl bg-[#1DB954]/10 border border-[#1DB954]/20 flex items-center justify-center text-[#1DB954]">
-                                            <TrendingUp className="w-7 h-7" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-black text-white uppercase tracking-tight">{t("conversion_rate")}</h3>
-                                            <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">{t("payment_efficiency")}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-6">
-                                        {[
-                                            { label: "Links Pagos", val: "94.2%", color: "text-[#1DB954]" },
-                                            { label: "Boletos Compensados", val: "42.8%", color: "text-amber-500" },
-                                            { label: "Retenção de Base", val: "88.5%", color: "text-sky-500" }
-                                        ].map((stat, i) => (
-                                            <div key={i} className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex items-center justify-between group hover:border-white/10 transition-all">
-                                                <span className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">{stat.label}</span>
-                                                <span className={`text-sm font-black ${stat.color}`}>{stat.val}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <Button className="w-full h-16 rounded-[2rem] bg-white text-black font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-all mt-10">{t("fiscal_report_desc")}</Button>
-                            </Card>
-                        </div>
-                    </motion.div>
-                )}
-
-                {tab === "financial" && (
-                    <motion.div key="financial" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-                        {/* Filters Row */}
-                        <div className="flex flex-col xl:flex-row gap-4 items-center justify-between bg-[#121212] p-8 rounded-[2.5rem] border border-white/5">
-                            <div className="flex flex-wrap items-center gap-4">
-                                <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full border border-white/10 text-[#A7A7A7]">
-                                    <Filter className="w-4 h-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">{t("filters")}:</span>
-                                </div>
-                                <select
-                                    className="bg-black text-[#A7A7A7] border-none rounded-full px-6 py-3 text-[10px] font-black uppercase tracking-widest outline-none ring-1 ring-white/10 focus:ring-[#1DB954]"
-                                    onChange={(e) => setFilterMethod(e.target.value)}
-                                    value={filterMethod}
-                                >
-                                    <option value="ALL">{t("all")}</option>
-                                    <option value="PIX">PIX</option>
-                                    <option value="BOLETO">BOLETO</option>
-                                    <option value="LINK">LINK</option>
-                                </select>
-                                <select
-                                    className="bg-black text-[#A7A7A7] border-none rounded-full px-6 py-3 text-[10px] font-black uppercase tracking-widest outline-none ring-1 ring-white/10 focus:ring-[#1DB954]"
-                                    onChange={(e) => setFilterStatus(e.target.value)}
-                                    value={filterStatus}
-                                >
-                                    <option value="ALL">{t("all")}</option>
-                                    <option value="COMPLETED">COMPLETED</option>
-                                    <option value="PENDING">PENDING</option>
-                                    <option value="FAILED">FAILED</option>
-                                </select>
-                                <div className="relative">
-                                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A7A7A7]" />
-                                    <input
-                                        className="h-12 w-64 bg-black border-none rounded-full pl-14 pr-6 text-[10px] font-black text-white uppercase tracking-widest placeholder:text-[#A7A7A7] outline-none ring-1 ring-white/10 focus:ring-[#1DB954]"
-                                        placeholder={`${t("search_tx")}...`}
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <Button className="h-12 px-10 rounded-full bg-[#1DB954] text-black font-black uppercase text-[10px] tracking-widest">
-                                <Download className="w-4 h-4 mr-2" /> {t("export_ledger")}
-                            </Button>
+                                </Card>
+                            ))}
                         </div>
 
-                        {/* Transaction List */}
-                        <Card className="bg-[#121212] border-white/5 rounded-[3rem] overflow-hidden">
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="bg-white/[0.01] border-b border-white/5">
-                                            <th className="px-10 py-6 text-left text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">ID / {t("date")}</th>
-                                            <th className="px-10 py-6 text-left text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{t("users")}</th>
-                                            <th className="px-10 py-6 text-left text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{t("transaction")}</th>
-                                            <th className="px-10 py-6 text-right text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">Gross / Spread</th>
-                                            <th className="px-10 py-6 text-right text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest pr-10">{t("status")}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        {filteredTransactions.map((tx, i) => (
-                                            <tr key={i} className="hover:bg-white/[0.01] transition-all group">
-                                                <td className="px-10 py-8">
-                                                    <p className="text-[10px] font-black text-white uppercase font-mono">{tx.id.substring(0, 12)}</p>
-                                                    <p className="text-[8px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1 flex items-center gap-1">
-                                                        <Calendar className="w-3 h-3" /> {new Date(tx.createdAt).toLocaleString()}
-                                                    </p>
-                                                </td>
-                                                <td className="px-10 py-8">
-                                                    <p className="text-[11px] font-black text-white uppercase italic">{tx.user.name}</p>
-                                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">{tx.user.email}</p>
-                                                </td>
-                                                <td className="px-10 py-8">
-                                                    <span className="flex items-center gap-2 text-[10px] font-black text-white uppercase bg-white/5 px-4 py-1.5 rounded-full border border-white/10 w-fit">
-                                                        <Zap className="w-3 h-3 text-[#1DB954]" /> {tx.method}
-                                                    </span>
-                                                </td>
-                                                <td className="px-10 py-8 text-right tabular-nums">
-                                                    <p className="text-sm font-black text-white">R$ {(tx.grossAmount / 100).toLocaleString()}</p>
-                                                    <p className="text-[9px] font-black text-[#1DB954] uppercase tracking-widest mt-1 flex items-center justify-end gap-1">
-                                                        <TrendingUp className="w-2.5 h-2.5" /> Spread: R$ {(tx.spread / 100).toLocaleString()}
-                                                    </p>
-                                                </td>
-                                                <td className="px-10 py-8 text-right pr-10">
-                                                    <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${tx.status === 'COMPLETED' ? 'bg-[#1DB954]/5 text-[#1DB954] border-[#1DB954]/10' :
-                                                        tx.status === 'FAILED' ? 'bg-rose-500/5 text-rose-500 border-rose-500/10' : 'bg-white/5 text-[#A7A7A7] border-white/10'
-                                                        }`}>
-                                                        {tx.status}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </Card>
-                    </motion.div>
-                )}
-
-                {tab === "users" && (
-                    <motion.div key="users" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                        <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] overflow-hidden">
-                            <div className="p-10 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5">
+                        {/* Receita por Período */}
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                            <Card className="bg-[#121212] border-white/5 rounded-[3rem] p-10 space-y-8">
                                 <div>
-                                    <h3 className="text-xl font-black text-white uppercase tracking-tighter">{t("members")}</h3>
-                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">{t("risk_assessment_desc")}</p>
+                                    <h3 className="text-lg font-black text-white uppercase tracking-tight">Receita por Período</h3>
+                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">Taxas capturadas pela plataforma</p>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="relative">
-                                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A7A7A7]" />
-                                        <input className="h-14 w-80 bg-white/[0.02] border-none rounded-full pl-14 pr-6 text-[11px] font-black text-white uppercase tracking-widest placeholder:text-[#A7A7A7] outline-none focus:ring-1 focus:ring-white/10" placeholder={t("search_accounts")} />
+                                {[
+                                    { label: "Hoje", vol: stats?.volToday || 0, spread: stats?.spreadToday || 0 },
+                                    { label: "Este Mês", vol: stats?.volMonth || 0, spread: stats?.spreadMonth || 0 },
+                                    { label: "Mês Anterior", vol: stats?.volLastMonth || 0, spread: stats?.spreadLastMonth || 0 },
+                                    { label: "Total Acumulado", vol: stats?.totalVolume || 0, spread: stats?.netRevenue || 0 },
+                                ].map((p, i) => (
+                                    <div key={i} className="p-5 rounded-[2rem] bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                                        <div>
+                                            <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{p.label}</p>
+                                            <p className="text-sm font-black text-white mt-1">{fmt(p.vol)} <span className="text-[#A7A7A7] font-black text-[10px]">volume</span></p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[9px] font-black text-[#1DB954] uppercase tracking-widest">Receita</p>
+                                            <p className="text-lg font-black text-[#1DB954]">{fmt(p.spread)}</p>
+                                        </div>
                                     </div>
-                                    <Button className="h-14 px-10 rounded-full bg-white text-black font-black uppercase text-[10px] tracking-widest">{t("new_profile")}</Button>
+                                ))}
+                            </Card>
+
+                            <Card className="bg-[#121212] border-white/5 rounded-[3rem] p-10 space-y-8">
+                                <div>
+                                    <h3 className="text-lg font-black text-white uppercase tracking-tight">Volume por Canal</h3>
+                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">Distribuição por método de captura</p>
+                                </div>
+                                {["PIX", "BOLETO", "LINK", "SWAP", "OTHER"].map((method, i) => {
+                                    const vol = stats?.volumeByMethod?.[method] || 0;
+                                    const spread = stats?.spreadByMethod?.[method] || 0;
+                                    const pct = stats?.totalVolume > 0 ? (vol / stats.totalVolume) * 100 : 0;
+                                    return (
+                                        <div key={i} className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                                    {method === "SWAP" ? <ArrowUpDown className="w-3.5 h-3.5 text-[#1DB954]" /> : <Zap className="w-3.5 h-3.5 text-[#1DB954]" />}
+                                                    {method}
+                                                </span>
+                                                <span className="text-[9px] font-black text-[#1DB954]">{fmt(spread)}</span>
+                                            </div>
+                                            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${pct}%` }}
+                                                    transition={{ duration: 1, delay: i * 0.1 }}
+                                                    className="h-full bg-gradient-to-r from-[#1DB954] to-[#1ED760] rounded-full"
+                                                />
+                                            </div>
+                                            <div className="flex justify-between text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">
+                                                <span>{fmt(vol)}</span>
+                                                <span>{pct.toFixed(1)}%</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </Card>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* ══ USERS ═════════════════════════════════════════════════ */}
+                {tab === "users" && (
+                    <motion.div key="users" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                        <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] overflow-hidden">
+                            <div className="p-8 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5">
+                                <div>
+                                    <h3 className="text-lg font-black text-white uppercase">Membros da Plataforma</h3>
+                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{users.length} contas registradas</p>
+                                </div>
+                                <div className="relative">
+                                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A7A7A7]" />
+                                    <input className="h-12 w-72 bg-white/[0.03] border border-white/5 rounded-full pl-12 pr-5 text-[11px] font-black text-white uppercase tracking-widest placeholder:text-[#A7A7A7]/40 outline-none focus:border-[#1DB954]/30 transition-all"
+                                        placeholder="Buscar por email..." onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} />
                                 </div>
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full">
                                     <thead>
-                                        <tr className="bg-white/[0.01] border-b border-white/5">
-                                            <th className="px-10 py-6 text-left text-[9px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">{t("users")}</th>
-                                            <th className="px-10 py-6 text-left text-[9px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">{t("risk_status")}</th>
-                                            <th className="px-10 py-6 text-right text-[9px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">{t("available_balance_admin")}</th>
-                                            <th className="px-10 py-6 text-right text-[9px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">{t("actions")}</th>
+                                        <tr className="border-b border-white/5">
+                                            {["Usuário", "Status", "KYC", "Pontos", "Transações", "Ações"].map(h => (
+                                                <th key={h} className="px-8 py-5 text-left text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest last:text-right">{h}</th>
+                                            ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        {users.map((u, i) => (
-                                            <tr key={i} className="hover:bg-white/[0.01] transition-all group">
-                                                <td className="px-10 py-8">
-                                                    <div className="flex items-center gap-5">
-                                                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center font-black text-white border border-white/5 group-hover:border-[#1DB954]/40 transition-all">
-                                                            {u.name?.[0] || u.email[0]}
+                                    <tbody className="divide-y divide-white/[0.03]">
+                                        {users
+                                            .filter(u => !searchQuery || u.email?.toLowerCase().includes(searchQuery.toLowerCase()) || u.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+                                            .map((u, i) => (
+                                                <tr key={i} className="hover:bg-white/[0.01] transition-all group">
+                                                    <td className="px-8 py-6">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="w-10 h-10 rounded-full bg-[#1DB954]/10 border border-[#1DB954]/20 flex items-center justify-center font-black text-[#1DB954] text-sm flex-shrink-0">
+                                                                {(u.name?.[0] || u.email?.[0] || "?").toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-black text-white">{u.name || "—"}</p>
+                                                                <p className="text-[9px] font-black text-[#A7A7A7] tracking-widest">{u.email}</p>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <p className="text-sm font-black text-white uppercase italic tracking-tighter leading-none">{u.name || "Default User"}</p>
-                                                            <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest mt-2">{u.email}</p>
-                                                            {u.instagram && <p className="text-[9px] font-black text-sky-400 uppercase tracking-widest mt-1">@ {u.instagram.replace('@', '')}</p>}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-10 py-8">
-                                                    <div className="space-y-3">
-                                                        <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border ${u.status === 'ACTIVE' ? 'bg-[#1DB954]/5 text-[#1DB954] border-[#1DB954]/10' :
-                                                            u.status === 'BLOCKED' ? 'bg-rose-500/5 text-rose-500 border-rose-500/10' : 'bg-white/5 text-[#A7A7A7] border-white/10'
-                                                            }`}>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <span className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase border ${u.status === "ACTIVE" ? "text-[#1DB954] bg-[#1DB954]/5 border-[#1DB954]/10" : u.status === "BLOCKED" || u.status === "TERMINATED" ? "text-rose-500 bg-rose-500/5 border-rose-500/10" : "text-amber-400 bg-amber-400/5 border-amber-400/10"}`}>
                                                             {u.status}
                                                         </span>
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-20 h-1 bg-white/5 rounded-full overflow-hidden">
-                                                                <div className={`h-full ${u.riskScore > 70 ? 'bg-rose-500' : u.riskScore > 30 ? 'bg-amber-500' : 'bg-[#1DB954]'}`} style={{ width: `${u.riskScore || 5}%` }} />
-                                                            </div>
-                                                            <span className="text-[9px] font-black text-[#A7A7A7] uppercase">Score {u.riskScore || 0}</span>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <span className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase border ${u.kycStatus === "VERIFIED" ? "text-sky-400 bg-sky-400/5 border-sky-400/10" : "text-[#A7A7A7] bg-white/5 border-white/10"}`}>
+                                                            {u.kycStatus || "PENDING"}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-[#1DB954] font-black text-sm">{(u.yunyPoints || 0).toLocaleString()}</td>
+                                                    <td className="px-8 py-6 text-white font-black text-sm">{u._count?.transactions || 0}</td>
+                                                    <td className="px-8 py-6">
+                                                        <div className="flex items-center justify-end gap-2 opacity-30 group-hover:opacity-100 transition-all">
+                                                            {(u.status === "PENDING" || u.kycStatus === "PENDING") && (
+                                                                <button onClick={() => approveUser(ADMIN_ID, u.id).then(refresh)}
+                                                                    className="px-4 py-2 rounded-full bg-[#1DB954] text-black text-[9px] font-black uppercase flex items-center gap-1.5 hover:bg-[#1ED760] transition-all">
+                                                                    <CheckCircle2 className="w-3.5 h-3.5" /> Aprovar
+                                                                </button>
+                                                            )}
+                                                            {u.status !== "TERMINATED" && (
+                                                                <button onClick={() => terminateUser(ADMIN_ID, u.id).then(refresh)}
+                                                                    className="px-4 py-2 rounded-full border border-rose-500/20 text-rose-500 text-[9px] font-black uppercase flex items-center gap-1.5 hover:bg-rose-500/5 transition-all">
+                                                                    <XCircle className="w-3.5 h-3.5" /> Encerrar
+                                                                </button>
+                                                            )}
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-10 py-8 text-right tabular-nums">
-                                                    <p className="text-lg font-black text-[#1DB954]">{u.pointsBalance.toLocaleString()}</p>
-                                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">{t("total_points")}</p>
-                                                </td>
-                                                <td className="px-10 py-8 text-right pr-10">
-                                                    <div className="flex items-center justify-end gap-3 opacity-40 group-hover:opacity-100 transition-opacity">
-                                                        {u.kycStatus === 'PENDING' && (
-                                                            <Button onClick={() => approveUserKyc("SUPER_ADMIN_ID", u.id).then(refreshData)} className="h-10 px-6 rounded-full bg-[#1DB954] text-black text-[9px] font-black uppercase">{t("approve")}</Button>
-                                                        )}
-                                                        <Button variant="ghost" className="h-10 px-6 rounded-full border border-white/5 text-[#A7A7A7] text-[9px] font-black uppercase">{t("terminate")}</Button>
-                                                        <Button variant="ghost" className="w-10 h-10 rounded-full p-0 border border-white/5 text-[#A7A7A7]">
-                                                            <Settings className="w-4 h-4" />
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                                    </td>
+                                                </tr>
+                                            ))}
                                     </tbody>
                                 </table>
                             </div>
                         </Card>
                     </motion.div>
                 )}
+
+                {/* ══ FINANCIAL LEDGER ══════════════════════════════════════ */}
+                {tab === "financial" && (
+                    <motion.div key="financial" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                        {/* Filtros */}
+                        <div className="flex flex-col xl:flex-row gap-4 items-center justify-between bg-[#121212] p-6 rounded-[2.5rem] border border-white/5">
+                            <div className="flex flex-wrap items-center gap-3">
+                                <div className="flex items-center gap-2 px-5 py-2.5 bg-white/5 rounded-full border border-white/10 text-[#A7A7A7]">
+                                    <Filter className="w-3.5 h-3.5" />
+                                    <span className="text-[9px] font-black uppercase tracking-widest">Filtros</span>
+                                </div>
+                                {["ALL", "PIX", "BOLETO", "LINK", "SWAP"].map(m => (
+                                    <button key={m} onClick={() => setFilterMethod(m)}
+                                        className={`px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${filterMethod === m ? "bg-[#1DB954] text-black border-[#1DB954]" : "border-white/10 text-[#A7A7A7] hover:text-white"}`}>
+                                        {m}
+                                    </button>
+                                ))}
+                                {["ALL", "COMPLETED", "PENDING", "FAILED"].map(s => (
+                                    <button key={s} onClick={() => setFilterStatus(s)}
+                                        className={`px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${filterStatus === s ? "bg-white text-black border-white" : "border-white/10 text-[#A7A7A7] hover:text-white"}`}>
+                                        {s}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="relative">
+                                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A7A7A7]" />
+                                    <input className="h-11 w-60 bg-white/[0.03] border border-white/5 rounded-full pl-12 pr-5 text-[10px] font-black text-white uppercase tracking-widest placeholder:text-[#A7A7A7]/40 outline-none focus:border-[#1DB954]/30"
+                                        placeholder="Email do usuário..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                                </div>
+                                <button className="h-11 px-6 rounded-full bg-[#1DB954] text-black font-black text-[9px] uppercase tracking-widest flex items-center gap-2 hover:bg-[#1ED760] transition-all">
+                                    <Download className="w-4 h-4" /> Export
+                                </button>
+                            </div>
+                        </div>
+
+                        <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-white/5">
+                                            {["ID / Data", "Usuário", "Método", "Gross / Taxa", "Líquido", "Status"].map(h => (
+                                                <th key={h} className="px-8 py-5 text-left text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest last:text-right">{h}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/[0.03]">
+                                        {filteredTx.length === 0 ? (
+                                            <tr><td colSpan={6} className="px-8 py-16 text-center text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">Nenhuma transação encontrada</td></tr>
+                                        ) : filteredTx.map((tx, i) => {
+                                            const gross = tx.grossAmount || 0;
+                                            const spread = tx.spread || 0;
+                                            const net = gross - spread;
+                                            return (
+                                                <tr key={i} className="hover:bg-white/[0.01] transition-all group">
+                                                    <td className="px-8 py-6">
+                                                        <p className="text-[10px] font-black text-white font-mono">{tx.id?.substring(0, 10)}...</p>
+                                                        <p className="text-[9px] font-black text-[#A7A7A7] mt-1">{new Date(tx.createdAt).toLocaleString("pt-BR")}</p>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <p className="text-xs font-black text-white">{tx.user?.name || "—"}</p>
+                                                        <p className="text-[9px] font-black text-[#A7A7A7]">{tx.user?.email}</p>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <span className="flex items-center gap-1.5 text-[9px] font-black text-white uppercase bg-white/5 px-3 py-1.5 rounded-full border border-white/10 w-fit">
+                                                            <Zap className="w-3 h-3 text-[#1DB954]" />{tx.method || "OTHER"}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <p className="text-sm font-black text-white">{fmt(gross)}</p>
+                                                        <p className="text-[9px] font-black text-[#1DB954] mt-1">Taxa: {fmt(spread)}</p>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <p className="text-sm font-black text-white">{fmt(net)}</p>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right">
+                                                        <span className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase border ${tx.status === "COMPLETED" ? "text-[#1DB954] bg-[#1DB954]/5 border-[#1DB954]/10" : tx.status === "FAILED" ? "text-rose-500 bg-rose-500/5 border-rose-500/10" : "text-amber-400 bg-amber-400/5 border-amber-400/10"}`}>
+                                                            {tx.status}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </Card>
+                    </motion.div>
+                )}
+
+                {/* ══ TAXAS ════════════════════════════════════════════════ */}
+                {tab === "fees" && (
+                    <motion.div key="fees" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            {[
+                                {
+                                    title: "Enviar / Receber / Pagar",
+                                    icon: Zap, color: "#1DB954",
+                                    rule: `max(${FEES.TRANSACTION.PERCENT}%, R$ ${FEES.TRANSACTION.MIN_FLAT.toFixed(2)})`,
+                                    detail: "A maior taxa é aplicada: 3% do valor ou R$0,50 mínimo",
+                                    examples: [
+                                        { val: "R$ 10,00", fee: `R$ 0,50 (mínimo)` },
+                                        { val: "R$ 50,00", fee: `R$ 1,50 (3%)` },
+                                        { val: "R$ 200,00", fee: `R$ 6,00 (3%)` },
+                                        { val: "R$ 1.000,00", fee: `R$ 30,00 (3%)` },
+                                    ]
+                                },
+                                {
+                                    title: "Swap PTS → USDT",
+                                    icon: ArrowUpDown, color: "#26A17B",
+                                    rule: `${FEES.SWAP_USDT.PERCENT}% do valor convertido`,
+                                    detail: "Taxa sobre o valor em USDT antes da entrega",
+                                    examples: [
+                                        { val: "1.000 PTS → 1 USDT", fee: "0,01 USDT (1%)" },
+                                        { val: "5.000 PTS → 5 USDT", fee: "0,05 USDT (1%)" },
+                                        { val: "10.000 PTS → 10 USDT", fee: "0,10 USDT (1%)" },
+                                        { val: "50.000 PTS → 50 USDT", fee: "0,50 USDT (1%)" },
+                                    ]
+                                },
+                                {
+                                    title: "Swap PTS → BTC",
+                                    icon: Bitcoin, color: "#F7931A",
+                                    rule: `${FEES.SWAP_BTC.PERCENT}% do valor convertido`,
+                                    detail: "Taxa sobre o valor em BTC antes da entrega",
+                                    examples: [
+                                        { val: "1.000 PTS → 0,0001 BTC", fee: "0,000002 BTC (2%)" },
+                                        { val: "5.000 PTS → 0,0005 BTC", fee: "0,00001 BTC (2%)" },
+                                        { val: "10.000 PTS → 0,001 BTC", fee: "0,00002 BTC (2%)" },
+                                        { val: "50.000 PTS → 0,005 BTC", fee: "0,0001 BTC (2%)" },
+                                    ]
+                                },
+                            ].map((card, i) => (
+                                <Card key={i} className="bg-[#121212] border-white/5 rounded-[2.5rem] p-8 flex flex-col gap-6 hover:border-white/10 transition-all">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${card.color}15`, border: `1px solid ${card.color}30` }}>
+                                            <card.icon className="w-5 h-5" style={{ color: card.color }} />
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">Taxa</p>
+                                            <p className="text-xs font-black text-white uppercase tracking-tight">{card.title}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-5 rounded-2xl border" style={{ backgroundColor: `${card.color}08`, borderColor: `${card.color}20` }}>
+                                        <p className="text-lg font-black tracking-tight" style={{ color: card.color }}>{card.rule}</p>
+                                        <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-2">{card.detail}</p>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">Exemplos</p>
+                                        {card.examples.map((ex, j) => (
+                                            <div key={j} className="flex justify-between items-center py-2 border-b border-white/5">
+                                                <span className="text-[9px] font-black text-[#A7A7A7] uppercase">{ex.val}</span>
+                                                <span className="text-[9px] font-black uppercase" style={{ color: card.color }}>{ex.fee}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
+
+                        {/* Receita por tipo */}
+                        <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] p-10 space-y-6">
+                            <h3 className="text-lg font-black text-white uppercase tracking-tight">Receita por Tipo de Taxa</h3>
+                            {[
+                                { label: "Transações (3% / R$0,50)", value: stats?.feeFromTransactions || 0, color: "#1DB954", icon: Zap },
+                                { label: "Swap USDT (1%)", value: stats?.feeFromSwapsUSDT || 0, color: "#26A17B", icon: ArrowUpDown },
+                                { label: "Swap BTC (2%)", value: stats?.feeFromSwapsBTC || 0, color: "#F7931A", icon: Bitcoin },
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${item.color}15` }}>
+                                            <item.icon className="w-4 h-4" style={{ color: item.color }} />
+                                        </div>
+                                        <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">{item.label}</p>
+                                    </div>
+                                    <p className="text-xl font-black" style={{ color: item.color }}>{fmt(item.value)}</p>
+                                </div>
+                            ))}
+                        </Card>
+                    </motion.div>
+                )}
+
+                {/* ══ LOGS ═════════════════════════════════════════════════ */}
+                {tab === "logs" && (
+                    <motion.div key="logs" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                        <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] overflow-hidden">
+                            <div className="p-8 border-b border-white/5">
+                                <h3 className="text-lg font-black text-white uppercase">Audit Log</h3>
+                                <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">{logs.length} ações registradas</p>
+                            </div>
+                            <div className="divide-y divide-white/[0.03]">
+                                {logs.length === 0 ? (
+                                    <div className="py-16 text-center text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">Nenhum log registrado</div>
+                                ) : logs.map((log, i) => (
+                                    <div key={i} className="px-8 py-5 flex items-center gap-6 hover:bg-white/[0.01] transition-all">
+                                        <div className="w-9 h-9 rounded-xl bg-[#1DB954]/10 flex items-center justify-center flex-shrink-0">
+                                            <ShieldCheck className="w-4 h-4 text-[#1DB954]" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-[10px] font-black text-white uppercase tracking-wider">{log.action}</p>
+                                            <p className="text-[9px] font-black text-[#A7A7A7] mt-0.5">{log.responsible?.email} · {new Date(log.createdAt).toLocaleString("pt-BR")}</p>
+                                        </div>
+                                        <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest truncate max-w-[200px]">
+                                            {log.details ? JSON.stringify(JSON.parse(log.details)).slice(0, 60) : "—"}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </Card>
+                    </motion.div>
+                )}
+
             </AnimatePresence>
         </div>
     );
 }
-
-const Percents = ({ className }: { className?: string }) => <div className={className}><TrendingUp className="w-full h-full" /></div>;
-const Percent = ({ className }: { className?: string }) => <div className={className}><TrendingUp className="w-full h-full" /></div>;
