@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import {
     getAdminStats, getAdminUsers, getGlobalActivity,
-    getAdminLogs, approveUserKyc, approveUser, terminateUser
+    getAdminLogs, approveUserKyc, approveUser, terminateUser, rejectUser
 } from "@/actions/admin-actions";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "@/components/ui/react-bits/CountUp";
@@ -21,6 +21,7 @@ import { FEES } from "@/lib/fees";
 export const dynamic = "force-dynamic";
 
 type Tab = "overview" | "users" | "financial" | "fees" | "logs";
+type ModalAction = "terminate" | "reject" | null;
 
 const ADMIN_ID = "SUPER_ADMIN";
 
@@ -35,6 +36,39 @@ export default function AdminDashboardPage() {
     const [filterMethod, setFilterMethod] = useState("ALL");
     const [filterStatus, setFilterStatus] = useState("ALL");
     const [searchQuery, setSearchQuery] = useState("");
+
+    // Modal de confirmação
+    const [modalAction, setModalAction] = useState<ModalAction>(null);
+    const [modalUser, setModalUser] = useState<any>(null);
+    const [modalConfirmText, setModalConfirmText] = useState("");
+    const [modalLoading, setModalLoading] = useState(false);
+
+    const openModal = (action: ModalAction, user: any) => {
+        setModalAction(action);
+        setModalUser(user);
+        setModalConfirmText("");
+    };
+
+    const closeModal = () => {
+        setModalAction(null);
+        setModalUser(null);
+        setModalConfirmText("");
+    };
+
+    const handleModalConfirm = async () => {
+        if (!modalUser || !modalAction) return;
+        setModalLoading(true);
+        if (modalAction === "terminate") {
+            await terminateUser(ADMIN_ID, modalUser.id);
+        } else if (modalAction === "reject") {
+            await rejectUser(ADMIN_ID, modalUser.id);
+        }
+        setModalLoading(false);
+        closeModal();
+        refresh();
+    };
+
+    const modalConfirmWord = modalUser?.name?.split(" ")?.[0] || modalUser?.email?.split("@")?.[0] || "CONFIRMAR";
 
     const refresh = async () => {
         setIsLoading(true);
@@ -65,11 +99,11 @@ export default function AdminDashboardPage() {
     const growth = (v: number) => v > 0 ? `+${v.toFixed(1)}%` : `${v.toFixed(1)}%`;
 
     const tabs: { id: Tab; label: string; icon: any }[] = [
-        { id: "overview", label: "Visão Geral", icon: Activity },
-        { id: "users", label: "Membros", icon: Users },
-        { id: "financial", label: "Ledger", icon: DollarSign },
-        { id: "fees", label: "Taxas", icon: Zap },
-        { id: "logs", label: "Auditoria", icon: ShieldCheck },
+        { id: "overview", label: t("admin_overview"), icon: Activity },
+        { id: "users", label: t("admin_members"), icon: Users },
+        { id: "financial", label: t("admin_movements"), icon: DollarSign },
+        { id: "fees", label: t("admin_fees"), icon: Zap },
+        { id: "logs", label: t("admin_audit"), icon: ShieldCheck },
     ];
 
     return (
@@ -77,9 +111,9 @@ export default function AdminDashboardPage() {
             {/* ── Header ─────────────────────────────────────────────────── */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pt-12">
                 <div>
-                    <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Command Center</h2>
+                    <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">{t("command_center")}</h2>
                     <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.5em] mt-3 flex items-center gap-2">
-                        <ShieldCheck className="w-3.5 h-3.5" /> Core Infrastructure: Active & Shielded
+                        <ShieldCheck className="w-3.5 h-3.5" /> {t("admin_shield_status")}
                     </p>
                 </div>
                 <div className="flex items-center gap-2 bg-[#121212] p-1.5 rounded-full border border-white/5 shadow-2xl flex-wrap">
@@ -285,15 +319,21 @@ export default function AdminDashboardPage() {
                                                     <td className="px-8 py-6">
                                                         <div className="flex items-center justify-end gap-2 opacity-30 group-hover:opacity-100 transition-all">
                                                             {(u.status === "PENDING" || u.kycStatus === "PENDING") && (
-                                                                <button onClick={() => approveUser(ADMIN_ID, u.id).then(refresh)}
-                                                                    className="px-4 py-2 rounded-full bg-[#1DB954] text-black text-[9px] font-black uppercase flex items-center gap-1.5 hover:bg-[#1ED760] transition-all">
-                                                                    <CheckCircle2 className="w-3.5 h-3.5" /> Aprovar
-                                                                </button>
+                                                                <>
+                                                                    <button onClick={() => approveUser(ADMIN_ID, u.id).then(refresh)}
+                                                                        className="px-4 py-2 rounded-full bg-[#1DB954] text-black text-[9px] font-black uppercase flex items-center gap-1.5 hover:bg-[#1ED760] transition-all">
+                                                                        <CheckCircle2 className="w-3.5 h-3.5" /> {t("approve")}
+                                                                    </button>
+                                                                    <button onClick={() => openModal("reject", u)}
+                                                                        className="px-4 py-2 rounded-full border border-amber-500/20 text-amber-400 text-[9px] font-black uppercase flex items-center gap-1.5 hover:bg-amber-500/5 transition-all">
+                                                                        <AlertCircle className="w-3.5 h-3.5" /> {t("admin_reject")}
+                                                                    </button>
+                                                                </>
                                                             )}
                                                             {u.status !== "TERMINATED" && (
-                                                                <button onClick={() => terminateUser(ADMIN_ID, u.id).then(refresh)}
+                                                                <button onClick={() => openModal("terminate", u)}
                                                                     className="px-4 py-2 rounded-full border border-rose-500/20 text-rose-500 text-[9px] font-black uppercase flex items-center gap-1.5 hover:bg-rose-500/5 transition-all">
-                                                                    <XCircle className="w-3.5 h-3.5" /> Encerrar
+                                                                    <XCircle className="w-3.5 h-3.5" /> {t("terminate")}
                                                                 </button>
                                                             )}
                                                         </div>
@@ -519,6 +559,85 @@ export default function AdminDashboardPage() {
                     </motion.div>
                 )}
 
+            </AnimatePresence>
+
+            {/* ── Modal de Confirmação ──────────────────────────────────── */}
+            <AnimatePresence>
+                {modalAction && modalUser && (
+                    <motion.div
+                        key="confirm-modal"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm"
+                        onClick={(e) => e.target === e.currentTarget && closeModal()}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.92, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.92, opacity: 0, y: 20 }}
+                            transition={{ type: "spring", duration: 0.3 }}
+                            className="w-full max-w-md bg-[#111] border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-2xl"
+                        >
+                            {/* Ícone */}
+                            <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center ${modalAction === "terminate" ? "bg-rose-500/10 border border-rose-500/20" : "bg-amber-500/10 border border-amber-500/20"}`}>
+                                {modalAction === "terminate"
+                                    ? <XCircle className="w-7 h-7 text-rose-500" />
+                                    : <AlertCircle className="w-7 h-7 text-amber-400" />
+                                }
+                            </div>
+
+                            {/* Título */}
+                            <div className="text-center space-y-2">
+                                <p className={`text-xs font-black uppercase tracking-[0.4em] ${modalAction === "terminate" ? "text-rose-500" : "text-amber-400"}`}>
+                                    {modalAction === "terminate" ? t("admin_confirm_terminate") : t("admin_confirm_reject")}
+                                </p>
+                                <p className="text-xl font-black text-white">{modalUser.name || modalUser.email}</p>
+                                <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">{modalUser.email}</p>
+                            </div>
+
+                            {/* Aviso */}
+                            <div className={`p-4 rounded-2xl ${modalAction === "terminate" ? "bg-rose-500/5 border border-rose-500/10" : "bg-amber-500/5 border border-amber-500/10"}`}>
+                                <p className={`text-[9px] font-black uppercase tracking-widest leading-relaxed ${modalAction === "terminate" ? "text-rose-400/70" : "text-amber-400/70"}`}>
+                                    {modalAction === "terminate"
+                                        ? t("admin_terminate_warning")
+                                        : t("admin_reject_warning")}
+                                </p>
+                            </div>
+
+                            {/* Campo de confirmação */}
+                            <div className="space-y-2">
+                                <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">
+                                    {t("admin_type_to_confirm")}: <span className="text-white">{modalConfirmWord.toUpperCase()}</span>
+                                </p>
+                                <input
+                                    type="text"
+                                    value={modalConfirmText}
+                                    onChange={e => setModalConfirmText(e.target.value.toUpperCase())}
+                                    placeholder={modalConfirmWord.toUpperCase()}
+                                    className="w-full h-12 px-5 rounded-2xl bg-white/[0.03] border border-white/10 focus:border-white/20 outline-none text-white font-black text-sm uppercase tracking-widest placeholder:text-white/10 transition-all"
+                                    autoFocus
+                                />
+                            </div>
+
+                            {/* Ações */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <button onClick={closeModal}
+                                    className="py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-white/10 text-[#A7A7A7] hover:text-white hover:border-white/20 transition-all">
+                                    {t("cancel")}
+                                </button>
+                                <button
+                                    onClick={handleModalConfirm}
+                                    disabled={modalConfirmText !== modalConfirmWord.toUpperCase() || modalLoading}
+                                    className={`py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${modalAction === "terminate" ? "bg-rose-500 text-white hover:bg-rose-400" : "bg-amber-500 text-black hover:bg-amber-400"}`}>
+                                    {modalLoading
+                                        ? <><RefreshCw className="w-4 h-4 animate-spin" /> {t("processing")}</>
+                                        : (modalAction === "terminate" ? t("terminate") : t("admin_reject"))}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
             </AnimatePresence>
         </div>
     );

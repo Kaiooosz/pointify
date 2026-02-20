@@ -213,10 +213,23 @@ export async function terminateUser(adminId: string, userId: string) {
             where: { id: userId },
             data: { status: "TERMINATED" }
         });
-        await logAdminAction(adminId, "TERMINATE_USER", {}, userId);
+        await logAdminAction(adminId, "TERMINATE_USER", { reason: "Admin action" }, userId);
         return { success: true };
     } catch (error) {
         return { success: false, error: "Failed to terminate user" };
+    }
+}
+
+export async function rejectUser(adminId: string, userId: string) {
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { status: "BLOCKED", kycStatus: "REJECTED" }
+        });
+        await logAdminAction(adminId, "REJECT_USER", { reason: "KYC/Compliance review failed" }, userId);
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: "Failed to reject user" };
     }
 }
 
