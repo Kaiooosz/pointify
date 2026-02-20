@@ -2,6 +2,29 @@
 
 import { signIn } from "@/lib/auth";
 import { AuthError } from "next-auth";
+import prisma from "@/lib/prisma";
+
+export async function checkEmailStatus(email: string): Promise<{
+    exists: boolean;
+    status?: string;
+}> {
+    if (!email) return { exists: false };
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: normalizedEmail },
+            select: { status: true },
+        });
+
+        if (!user) return { exists: false };
+
+        return { exists: true, status: user.status };
+    } catch {
+        return { exists: false };
+    }
+}
 
 export async function loginAction(formData: FormData) {
     try {
@@ -24,12 +47,10 @@ export async function loginAction(formData: FormData) {
                     return { success: false, error: "Ocorreu um erro ao tentar entrar. Tente novamente." };
             }
         }
-        // Next.js redirect throws an error, so we need to rethrow it or handle it
         if ((error as any).message === "NEXT_REDIRECT") {
             throw error;
         }
 
-        // Handle other errors
         return { success: false, error: "Conexão falhou. Verifique sua rede." };
     }
 }

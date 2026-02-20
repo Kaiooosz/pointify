@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/ui/logo";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowLeft, ShieldCheck, AlertCircle, RefreshCw, Zap, User, Mail, Smartphone, Instagram, Send, CheckCircle2, ArrowRight } from "lucide-react";
@@ -19,6 +20,7 @@ export default function RegisterPage() {
     const { t } = useLanguage();
     const router = useRouter();
 
+    const searchParams = useSearchParams();
     const [step, setStep] = useState(1); // 1: Name/Phone, 2: Email, 3: Code, 4: Social/Password
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -33,6 +35,15 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: ""
     });
+
+    // Pré-preencher email se vier do fluxo de login
+    useEffect(() => {
+        const emailParam = searchParams.get("email");
+        if (emailParam) {
+            setFormData(prev => ({ ...prev, email: emailParam }));
+            setStep(2); // Já tem o email, pular para step 2
+        }
+    }, [searchParams]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
