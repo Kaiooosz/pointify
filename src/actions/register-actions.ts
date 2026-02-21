@@ -17,9 +17,11 @@ export async function registerUserAction(formData: FormData) {
             return { success: false, error: "Preencha todos os campos obrigatórios." };
         }
 
+        const normalizedEmail = email.toLowerCase().trim();
+
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({
-            where: { email },
+            where: { email: normalizedEmail },
         });
 
         if (existingUser) {
@@ -32,7 +34,7 @@ export async function registerUserAction(formData: FormData) {
         await prisma.user.create({
             data: {
                 name,
-                email,
+                email: normalizedEmail,
                 phoneNumber: phone,
                 instagram: instagram || null,
                 password: hashedPassword,
@@ -44,7 +46,7 @@ export async function registerUserAction(formData: FormData) {
         });
 
         // Limpar token de verificação usado no cadastro
-        await clearVerificationToken(email);
+        await clearVerificationToken(normalizedEmail);
 
         return { success: true };
 

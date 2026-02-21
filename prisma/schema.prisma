@@ -57,10 +57,12 @@ model User {
   name          String?
   email         String    @unique
   password      String?
+  image         String?
   role          UserRole  @default(CUSTOMER)
   status        UserStatus @default(PENDING)
   
   // Custom Profile Info
+  bio           String?
   instagram     String?
   origin        String?    @default("ORGANIC")
   riskScore     Int       @default(0) // 0-100
@@ -71,8 +73,10 @@ model User {
   perTxLimit    Int       @default(500000)   // R$ 5.000,00
   
   // Balance
-  pointsBalance Int       @default(0)
+  pointsBalance  Int      @default(0)
   blockedBalance Int      @default(0)
+  usdtBalance    Int      @default(0) // cents (100 = 1 USDT)
+  btcBalance     BigInt   @default(0) // sats
   
   // Auth & Security
   twoFactorEnabled Boolean @default(false)
@@ -87,6 +91,7 @@ model User {
   
   // Relationships
   transactions   Transaction[]
+  pixKeys        PixKey[]
   adminLogs      AdminLog[]     @relation("ResponsibleAdmin")
   actionLogs     AdminLog[]     @relation("TargetUser")
   partner        Partner?       @relation(name: "PartnerOwner")
@@ -264,4 +269,36 @@ model Notification {
 
   @@index([userId])
   @@index([createdAt])
+}
+
+enum PixKeyType {
+  CPF
+  CNPJ
+  EMAIL
+  PHONE
+  RANDOM
+  BTC
+  USDT
+}
+
+enum PixKeyCategory {
+  RECEIVING
+  WITHDRAWAL
+}
+
+model PixKey {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key       String          @unique
+  type      PixKeyType
+  network   String?         // For Crypto Wallets (ERC20, TRC20, etc.)
+  category  PixKeyCategory  @default(RECEIVING)
+  label     String?         // Optional name for the key
+  isDefault Boolean         @default(false)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([key])
 }

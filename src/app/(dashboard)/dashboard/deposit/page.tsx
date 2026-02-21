@@ -86,8 +86,8 @@ export default function DepositPage() {
                         exit={{ opacity: 0, y: -10 }}
                         className="px-4"
                     >
-                        <Card className="border border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden bg-[#121212]">
-                            <CardHeader className="bg-white/[0.02] p-8 border-b border-white/5">
+                        <Card className="border border-[#1DB954]/20 shadow-[0_0_50px_rgba(29,185,84,0.05)] rounded-[2.5rem] overflow-hidden bg-[#0A0A0A]">
+                            <CardHeader className="bg-white/[0.02] p-8 border-b border-[#1DB954]/10">
                                 <CardTitle className="text-white font-black uppercase tracking-[0.2em] text-xs flex items-center gap-3">
                                     <QrCode className="w-5 h-5 text-[#1DB954]" />
                                     Gerar QR Code PIX
@@ -98,7 +98,7 @@ export default function DepositPage() {
                                     <div className="space-y-4">
                                         <label className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-2 leading-none">Valor (BRL)</label>
                                         <div className="relative group">
-                                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1DB954] font-black text-xl">R$</span>
+                                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-white font-black text-xl">R$</span>
                                             <Input
                                                 type="number"
                                                 step="0.01"
@@ -106,7 +106,7 @@ export default function DepositPage() {
                                                 placeholder="0,00"
                                                 value={amount}
                                                 onChange={(e) => setAmount(e.target.value)}
-                                                className="pl-16 h-20 rounded-full text-3xl font-black border-white/5 bg-[#181818] text-white focus:ring-[#1DB954]/20 transition-all placeholder:text-white/5"
+                                                className="pl-16 h-20 rounded-full text-3xl font-black border-[#1DB954]/10 bg-[#181818] text-white focus:ring-white/10 transition-all placeholder:text-white/5"
                                                 autoFocus
                                             />
                                         </div>
@@ -119,7 +119,7 @@ export default function DepositPage() {
                                     <Button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full h-16 rounded-full bg-[#1DB954] hover:bg-[#1ED760] text-black font-black uppercase tracking-[0.3em] text-xs shadow-[0_15px_40px_rgba(29,185,84,0.2)] transition-all hover:scale-[1.02] border-none"
+                                        className="w-full h-16 rounded-full bg-[#1DB954] hover:bg-[#1ED760] text-black font-black uppercase tracking-[0.3em] text-xs transition-all hover:scale-[1.02] border-none shadow-[0_15px_40px_rgba(29,185,84,0.1)]"
                                     >
                                         {loading ? "Processando..." : "Gerar Pagamento"}
                                     </Button>
@@ -137,11 +137,11 @@ export default function DepositPage() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         className="space-y-6 px-4"
                     >
-                        <Card className="border border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden bg-[#121212]">
+                        <Card className="border border-[#1DB954]/20 shadow-[0_0_50px_rgba(29,185,84,0.05)] rounded-[2.5rem] overflow-hidden bg-[#0A0A0A]">
                             <CardContent className="p-12 flex flex-col items-center text-center">
                                 <div className="mb-10 relative">
-                                    <div className="absolute inset-0 bg-[#1DB954]/10 blur-[60px] rounded-full" />
-                                    <div className="relative bg-white p-6 rounded-[2.5rem] shadow-2xl border-4 border-[#1DB954]/20">
+                                    <div className="absolute inset-0 bg-white/5 blur-[60px]" />
+                                    <div className="relative bg-white p-6 rounded-[2.5rem] shadow-2xl border-4 border-[#1DB954]/10">
                                         <img src={pixData.qrCode} alt="PIX QR" className="w-56 h-56 rounded-2xl mix-blend-multiply" />
                                     </div>
                                 </div>
@@ -152,7 +152,7 @@ export default function DepositPage() {
                                 </div>
 
                                 <div className="w-full space-y-4">
-                                    <div className="flex items-center gap-3 p-5 bg-[#181818] rounded-full border border-white/5 overflow-hidden">
+                                    <div className="flex items-center gap-3 p-5 bg-[#181818] rounded-full border border-[#1DB954]/10 overflow-hidden">
                                         <code className="flex-1 text-[10px] font-black text-[#A7A7A7] truncate text-left uppercase tracking-widest px-2">{pixData.copyPaste}</code>
                                         <Button size="icon" variant="ghost" className="shrink-0 hover:bg-white/5 rounded-full" onClick={copyToClipboard}>
                                             {copied ? <CheckCircle2 className="w-5 h-5 text-[#1DB954]" /> : <Copy className="w-5 h-5 text-[#A7A7A7]" />}
@@ -160,21 +160,21 @@ export default function DepositPage() {
                                     </div>
                                     <Button
                                         onClick={copyToClipboard}
-                                        className="w-full h-14 rounded-full font-black uppercase text-[10px] tracking-[0.2em] bg-white text-black hover:bg-white/90 border-none transition-all shadow-xl"
+                                        className="w-full h-14 rounded-full font-black uppercase text-[10px] tracking-[0.2em] bg-[#1DB954] text-black hover:bg-[#1ED760] border-none transition-all shadow-xl"
                                     >
                                         Copiar Código PIX
                                     </Button>
                                 </div>
 
-                                <div className="mt-10 pt-10 border-t border-white/5 w-full space-y-6">
+                                <div className="mt-10 pt-10 border-t border-[#1DB954]/10 w-full space-y-6">
                                     <Button
                                         onClick={handleSimulatePayment}
-                                        className="w-full h-14 rounded-full bg-[#181818] text-[#1DB954] hover:bg-[#282828] font-black uppercase text-[10px] tracking-[0.2em] border border-[#1DB954]/20 transition-all"
+                                        className="w-full h-14 rounded-full bg-white/5 text-white hover:bg-white/10 font-black uppercase text-[10px] tracking-[0.2em] border border-white/10 transition-all"
                                     >
                                         Simular Pagamento (Dev)
                                     </Button>
                                     <div className="flex items-center justify-center gap-3">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-[#1DB954] animate-pulse shadow-[0_0_8px_#1DB954]" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#1DB954] animate-pulse" />
                                         <p className="text-[8px] text-[#A7A7A7] font-black uppercase tracking-[0.3em] opacity-40">Polling Infrastructure v2.4 Active</p>
                                     </div>
                                 </div>
@@ -190,13 +190,13 @@ export default function DepositPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="px-4"
                     >
-                        <Card ref={receiptRef} className="border border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden bg-[#121212] relative">
+                        <Card ref={receiptRef} className="border border-[#1DB954]/20 shadow-[0_0_60px_rgba(29,185,84,0.1)] rounded-[2.5rem] overflow-hidden bg-[#0A0A0A] relative">
                             <div className="absolute top-0 w-full h-1.5 bg-[#1DB954] shadow-[0_0_20px_#1DB954]" />
 
                             <CardContent className="p-12">
                                 <div className="flex flex-col items-center text-center space-y-8">
-                                    <div className="w-24 h-24 bg-[#1DB954] rounded-full flex items-center justify-center shadow-[0_20px_50px_rgba(29,185,84,0.3)] mb-4">
-                                        <CheckCircle2 className="w-12 h-12 text-black" />
+                                    <div className="w-24 h-24 bg-[#1DB954]/10 rounded-full flex items-center justify-center shadow-2xl mb-4">
+                                        <CheckCircle2 className="w-12 h-12 text-[#1DB954]" />
                                     </div>
 
                                     <div className="space-y-2">
@@ -207,7 +207,7 @@ export default function DepositPage() {
                                     <div className="w-full py-10 border-y border-white/5 space-y-6">
                                         <div className="flex justify-between items-center">
                                             <span className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">Valor Inserido</span>
-                                            <span className="text-2xl font-black text-[#1DB954] tracking-tight">R$ {parseFloat(amount).toFixed(2)}</span>
+                                            <span className="text-2xl font-black text-white tracking-tight">R$ {parseFloat(amount).toFixed(2)}</span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.2em]">Data e Hora</span>

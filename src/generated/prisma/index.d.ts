@@ -78,6 +78,11 @@ export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTok
  * 
  */
 export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
+/**
+ * Model PixKey
+ * 
+ */
+export type PixKey = $Result.DefaultSelection<Prisma.$PixKeyPayload>
 
 /**
  * Enums
@@ -141,6 +146,27 @@ export const KycStatus: {
 
 export type KycStatus = (typeof KycStatus)[keyof typeof KycStatus]
 
+
+export const PixKeyType: {
+  CPF: 'CPF',
+  CNPJ: 'CNPJ',
+  EMAIL: 'EMAIL',
+  PHONE: 'PHONE',
+  RANDOM: 'RANDOM',
+  BTC: 'BTC',
+  USDT: 'USDT'
+};
+
+export type PixKeyType = (typeof PixKeyType)[keyof typeof PixKeyType]
+
+
+export const PixKeyCategory: {
+  RECEIVING: 'RECEIVING',
+  WITHDRAWAL: 'WITHDRAWAL'
+};
+
+export type PixKeyCategory = (typeof PixKeyCategory)[keyof typeof PixKeyCategory]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -162,6 +188,14 @@ export const TransactionStatus: typeof $Enums.TransactionStatus
 export type KycStatus = $Enums.KycStatus
 
 export const KycStatus: typeof $Enums.KycStatus
+
+export type PixKeyType = $Enums.PixKeyType
+
+export const PixKeyType: typeof $Enums.PixKeyType
+
+export type PixKeyCategory = $Enums.PixKeyCategory
+
+export const PixKeyCategory: typeof $Enums.PixKeyCategory
 
 /**
  * ##  Prisma Client ʲˢ
@@ -409,6 +443,16 @@ export class PrismaClient<
     * ```
     */
   get notification(): Prisma.NotificationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pixKey`: Exposes CRUD operations for the **PixKey** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PixKeys
+    * const pixKeys = await prisma.pixKey.findMany()
+    * ```
+    */
+  get pixKey(): Prisma.PixKeyDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -855,7 +899,8 @@ export namespace Prisma {
     Order: 'Order',
     OrderItem: 'OrderItem',
     VerificationToken: 'VerificationToken',
-    Notification: 'Notification'
+    Notification: 'Notification',
+    PixKey: 'PixKey'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -871,7 +916,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "partner" | "product" | "transaction" | "paymentLink" | "adminLog" | "systemSetting" | "cart" | "cartItem" | "order" | "orderItem" | "verificationToken" | "notification"
+      modelProps: "user" | "partner" | "product" | "transaction" | "paymentLink" | "adminLog" | "systemSetting" | "cart" | "cartItem" | "order" | "orderItem" | "verificationToken" | "notification" | "pixKey"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1837,6 +1882,80 @@ export namespace Prisma {
           }
         }
       }
+      PixKey: {
+        payload: Prisma.$PixKeyPayload<ExtArgs>
+        fields: Prisma.PixKeyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PixKeyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PixKeyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>
+          }
+          findFirst: {
+            args: Prisma.PixKeyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PixKeyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>
+          }
+          findMany: {
+            args: Prisma.PixKeyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>[]
+          }
+          create: {
+            args: Prisma.PixKeyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>
+          }
+          createMany: {
+            args: Prisma.PixKeyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PixKeyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>[]
+          }
+          delete: {
+            args: Prisma.PixKeyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>
+          }
+          update: {
+            args: Prisma.PixKeyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>
+          }
+          deleteMany: {
+            args: Prisma.PixKeyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PixKeyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PixKeyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>[]
+          }
+          upsert: {
+            args: Prisma.PixKeyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PixKeyPayload>
+          }
+          aggregate: {
+            args: Prisma.PixKeyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePixKey>
+          }
+          groupBy: {
+            args: Prisma.PixKeyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PixKeyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PixKeyCountArgs<ExtArgs>
+            result: $Utils.Optional<PixKeyCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1958,6 +2077,7 @@ export namespace Prisma {
     orderItem?: OrderItemOmit
     verificationToken?: VerificationTokenOmit
     notification?: NotificationOmit
+    pixKey?: PixKeyOmit
   }
 
   /* Types for Logging */
@@ -2039,6 +2159,7 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     transactions: number
+    pixKeys: number
     adminLogs: number
     actionLogs: number
     carts: number
@@ -2048,6 +2169,7 @@ export namespace Prisma {
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
+    pixKeys?: boolean | UserCountOutputTypeCountPixKeysArgs
     adminLogs?: boolean | UserCountOutputTypeCountAdminLogsArgs
     actionLogs?: boolean | UserCountOutputTypeCountActionLogsArgs
     carts?: boolean | UserCountOutputTypeCountCartsArgs
@@ -2071,6 +2193,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPixKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PixKeyWhereInput
   }
 
   /**
@@ -2265,6 +2394,8 @@ export namespace Prisma {
     perTxLimit: number | null
     pointsBalance: number | null
     blockedBalance: number | null
+    usdtBalance: number | null
+    btcBalance: number | null
   }
 
   export type UserSumAggregateOutputType = {
@@ -2274,6 +2405,8 @@ export namespace Prisma {
     perTxLimit: number | null
     pointsBalance: number | null
     blockedBalance: number | null
+    usdtBalance: number | null
+    btcBalance: bigint | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -2281,8 +2414,10 @@ export namespace Prisma {
     name: string | null
     email: string | null
     password: string | null
+    image: string | null
     role: $Enums.UserRole | null
     status: $Enums.UserStatus | null
+    bio: string | null
     instagram: string | null
     origin: string | null
     riskScore: number | null
@@ -2291,6 +2426,8 @@ export namespace Prisma {
     perTxLimit: number | null
     pointsBalance: number | null
     blockedBalance: number | null
+    usdtBalance: number | null
+    btcBalance: bigint | null
     twoFactorEnabled: boolean | null
     twoFactorSecret: string | null
     lastIp: string | null
@@ -2307,8 +2444,10 @@ export namespace Prisma {
     name: string | null
     email: string | null
     password: string | null
+    image: string | null
     role: $Enums.UserRole | null
     status: $Enums.UserStatus | null
+    bio: string | null
     instagram: string | null
     origin: string | null
     riskScore: number | null
@@ -2317,6 +2456,8 @@ export namespace Prisma {
     perTxLimit: number | null
     pointsBalance: number | null
     blockedBalance: number | null
+    usdtBalance: number | null
+    btcBalance: bigint | null
     twoFactorEnabled: boolean | null
     twoFactorSecret: string | null
     lastIp: string | null
@@ -2333,8 +2474,10 @@ export namespace Prisma {
     name: number
     email: number
     password: number
+    image: number
     role: number
     status: number
+    bio: number
     instagram: number
     origin: number
     riskScore: number
@@ -2343,6 +2486,8 @@ export namespace Prisma {
     perTxLimit: number
     pointsBalance: number
     blockedBalance: number
+    usdtBalance: number
+    btcBalance: number
     twoFactorEnabled: number
     twoFactorSecret: number
     lastIp: number
@@ -2363,6 +2508,8 @@ export namespace Prisma {
     perTxLimit?: true
     pointsBalance?: true
     blockedBalance?: true
+    usdtBalance?: true
+    btcBalance?: true
   }
 
   export type UserSumAggregateInputType = {
@@ -2372,6 +2519,8 @@ export namespace Prisma {
     perTxLimit?: true
     pointsBalance?: true
     blockedBalance?: true
+    usdtBalance?: true
+    btcBalance?: true
   }
 
   export type UserMinAggregateInputType = {
@@ -2379,8 +2528,10 @@ export namespace Prisma {
     name?: true
     email?: true
     password?: true
+    image?: true
     role?: true
     status?: true
+    bio?: true
     instagram?: true
     origin?: true
     riskScore?: true
@@ -2389,6 +2540,8 @@ export namespace Prisma {
     perTxLimit?: true
     pointsBalance?: true
     blockedBalance?: true
+    usdtBalance?: true
+    btcBalance?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     lastIp?: true
@@ -2405,8 +2558,10 @@ export namespace Prisma {
     name?: true
     email?: true
     password?: true
+    image?: true
     role?: true
     status?: true
+    bio?: true
     instagram?: true
     origin?: true
     riskScore?: true
@@ -2415,6 +2570,8 @@ export namespace Prisma {
     perTxLimit?: true
     pointsBalance?: true
     blockedBalance?: true
+    usdtBalance?: true
+    btcBalance?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     lastIp?: true
@@ -2431,8 +2588,10 @@ export namespace Prisma {
     name?: true
     email?: true
     password?: true
+    image?: true
     role?: true
     status?: true
+    bio?: true
     instagram?: true
     origin?: true
     riskScore?: true
@@ -2441,6 +2600,8 @@ export namespace Prisma {
     perTxLimit?: true
     pointsBalance?: true
     blockedBalance?: true
+    usdtBalance?: true
+    btcBalance?: true
     twoFactorEnabled?: true
     twoFactorSecret?: true
     lastIp?: true
@@ -2544,8 +2705,10 @@ export namespace Prisma {
     name: string | null
     email: string
     password: string | null
+    image: string | null
     role: $Enums.UserRole
     status: $Enums.UserStatus
+    bio: string | null
     instagram: string | null
     origin: string | null
     riskScore: number
@@ -2554,6 +2717,8 @@ export namespace Prisma {
     perTxLimit: number
     pointsBalance: number
     blockedBalance: number
+    usdtBalance: number
+    btcBalance: bigint
     twoFactorEnabled: boolean
     twoFactorSecret: string | null
     lastIp: string | null
@@ -2589,8 +2754,10 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     password?: boolean
+    image?: boolean
     role?: boolean
     status?: boolean
+    bio?: boolean
     instagram?: boolean
     origin?: boolean
     riskScore?: boolean
@@ -2599,6 +2766,8 @@ export namespace Prisma {
     perTxLimit?: boolean
     pointsBalance?: boolean
     blockedBalance?: boolean
+    usdtBalance?: boolean
+    btcBalance?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     lastIp?: boolean
@@ -2609,6 +2778,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     transactions?: boolean | User$transactionsArgs<ExtArgs>
+    pixKeys?: boolean | User$pixKeysArgs<ExtArgs>
     adminLogs?: boolean | User$adminLogsArgs<ExtArgs>
     actionLogs?: boolean | User$actionLogsArgs<ExtArgs>
     partner?: boolean | User$partnerArgs<ExtArgs>
@@ -2623,8 +2793,10 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     password?: boolean
+    image?: boolean
     role?: boolean
     status?: boolean
+    bio?: boolean
     instagram?: boolean
     origin?: boolean
     riskScore?: boolean
@@ -2633,6 +2805,8 @@ export namespace Prisma {
     perTxLimit?: boolean
     pointsBalance?: boolean
     blockedBalance?: boolean
+    usdtBalance?: boolean
+    btcBalance?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     lastIp?: boolean
@@ -2649,8 +2823,10 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     password?: boolean
+    image?: boolean
     role?: boolean
     status?: boolean
+    bio?: boolean
     instagram?: boolean
     origin?: boolean
     riskScore?: boolean
@@ -2659,6 +2835,8 @@ export namespace Prisma {
     perTxLimit?: boolean
     pointsBalance?: boolean
     blockedBalance?: boolean
+    usdtBalance?: boolean
+    btcBalance?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     lastIp?: boolean
@@ -2675,8 +2853,10 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     password?: boolean
+    image?: boolean
     role?: boolean
     status?: boolean
+    bio?: boolean
     instagram?: boolean
     origin?: boolean
     riskScore?: boolean
@@ -2685,6 +2865,8 @@ export namespace Prisma {
     perTxLimit?: boolean
     pointsBalance?: boolean
     blockedBalance?: boolean
+    usdtBalance?: boolean
+    btcBalance?: boolean
     twoFactorEnabled?: boolean
     twoFactorSecret?: boolean
     lastIp?: boolean
@@ -2696,9 +2878,10 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "status" | "instagram" | "origin" | "riskScore" | "dailyLimit" | "monthlyLimit" | "perTxLimit" | "pointsBalance" | "blockedBalance" | "twoFactorEnabled" | "twoFactorSecret" | "lastIp" | "lastLogin" | "kycStatus" | "documentId" | "phoneNumber" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "image" | "role" | "status" | "bio" | "instagram" | "origin" | "riskScore" | "dailyLimit" | "monthlyLimit" | "perTxLimit" | "pointsBalance" | "blockedBalance" | "usdtBalance" | "btcBalance" | "twoFactorEnabled" | "twoFactorSecret" | "lastIp" | "lastLogin" | "kycStatus" | "documentId" | "phoneNumber" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transactions?: boolean | User$transactionsArgs<ExtArgs>
+    pixKeys?: boolean | User$pixKeysArgs<ExtArgs>
     adminLogs?: boolean | User$adminLogsArgs<ExtArgs>
     actionLogs?: boolean | User$actionLogsArgs<ExtArgs>
     partner?: boolean | User$partnerArgs<ExtArgs>
@@ -2714,6 +2897,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
+      pixKeys: Prisma.$PixKeyPayload<ExtArgs>[]
       adminLogs: Prisma.$AdminLogPayload<ExtArgs>[]
       actionLogs: Prisma.$AdminLogPayload<ExtArgs>[]
       partner: Prisma.$PartnerPayload<ExtArgs> | null
@@ -2726,8 +2910,10 @@ export namespace Prisma {
       name: string | null
       email: string
       password: string | null
+      image: string | null
       role: $Enums.UserRole
       status: $Enums.UserStatus
+      bio: string | null
       instagram: string | null
       origin: string | null
       riskScore: number
@@ -2736,6 +2922,8 @@ export namespace Prisma {
       perTxLimit: number
       pointsBalance: number
       blockedBalance: number
+      usdtBalance: number
+      btcBalance: bigint
       twoFactorEnabled: boolean
       twoFactorSecret: string | null
       lastIp: string | null
@@ -3140,6 +3328,7 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     transactions<T extends User$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    pixKeys<T extends User$pixKeysArgs<ExtArgs> = {}>(args?: Subset<T, User$pixKeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     adminLogs<T extends User$adminLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$adminLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     actionLogs<T extends User$actionLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$actionLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     partner<T extends User$partnerArgs<ExtArgs> = {}>(args?: Subset<T, User$partnerArgs<ExtArgs>>): Prisma__PartnerClient<$Result.GetResult<Prisma.$PartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -3179,8 +3368,10 @@ export namespace Prisma {
     readonly name: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
+    readonly image: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'UserRole'>
     readonly status: FieldRef<"User", 'UserStatus'>
+    readonly bio: FieldRef<"User", 'String'>
     readonly instagram: FieldRef<"User", 'String'>
     readonly origin: FieldRef<"User", 'String'>
     readonly riskScore: FieldRef<"User", 'Int'>
@@ -3189,6 +3380,8 @@ export namespace Prisma {
     readonly perTxLimit: FieldRef<"User", 'Int'>
     readonly pointsBalance: FieldRef<"User", 'Int'>
     readonly blockedBalance: FieldRef<"User", 'Int'>
+    readonly usdtBalance: FieldRef<"User", 'Int'>
+    readonly btcBalance: FieldRef<"User", 'BigInt'>
     readonly twoFactorEnabled: FieldRef<"User", 'Boolean'>
     readonly twoFactorSecret: FieldRef<"User", 'String'>
     readonly lastIp: FieldRef<"User", 'String'>
@@ -3607,6 +3800,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * User.pixKeys
+   */
+  export type User$pixKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    where?: PixKeyWhereInput
+    orderBy?: PixKeyOrderByWithRelationInput | PixKeyOrderByWithRelationInput[]
+    cursor?: PixKeyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PixKeyScalarFieldEnum | PixKeyScalarFieldEnum[]
   }
 
   /**
@@ -17083,6 +17300,1129 @@ export namespace Prisma {
 
 
   /**
+   * Model PixKey
+   */
+
+  export type AggregatePixKey = {
+    _count: PixKeyCountAggregateOutputType | null
+    _min: PixKeyMinAggregateOutputType | null
+    _max: PixKeyMaxAggregateOutputType | null
+  }
+
+  export type PixKeyMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    key: string | null
+    type: $Enums.PixKeyType | null
+    network: string | null
+    category: $Enums.PixKeyCategory | null
+    label: string | null
+    isDefault: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PixKeyMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    key: string | null
+    type: $Enums.PixKeyType | null
+    network: string | null
+    category: $Enums.PixKeyCategory | null
+    label: string | null
+    isDefault: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PixKeyCountAggregateOutputType = {
+    id: number
+    userId: number
+    key: number
+    type: number
+    network: number
+    category: number
+    label: number
+    isDefault: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PixKeyMinAggregateInputType = {
+    id?: true
+    userId?: true
+    key?: true
+    type?: true
+    network?: true
+    category?: true
+    label?: true
+    isDefault?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PixKeyMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    key?: true
+    type?: true
+    network?: true
+    category?: true
+    label?: true
+    isDefault?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PixKeyCountAggregateInputType = {
+    id?: true
+    userId?: true
+    key?: true
+    type?: true
+    network?: true
+    category?: true
+    label?: true
+    isDefault?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PixKeyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PixKey to aggregate.
+     */
+    where?: PixKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PixKeys to fetch.
+     */
+    orderBy?: PixKeyOrderByWithRelationInput | PixKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PixKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PixKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PixKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PixKeys
+    **/
+    _count?: true | PixKeyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PixKeyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PixKeyMaxAggregateInputType
+  }
+
+  export type GetPixKeyAggregateType<T extends PixKeyAggregateArgs> = {
+        [P in keyof T & keyof AggregatePixKey]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePixKey[P]>
+      : GetScalarType<T[P], AggregatePixKey[P]>
+  }
+
+
+
+
+  export type PixKeyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PixKeyWhereInput
+    orderBy?: PixKeyOrderByWithAggregationInput | PixKeyOrderByWithAggregationInput[]
+    by: PixKeyScalarFieldEnum[] | PixKeyScalarFieldEnum
+    having?: PixKeyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PixKeyCountAggregateInputType | true
+    _min?: PixKeyMinAggregateInputType
+    _max?: PixKeyMaxAggregateInputType
+  }
+
+  export type PixKeyGroupByOutputType = {
+    id: string
+    userId: string
+    key: string
+    type: $Enums.PixKeyType
+    network: string | null
+    category: $Enums.PixKeyCategory
+    label: string | null
+    isDefault: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: PixKeyCountAggregateOutputType | null
+    _min: PixKeyMinAggregateOutputType | null
+    _max: PixKeyMaxAggregateOutputType | null
+  }
+
+  type GetPixKeyGroupByPayload<T extends PixKeyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PixKeyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PixKeyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PixKeyGroupByOutputType[P]>
+            : GetScalarType<T[P], PixKeyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PixKeySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    key?: boolean
+    type?: boolean
+    network?: boolean
+    category?: boolean
+    label?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pixKey"]>
+
+  export type PixKeySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    key?: boolean
+    type?: boolean
+    network?: boolean
+    category?: boolean
+    label?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pixKey"]>
+
+  export type PixKeySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    key?: boolean
+    type?: boolean
+    network?: boolean
+    category?: boolean
+    label?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pixKey"]>
+
+  export type PixKeySelectScalar = {
+    id?: boolean
+    userId?: boolean
+    key?: boolean
+    type?: boolean
+    network?: boolean
+    category?: boolean
+    label?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PixKeyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "key" | "type" | "network" | "category" | "label" | "isDefault" | "createdAt" | "updatedAt", ExtArgs["result"]["pixKey"]>
+  export type PixKeyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PixKeyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PixKeyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $PixKeyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PixKey"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      key: string
+      type: $Enums.PixKeyType
+      network: string | null
+      category: $Enums.PixKeyCategory
+      label: string | null
+      isDefault: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["pixKey"]>
+    composites: {}
+  }
+
+  type PixKeyGetPayload<S extends boolean | null | undefined | PixKeyDefaultArgs> = $Result.GetResult<Prisma.$PixKeyPayload, S>
+
+  type PixKeyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PixKeyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PixKeyCountAggregateInputType | true
+    }
+
+  export interface PixKeyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PixKey'], meta: { name: 'PixKey' } }
+    /**
+     * Find zero or one PixKey that matches the filter.
+     * @param {PixKeyFindUniqueArgs} args - Arguments to find a PixKey
+     * @example
+     * // Get one PixKey
+     * const pixKey = await prisma.pixKey.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PixKeyFindUniqueArgs>(args: SelectSubset<T, PixKeyFindUniqueArgs<ExtArgs>>): Prisma__PixKeyClient<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PixKey that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PixKeyFindUniqueOrThrowArgs} args - Arguments to find a PixKey
+     * @example
+     * // Get one PixKey
+     * const pixKey = await prisma.pixKey.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PixKeyFindUniqueOrThrowArgs>(args: SelectSubset<T, PixKeyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PixKeyClient<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PixKey that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PixKeyFindFirstArgs} args - Arguments to find a PixKey
+     * @example
+     * // Get one PixKey
+     * const pixKey = await prisma.pixKey.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PixKeyFindFirstArgs>(args?: SelectSubset<T, PixKeyFindFirstArgs<ExtArgs>>): Prisma__PixKeyClient<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PixKey that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PixKeyFindFirstOrThrowArgs} args - Arguments to find a PixKey
+     * @example
+     * // Get one PixKey
+     * const pixKey = await prisma.pixKey.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PixKeyFindFirstOrThrowArgs>(args?: SelectSubset<T, PixKeyFindFirstOrThrowArgs<ExtArgs>>): Prisma__PixKeyClient<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PixKeys that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PixKeyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PixKeys
+     * const pixKeys = await prisma.pixKey.findMany()
+     * 
+     * // Get first 10 PixKeys
+     * const pixKeys = await prisma.pixKey.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pixKeyWithIdOnly = await prisma.pixKey.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PixKeyFindManyArgs>(args?: SelectSubset<T, PixKeyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PixKey.
+     * @param {PixKeyCreateArgs} args - Arguments to create a PixKey.
+     * @example
+     * // Create one PixKey
+     * const PixKey = await prisma.pixKey.create({
+     *   data: {
+     *     // ... data to create a PixKey
+     *   }
+     * })
+     * 
+     */
+    create<T extends PixKeyCreateArgs>(args: SelectSubset<T, PixKeyCreateArgs<ExtArgs>>): Prisma__PixKeyClient<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PixKeys.
+     * @param {PixKeyCreateManyArgs} args - Arguments to create many PixKeys.
+     * @example
+     * // Create many PixKeys
+     * const pixKey = await prisma.pixKey.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PixKeyCreateManyArgs>(args?: SelectSubset<T, PixKeyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PixKeys and returns the data saved in the database.
+     * @param {PixKeyCreateManyAndReturnArgs} args - Arguments to create many PixKeys.
+     * @example
+     * // Create many PixKeys
+     * const pixKey = await prisma.pixKey.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PixKeys and only return the `id`
+     * const pixKeyWithIdOnly = await prisma.pixKey.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PixKeyCreateManyAndReturnArgs>(args?: SelectSubset<T, PixKeyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PixKey.
+     * @param {PixKeyDeleteArgs} args - Arguments to delete one PixKey.
+     * @example
+     * // Delete one PixKey
+     * const PixKey = await prisma.pixKey.delete({
+     *   where: {
+     *     // ... filter to delete one PixKey
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PixKeyDeleteArgs>(args: SelectSubset<T, PixKeyDeleteArgs<ExtArgs>>): Prisma__PixKeyClient<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PixKey.
+     * @param {PixKeyUpdateArgs} args - Arguments to update one PixKey.
+     * @example
+     * // Update one PixKey
+     * const pixKey = await prisma.pixKey.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PixKeyUpdateArgs>(args: SelectSubset<T, PixKeyUpdateArgs<ExtArgs>>): Prisma__PixKeyClient<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PixKeys.
+     * @param {PixKeyDeleteManyArgs} args - Arguments to filter PixKeys to delete.
+     * @example
+     * // Delete a few PixKeys
+     * const { count } = await prisma.pixKey.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PixKeyDeleteManyArgs>(args?: SelectSubset<T, PixKeyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PixKeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PixKeyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PixKeys
+     * const pixKey = await prisma.pixKey.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PixKeyUpdateManyArgs>(args: SelectSubset<T, PixKeyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PixKeys and returns the data updated in the database.
+     * @param {PixKeyUpdateManyAndReturnArgs} args - Arguments to update many PixKeys.
+     * @example
+     * // Update many PixKeys
+     * const pixKey = await prisma.pixKey.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PixKeys and only return the `id`
+     * const pixKeyWithIdOnly = await prisma.pixKey.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PixKeyUpdateManyAndReturnArgs>(args: SelectSubset<T, PixKeyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PixKey.
+     * @param {PixKeyUpsertArgs} args - Arguments to update or create a PixKey.
+     * @example
+     * // Update or create a PixKey
+     * const pixKey = await prisma.pixKey.upsert({
+     *   create: {
+     *     // ... data to create a PixKey
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PixKey we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PixKeyUpsertArgs>(args: SelectSubset<T, PixKeyUpsertArgs<ExtArgs>>): Prisma__PixKeyClient<$Result.GetResult<Prisma.$PixKeyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PixKeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PixKeyCountArgs} args - Arguments to filter PixKeys to count.
+     * @example
+     * // Count the number of PixKeys
+     * const count = await prisma.pixKey.count({
+     *   where: {
+     *     // ... the filter for the PixKeys we want to count
+     *   }
+     * })
+    **/
+    count<T extends PixKeyCountArgs>(
+      args?: Subset<T, PixKeyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PixKeyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PixKey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PixKeyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PixKeyAggregateArgs>(args: Subset<T, PixKeyAggregateArgs>): Prisma.PrismaPromise<GetPixKeyAggregateType<T>>
+
+    /**
+     * Group by PixKey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PixKeyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PixKeyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PixKeyGroupByArgs['orderBy'] }
+        : { orderBy?: PixKeyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PixKeyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPixKeyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PixKey model
+   */
+  readonly fields: PixKeyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PixKey.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PixKeyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PixKey model
+   */
+  interface PixKeyFieldRefs {
+    readonly id: FieldRef<"PixKey", 'String'>
+    readonly userId: FieldRef<"PixKey", 'String'>
+    readonly key: FieldRef<"PixKey", 'String'>
+    readonly type: FieldRef<"PixKey", 'PixKeyType'>
+    readonly network: FieldRef<"PixKey", 'String'>
+    readonly category: FieldRef<"PixKey", 'PixKeyCategory'>
+    readonly label: FieldRef<"PixKey", 'String'>
+    readonly isDefault: FieldRef<"PixKey", 'Boolean'>
+    readonly createdAt: FieldRef<"PixKey", 'DateTime'>
+    readonly updatedAt: FieldRef<"PixKey", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PixKey findUnique
+   */
+  export type PixKeyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which PixKey to fetch.
+     */
+    where: PixKeyWhereUniqueInput
+  }
+
+  /**
+   * PixKey findUniqueOrThrow
+   */
+  export type PixKeyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which PixKey to fetch.
+     */
+    where: PixKeyWhereUniqueInput
+  }
+
+  /**
+   * PixKey findFirst
+   */
+  export type PixKeyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which PixKey to fetch.
+     */
+    where?: PixKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PixKeys to fetch.
+     */
+    orderBy?: PixKeyOrderByWithRelationInput | PixKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PixKeys.
+     */
+    cursor?: PixKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PixKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PixKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PixKeys.
+     */
+    distinct?: PixKeyScalarFieldEnum | PixKeyScalarFieldEnum[]
+  }
+
+  /**
+   * PixKey findFirstOrThrow
+   */
+  export type PixKeyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which PixKey to fetch.
+     */
+    where?: PixKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PixKeys to fetch.
+     */
+    orderBy?: PixKeyOrderByWithRelationInput | PixKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PixKeys.
+     */
+    cursor?: PixKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PixKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PixKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PixKeys.
+     */
+    distinct?: PixKeyScalarFieldEnum | PixKeyScalarFieldEnum[]
+  }
+
+  /**
+   * PixKey findMany
+   */
+  export type PixKeyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which PixKeys to fetch.
+     */
+    where?: PixKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PixKeys to fetch.
+     */
+    orderBy?: PixKeyOrderByWithRelationInput | PixKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PixKeys.
+     */
+    cursor?: PixKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PixKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PixKeys.
+     */
+    skip?: number
+    distinct?: PixKeyScalarFieldEnum | PixKeyScalarFieldEnum[]
+  }
+
+  /**
+   * PixKey create
+   */
+  export type PixKeyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PixKey.
+     */
+    data: XOR<PixKeyCreateInput, PixKeyUncheckedCreateInput>
+  }
+
+  /**
+   * PixKey createMany
+   */
+  export type PixKeyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PixKeys.
+     */
+    data: PixKeyCreateManyInput | PixKeyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PixKey createManyAndReturn
+   */
+  export type PixKeyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * The data used to create many PixKeys.
+     */
+    data: PixKeyCreateManyInput | PixKeyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PixKey update
+   */
+  export type PixKeyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PixKey.
+     */
+    data: XOR<PixKeyUpdateInput, PixKeyUncheckedUpdateInput>
+    /**
+     * Choose, which PixKey to update.
+     */
+    where: PixKeyWhereUniqueInput
+  }
+
+  /**
+   * PixKey updateMany
+   */
+  export type PixKeyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PixKeys.
+     */
+    data: XOR<PixKeyUpdateManyMutationInput, PixKeyUncheckedUpdateManyInput>
+    /**
+     * Filter which PixKeys to update
+     */
+    where?: PixKeyWhereInput
+    /**
+     * Limit how many PixKeys to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PixKey updateManyAndReturn
+   */
+  export type PixKeyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * The data used to update PixKeys.
+     */
+    data: XOR<PixKeyUpdateManyMutationInput, PixKeyUncheckedUpdateManyInput>
+    /**
+     * Filter which PixKeys to update
+     */
+    where?: PixKeyWhereInput
+    /**
+     * Limit how many PixKeys to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PixKey upsert
+   */
+  export type PixKeyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PixKey to update in case it exists.
+     */
+    where: PixKeyWhereUniqueInput
+    /**
+     * In case the PixKey found by the `where` argument doesn't exist, create a new PixKey with this data.
+     */
+    create: XOR<PixKeyCreateInput, PixKeyUncheckedCreateInput>
+    /**
+     * In case the PixKey was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PixKeyUpdateInput, PixKeyUncheckedUpdateInput>
+  }
+
+  /**
+   * PixKey delete
+   */
+  export type PixKeyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+    /**
+     * Filter which PixKey to delete.
+     */
+    where: PixKeyWhereUniqueInput
+  }
+
+  /**
+   * PixKey deleteMany
+   */
+  export type PixKeyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PixKeys to delete
+     */
+    where?: PixKeyWhereInput
+    /**
+     * Limit how many PixKeys to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PixKey without action
+   */
+  export type PixKeyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PixKey
+     */
+    select?: PixKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PixKey
+     */
+    omit?: PixKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PixKeyInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -17101,8 +18441,10 @@ export namespace Prisma {
     name: 'name',
     email: 'email',
     password: 'password',
+    image: 'image',
     role: 'role',
     status: 'status',
+    bio: 'bio',
     instagram: 'instagram',
     origin: 'origin',
     riskScore: 'riskScore',
@@ -17111,6 +18453,8 @@ export namespace Prisma {
     perTxLimit: 'perTxLimit',
     pointsBalance: 'pointsBalance',
     blockedBalance: 'blockedBalance',
+    usdtBalance: 'usdtBalance',
+    btcBalance: 'btcBalance',
     twoFactorEnabled: 'twoFactorEnabled',
     twoFactorSecret: 'twoFactorSecret',
     lastIp: 'lastIp',
@@ -17282,6 +18626,22 @@ export namespace Prisma {
   export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
+  export const PixKeyScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    key: 'key',
+    type: 'type',
+    network: 'network',
+    category: 'category',
+    label: 'label',
+    isDefault: 'isDefault',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PixKeyScalarFieldEnum = (typeof PixKeyScalarFieldEnum)[keyof typeof PixKeyScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -17368,6 +18728,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'BigInt'
+   */
+  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+  /**
+   * Reference to a field of type 'BigInt[]'
+   */
+  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -17431,6 +18805,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'PixKeyType'
+   */
+  export type EnumPixKeyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PixKeyType'>
+    
+
+
+  /**
+   * Reference to a field of type 'PixKeyType[]'
+   */
+  export type ListEnumPixKeyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PixKeyType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'PixKeyCategory'
+   */
+  export type EnumPixKeyCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PixKeyCategory'>
+    
+
+
+  /**
+   * Reference to a field of type 'PixKeyCategory[]'
+   */
+  export type ListEnumPixKeyCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PixKeyCategory[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -17455,8 +18857,10 @@ export namespace Prisma {
     name?: StringNullableFilter<"User"> | string | null
     email?: StringFilter<"User"> | string
     password?: StringNullableFilter<"User"> | string | null
+    image?: StringNullableFilter<"User"> | string | null
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    bio?: StringNullableFilter<"User"> | string | null
     instagram?: StringNullableFilter<"User"> | string | null
     origin?: StringNullableFilter<"User"> | string | null
     riskScore?: IntFilter<"User"> | number
@@ -17465,6 +18869,8 @@ export namespace Prisma {
     perTxLimit?: IntFilter<"User"> | number
     pointsBalance?: IntFilter<"User"> | number
     blockedBalance?: IntFilter<"User"> | number
+    usdtBalance?: IntFilter<"User"> | number
+    btcBalance?: BigIntFilter<"User"> | bigint | number
     twoFactorEnabled?: BoolFilter<"User"> | boolean
     twoFactorSecret?: StringNullableFilter<"User"> | string | null
     lastIp?: StringNullableFilter<"User"> | string | null
@@ -17475,6 +18881,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     transactions?: TransactionListRelationFilter
+    pixKeys?: PixKeyListRelationFilter
     adminLogs?: AdminLogListRelationFilter
     actionLogs?: AdminLogListRelationFilter
     partner?: XOR<PartnerNullableScalarRelationFilter, PartnerWhereInput> | null
@@ -17488,8 +18895,10 @@ export namespace Prisma {
     name?: SortOrderInput | SortOrder
     email?: SortOrder
     password?: SortOrderInput | SortOrder
+    image?: SortOrderInput | SortOrder
     role?: SortOrder
     status?: SortOrder
+    bio?: SortOrderInput | SortOrder
     instagram?: SortOrderInput | SortOrder
     origin?: SortOrderInput | SortOrder
     riskScore?: SortOrder
@@ -17498,6 +18907,8 @@ export namespace Prisma {
     perTxLimit?: SortOrder
     pointsBalance?: SortOrder
     blockedBalance?: SortOrder
+    usdtBalance?: SortOrder
+    btcBalance?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrderInput | SortOrder
     lastIp?: SortOrderInput | SortOrder
@@ -17508,6 +18919,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactions?: TransactionOrderByRelationAggregateInput
+    pixKeys?: PixKeyOrderByRelationAggregateInput
     adminLogs?: AdminLogOrderByRelationAggregateInput
     actionLogs?: AdminLogOrderByRelationAggregateInput
     partner?: PartnerOrderByWithRelationInput
@@ -17525,8 +18937,10 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
+    image?: StringNullableFilter<"User"> | string | null
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    bio?: StringNullableFilter<"User"> | string | null
     instagram?: StringNullableFilter<"User"> | string | null
     origin?: StringNullableFilter<"User"> | string | null
     riskScore?: IntFilter<"User"> | number
@@ -17535,6 +18949,8 @@ export namespace Prisma {
     perTxLimit?: IntFilter<"User"> | number
     pointsBalance?: IntFilter<"User"> | number
     blockedBalance?: IntFilter<"User"> | number
+    usdtBalance?: IntFilter<"User"> | number
+    btcBalance?: BigIntFilter<"User"> | bigint | number
     twoFactorEnabled?: BoolFilter<"User"> | boolean
     twoFactorSecret?: StringNullableFilter<"User"> | string | null
     lastIp?: StringNullableFilter<"User"> | string | null
@@ -17544,6 +18960,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     transactions?: TransactionListRelationFilter
+    pixKeys?: PixKeyListRelationFilter
     adminLogs?: AdminLogListRelationFilter
     actionLogs?: AdminLogListRelationFilter
     partner?: XOR<PartnerNullableScalarRelationFilter, PartnerWhereInput> | null
@@ -17557,8 +18974,10 @@ export namespace Prisma {
     name?: SortOrderInput | SortOrder
     email?: SortOrder
     password?: SortOrderInput | SortOrder
+    image?: SortOrderInput | SortOrder
     role?: SortOrder
     status?: SortOrder
+    bio?: SortOrderInput | SortOrder
     instagram?: SortOrderInput | SortOrder
     origin?: SortOrderInput | SortOrder
     riskScore?: SortOrder
@@ -17567,6 +18986,8 @@ export namespace Prisma {
     perTxLimit?: SortOrder
     pointsBalance?: SortOrder
     blockedBalance?: SortOrder
+    usdtBalance?: SortOrder
+    btcBalance?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrderInput | SortOrder
     lastIp?: SortOrderInput | SortOrder
@@ -17591,8 +19012,10 @@ export namespace Prisma {
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
     email?: StringWithAggregatesFilter<"User"> | string
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
+    image?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
     status?: EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
+    bio?: StringNullableWithAggregatesFilter<"User"> | string | null
     instagram?: StringNullableWithAggregatesFilter<"User"> | string | null
     origin?: StringNullableWithAggregatesFilter<"User"> | string | null
     riskScore?: IntWithAggregatesFilter<"User"> | number
@@ -17601,6 +19024,8 @@ export namespace Prisma {
     perTxLimit?: IntWithAggregatesFilter<"User"> | number
     pointsBalance?: IntWithAggregatesFilter<"User"> | number
     blockedBalance?: IntWithAggregatesFilter<"User"> | number
+    usdtBalance?: IntWithAggregatesFilter<"User"> | number
+    btcBalance?: BigIntWithAggregatesFilter<"User"> | bigint | number
     twoFactorEnabled?: BoolWithAggregatesFilter<"User"> | boolean
     twoFactorSecret?: StringNullableWithAggregatesFilter<"User"> | string | null
     lastIp?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -18425,13 +19850,95 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
   }
 
+  export type PixKeyWhereInput = {
+    AND?: PixKeyWhereInput | PixKeyWhereInput[]
+    OR?: PixKeyWhereInput[]
+    NOT?: PixKeyWhereInput | PixKeyWhereInput[]
+    id?: StringFilter<"PixKey"> | string
+    userId?: StringFilter<"PixKey"> | string
+    key?: StringFilter<"PixKey"> | string
+    type?: EnumPixKeyTypeFilter<"PixKey"> | $Enums.PixKeyType
+    network?: StringNullableFilter<"PixKey"> | string | null
+    category?: EnumPixKeyCategoryFilter<"PixKey"> | $Enums.PixKeyCategory
+    label?: StringNullableFilter<"PixKey"> | string | null
+    isDefault?: BoolFilter<"PixKey"> | boolean
+    createdAt?: DateTimeFilter<"PixKey"> | Date | string
+    updatedAt?: DateTimeFilter<"PixKey"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type PixKeyOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    key?: SortOrder
+    type?: SortOrder
+    network?: SortOrderInput | SortOrder
+    category?: SortOrder
+    label?: SortOrderInput | SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type PixKeyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    key?: string
+    AND?: PixKeyWhereInput | PixKeyWhereInput[]
+    OR?: PixKeyWhereInput[]
+    NOT?: PixKeyWhereInput | PixKeyWhereInput[]
+    userId?: StringFilter<"PixKey"> | string
+    type?: EnumPixKeyTypeFilter<"PixKey"> | $Enums.PixKeyType
+    network?: StringNullableFilter<"PixKey"> | string | null
+    category?: EnumPixKeyCategoryFilter<"PixKey"> | $Enums.PixKeyCategory
+    label?: StringNullableFilter<"PixKey"> | string | null
+    isDefault?: BoolFilter<"PixKey"> | boolean
+    createdAt?: DateTimeFilter<"PixKey"> | Date | string
+    updatedAt?: DateTimeFilter<"PixKey"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "key">
+
+  export type PixKeyOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    key?: SortOrder
+    type?: SortOrder
+    network?: SortOrderInput | SortOrder
+    category?: SortOrder
+    label?: SortOrderInput | SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PixKeyCountOrderByAggregateInput
+    _max?: PixKeyMaxOrderByAggregateInput
+    _min?: PixKeyMinOrderByAggregateInput
+  }
+
+  export type PixKeyScalarWhereWithAggregatesInput = {
+    AND?: PixKeyScalarWhereWithAggregatesInput | PixKeyScalarWhereWithAggregatesInput[]
+    OR?: PixKeyScalarWhereWithAggregatesInput[]
+    NOT?: PixKeyScalarWhereWithAggregatesInput | PixKeyScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PixKey"> | string
+    userId?: StringWithAggregatesFilter<"PixKey"> | string
+    key?: StringWithAggregatesFilter<"PixKey"> | string
+    type?: EnumPixKeyTypeWithAggregatesFilter<"PixKey"> | $Enums.PixKeyType
+    network?: StringNullableWithAggregatesFilter<"PixKey"> | string | null
+    category?: EnumPixKeyCategoryWithAggregatesFilter<"PixKey"> | $Enums.PixKeyCategory
+    label?: StringNullableWithAggregatesFilter<"PixKey"> | string | null
+    isDefault?: BoolWithAggregatesFilter<"PixKey"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"PixKey"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PixKey"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -18440,6 +19947,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -18450,6 +19959,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogCreateNestedManyWithoutTargetUserInput
     partner?: PartnerCreateNestedOneWithoutOwnerInput
@@ -18463,8 +19973,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -18473,6 +19985,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -18483,6 +19997,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyUncheckedCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogUncheckedCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogUncheckedCreateNestedManyWithoutTargetUserInput
     partner?: PartnerUncheckedCreateNestedOneWithoutOwnerInput
@@ -18496,8 +20011,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -18506,6 +20023,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18516,6 +20035,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUpdateOneWithoutOwnerNestedInput
@@ -18529,8 +20049,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -18539,6 +20061,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18549,6 +20073,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUncheckedUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUncheckedUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUncheckedUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUncheckedUpdateOneWithoutOwnerNestedInput
@@ -18562,8 +20087,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -18572,6 +20099,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -18588,8 +20117,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -18598,6 +20129,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18614,8 +20147,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -18624,6 +20159,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19490,6 +21027,96 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PixKeyCreateInput = {
+    id?: string
+    key: string
+    type: $Enums.PixKeyType
+    network?: string | null
+    category?: $Enums.PixKeyCategory
+    label?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutPixKeysInput
+  }
+
+  export type PixKeyUncheckedCreateInput = {
+    id?: string
+    userId: string
+    key: string
+    type: $Enums.PixKeyType
+    network?: string | null
+    category?: $Enums.PixKeyCategory
+    label?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PixKeyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    type?: EnumPixKeyTypeFieldUpdateOperationsInput | $Enums.PixKeyType
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumPixKeyCategoryFieldUpdateOperationsInput | $Enums.PixKeyCategory
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutPixKeysNestedInput
+  }
+
+  export type PixKeyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    type?: EnumPixKeyTypeFieldUpdateOperationsInput | $Enums.PixKeyType
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumPixKeyCategoryFieldUpdateOperationsInput | $Enums.PixKeyCategory
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PixKeyCreateManyInput = {
+    id?: string
+    userId: string
+    key: string
+    type: $Enums.PixKeyType
+    network?: string | null
+    category?: $Enums.PixKeyCategory
+    label?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PixKeyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    type?: EnumPixKeyTypeFieldUpdateOperationsInput | $Enums.PixKeyType
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumPixKeyCategoryFieldUpdateOperationsInput | $Enums.PixKeyCategory
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PixKeyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    type?: EnumPixKeyTypeFieldUpdateOperationsInput | $Enums.PixKeyType
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumPixKeyCategoryFieldUpdateOperationsInput | $Enums.PixKeyCategory
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -19545,6 +21172,17 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type BigIntFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -19585,6 +21223,12 @@ export namespace Prisma {
     none?: TransactionWhereInput
   }
 
+  export type PixKeyListRelationFilter = {
+    every?: PixKeyWhereInput
+    some?: PixKeyWhereInput
+    none?: PixKeyWhereInput
+  }
+
   export type AdminLogListRelationFilter = {
     every?: AdminLogWhereInput
     some?: AdminLogWhereInput
@@ -19623,6 +21267,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type PixKeyOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type AdminLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -19644,8 +21292,10 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    image?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    bio?: SortOrder
     instagram?: SortOrder
     origin?: SortOrder
     riskScore?: SortOrder
@@ -19654,6 +21304,8 @@ export namespace Prisma {
     perTxLimit?: SortOrder
     pointsBalance?: SortOrder
     blockedBalance?: SortOrder
+    usdtBalance?: SortOrder
+    btcBalance?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     lastIp?: SortOrder
@@ -19672,6 +21324,8 @@ export namespace Prisma {
     perTxLimit?: SortOrder
     pointsBalance?: SortOrder
     blockedBalance?: SortOrder
+    usdtBalance?: SortOrder
+    btcBalance?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -19679,8 +21333,10 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    image?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    bio?: SortOrder
     instagram?: SortOrder
     origin?: SortOrder
     riskScore?: SortOrder
@@ -19689,6 +21345,8 @@ export namespace Prisma {
     perTxLimit?: SortOrder
     pointsBalance?: SortOrder
     blockedBalance?: SortOrder
+    usdtBalance?: SortOrder
+    btcBalance?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     lastIp?: SortOrder
@@ -19705,8 +21363,10 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    image?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    bio?: SortOrder
     instagram?: SortOrder
     origin?: SortOrder
     riskScore?: SortOrder
@@ -19715,6 +21375,8 @@ export namespace Prisma {
     perTxLimit?: SortOrder
     pointsBalance?: SortOrder
     blockedBalance?: SortOrder
+    usdtBalance?: SortOrder
+    btcBalance?: SortOrder
     twoFactorEnabled?: SortOrder
     twoFactorSecret?: SortOrder
     lastIp?: SortOrder
@@ -19733,6 +21395,8 @@ export namespace Prisma {
     perTxLimit?: SortOrder
     pointsBalance?: SortOrder
     blockedBalance?: SortOrder
+    usdtBalance?: SortOrder
+    btcBalance?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -19805,6 +21469,22 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedBigIntFilter<$PrismaModel>
+    _min?: NestedBigIntFilter<$PrismaModel>
+    _max?: NestedBigIntFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -20375,11 +22055,91 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumPixKeyTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.PixKeyType | EnumPixKeyTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PixKeyType[] | ListEnumPixKeyTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PixKeyType[] | ListEnumPixKeyTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPixKeyTypeFilter<$PrismaModel> | $Enums.PixKeyType
+  }
+
+  export type EnumPixKeyCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.PixKeyCategory | EnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.PixKeyCategory[] | ListEnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PixKeyCategory[] | ListEnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumPixKeyCategoryFilter<$PrismaModel> | $Enums.PixKeyCategory
+  }
+
+  export type PixKeyCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    key?: SortOrder
+    type?: SortOrder
+    network?: SortOrder
+    category?: SortOrder
+    label?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PixKeyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    key?: SortOrder
+    type?: SortOrder
+    network?: SortOrder
+    category?: SortOrder
+    label?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PixKeyMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    key?: SortOrder
+    type?: SortOrder
+    network?: SortOrder
+    category?: SortOrder
+    label?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumPixKeyTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PixKeyType | EnumPixKeyTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PixKeyType[] | ListEnumPixKeyTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PixKeyType[] | ListEnumPixKeyTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPixKeyTypeWithAggregatesFilter<$PrismaModel> | $Enums.PixKeyType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPixKeyTypeFilter<$PrismaModel>
+    _max?: NestedEnumPixKeyTypeFilter<$PrismaModel>
+  }
+
+  export type EnumPixKeyCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PixKeyCategory | EnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.PixKeyCategory[] | ListEnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PixKeyCategory[] | ListEnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumPixKeyCategoryWithAggregatesFilter<$PrismaModel> | $Enums.PixKeyCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPixKeyCategoryFilter<$PrismaModel>
+    _max?: NestedEnumPixKeyCategoryFilter<$PrismaModel>
+  }
+
   export type TransactionCreateNestedManyWithoutUserInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
     createMany?: TransactionCreateManyUserInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type PixKeyCreateNestedManyWithoutUserInput = {
+    create?: XOR<PixKeyCreateWithoutUserInput, PixKeyUncheckedCreateWithoutUserInput> | PixKeyCreateWithoutUserInput[] | PixKeyUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PixKeyCreateOrConnectWithoutUserInput | PixKeyCreateOrConnectWithoutUserInput[]
+    createMany?: PixKeyCreateManyUserInputEnvelope
+    connect?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
   }
 
   export type AdminLogCreateNestedManyWithoutResponsibleInput = {
@@ -20428,6 +22188,13 @@ export namespace Prisma {
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
     createMany?: TransactionCreateManyUserInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type PixKeyUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PixKeyCreateWithoutUserInput, PixKeyUncheckedCreateWithoutUserInput> | PixKeyCreateWithoutUserInput[] | PixKeyUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PixKeyCreateOrConnectWithoutUserInput | PixKeyCreateOrConnectWithoutUserInput[]
+    createMany?: PixKeyCreateManyUserInputEnvelope
+    connect?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
   }
 
   export type AdminLogUncheckedCreateNestedManyWithoutResponsibleInput = {
@@ -20495,6 +22262,14 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type BigIntFieldUpdateOperationsInput = {
+    set?: bigint | number
+    increment?: bigint | number
+    decrement?: bigint | number
+    multiply?: bigint | number
+    divide?: bigint | number
+  }
+
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
@@ -20523,6 +22298,20 @@ export namespace Prisma {
     update?: TransactionUpdateWithWhereUniqueWithoutUserInput | TransactionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: TransactionUpdateManyWithWhereWithoutUserInput | TransactionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type PixKeyUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PixKeyCreateWithoutUserInput, PixKeyUncheckedCreateWithoutUserInput> | PixKeyCreateWithoutUserInput[] | PixKeyUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PixKeyCreateOrConnectWithoutUserInput | PixKeyCreateOrConnectWithoutUserInput[]
+    upsert?: PixKeyUpsertWithWhereUniqueWithoutUserInput | PixKeyUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PixKeyCreateManyUserInputEnvelope
+    set?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
+    disconnect?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
+    delete?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
+    connect?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
+    update?: PixKeyUpdateWithWhereUniqueWithoutUserInput | PixKeyUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PixKeyUpdateManyWithWhereWithoutUserInput | PixKeyUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PixKeyScalarWhereInput | PixKeyScalarWhereInput[]
   }
 
   export type AdminLogUpdateManyWithoutResponsibleNestedInput = {
@@ -20617,6 +22406,20 @@ export namespace Prisma {
     update?: TransactionUpdateWithWhereUniqueWithoutUserInput | TransactionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: TransactionUpdateManyWithWhereWithoutUserInput | TransactionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type PixKeyUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PixKeyCreateWithoutUserInput, PixKeyUncheckedCreateWithoutUserInput> | PixKeyCreateWithoutUserInput[] | PixKeyUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PixKeyCreateOrConnectWithoutUserInput | PixKeyCreateOrConnectWithoutUserInput[]
+    upsert?: PixKeyUpsertWithWhereUniqueWithoutUserInput | PixKeyUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PixKeyCreateManyUserInputEnvelope
+    set?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
+    disconnect?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
+    delete?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
+    connect?: PixKeyWhereUniqueInput | PixKeyWhereUniqueInput[]
+    update?: PixKeyUpdateWithWhereUniqueWithoutUserInput | PixKeyUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PixKeyUpdateManyWithWhereWithoutUserInput | PixKeyUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PixKeyScalarWhereInput | PixKeyScalarWhereInput[]
   }
 
   export type AdminLogUncheckedUpdateManyWithoutResponsibleNestedInput = {
@@ -21089,6 +22892,28 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
   }
 
+  export type UserCreateNestedOneWithoutPixKeysInput = {
+    create?: XOR<UserCreateWithoutPixKeysInput, UserUncheckedCreateWithoutPixKeysInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPixKeysInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumPixKeyTypeFieldUpdateOperationsInput = {
+    set?: $Enums.PixKeyType
+  }
+
+  export type EnumPixKeyCategoryFieldUpdateOperationsInput = {
+    set?: $Enums.PixKeyCategory
+  }
+
+  export type UserUpdateOneRequiredWithoutPixKeysNestedInput = {
+    create?: XOR<UserCreateWithoutPixKeysInput, UserUncheckedCreateWithoutPixKeysInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPixKeysInput
+    upsert?: UserUpsertWithoutPixKeysInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPixKeysInput, UserUpdateWithoutPixKeysInput>, UserUncheckedUpdateWithoutPixKeysInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -21140,6 +22965,17 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type NestedBigIntFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -21268,6 +23104,22 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
+    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
+    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedBigIntFilter<$PrismaModel>
+    _min?: NestedBigIntFilter<$PrismaModel>
+    _max?: NestedBigIntFilter<$PrismaModel>
+  }
+
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -21348,6 +23200,40 @@ export namespace Prisma {
     _max?: NestedEnumTransactionStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumPixKeyTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.PixKeyType | EnumPixKeyTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PixKeyType[] | ListEnumPixKeyTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PixKeyType[] | ListEnumPixKeyTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPixKeyTypeFilter<$PrismaModel> | $Enums.PixKeyType
+  }
+
+  export type NestedEnumPixKeyCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.PixKeyCategory | EnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.PixKeyCategory[] | ListEnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PixKeyCategory[] | ListEnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumPixKeyCategoryFilter<$PrismaModel> | $Enums.PixKeyCategory
+  }
+
+  export type NestedEnumPixKeyTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PixKeyType | EnumPixKeyTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.PixKeyType[] | ListEnumPixKeyTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PixKeyType[] | ListEnumPixKeyTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumPixKeyTypeWithAggregatesFilter<$PrismaModel> | $Enums.PixKeyType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPixKeyTypeFilter<$PrismaModel>
+    _max?: NestedEnumPixKeyTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPixKeyCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PixKeyCategory | EnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.PixKeyCategory[] | ListEnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PixKeyCategory[] | ListEnumPixKeyCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumPixKeyCategoryWithAggregatesFilter<$PrismaModel> | $Enums.PixKeyCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPixKeyCategoryFilter<$PrismaModel>
+    _max?: NestedEnumPixKeyCategoryFilter<$PrismaModel>
+  }
+
   export type TransactionCreateWithoutUserInput = {
     id?: string
     grossAmount: number
@@ -21391,6 +23277,40 @@ export namespace Prisma {
 
   export type TransactionCreateManyUserInputEnvelope = {
     data: TransactionCreateManyUserInput | TransactionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PixKeyCreateWithoutUserInput = {
+    id?: string
+    key: string
+    type: $Enums.PixKeyType
+    network?: string | null
+    category?: $Enums.PixKeyCategory
+    label?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PixKeyUncheckedCreateWithoutUserInput = {
+    id?: string
+    key: string
+    type: $Enums.PixKeyType
+    network?: string | null
+    category?: $Enums.PixKeyCategory
+    label?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PixKeyCreateOrConnectWithoutUserInput = {
+    where: PixKeyWhereUniqueInput
+    create: XOR<PixKeyCreateWithoutUserInput, PixKeyUncheckedCreateWithoutUserInput>
+  }
+
+  export type PixKeyCreateManyUserInputEnvelope = {
+    data: PixKeyCreateManyUserInput | PixKeyCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -21603,6 +23523,38 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
   }
 
+  export type PixKeyUpsertWithWhereUniqueWithoutUserInput = {
+    where: PixKeyWhereUniqueInput
+    update: XOR<PixKeyUpdateWithoutUserInput, PixKeyUncheckedUpdateWithoutUserInput>
+    create: XOR<PixKeyCreateWithoutUserInput, PixKeyUncheckedCreateWithoutUserInput>
+  }
+
+  export type PixKeyUpdateWithWhereUniqueWithoutUserInput = {
+    where: PixKeyWhereUniqueInput
+    data: XOR<PixKeyUpdateWithoutUserInput, PixKeyUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PixKeyUpdateManyWithWhereWithoutUserInput = {
+    where: PixKeyScalarWhereInput
+    data: XOR<PixKeyUpdateManyMutationInput, PixKeyUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PixKeyScalarWhereInput = {
+    AND?: PixKeyScalarWhereInput | PixKeyScalarWhereInput[]
+    OR?: PixKeyScalarWhereInput[]
+    NOT?: PixKeyScalarWhereInput | PixKeyScalarWhereInput[]
+    id?: StringFilter<"PixKey"> | string
+    userId?: StringFilter<"PixKey"> | string
+    key?: StringFilter<"PixKey"> | string
+    type?: EnumPixKeyTypeFilter<"PixKey"> | $Enums.PixKeyType
+    network?: StringNullableFilter<"PixKey"> | string | null
+    category?: EnumPixKeyCategoryFilter<"PixKey"> | $Enums.PixKeyCategory
+    label?: StringNullableFilter<"PixKey"> | string | null
+    isDefault?: BoolFilter<"PixKey"> | boolean
+    createdAt?: DateTimeFilter<"PixKey"> | Date | string
+    updatedAt?: DateTimeFilter<"PixKey"> | Date | string
+  }
+
   export type AdminLogUpsertWithWhereUniqueWithoutResponsibleInput = {
     where: AdminLogWhereUniqueInput
     update: XOR<AdminLogUpdateWithoutResponsibleInput, AdminLogUncheckedUpdateWithoutResponsibleInput>
@@ -21773,8 +23725,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -21783,6 +23737,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -21793,6 +23749,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogCreateNestedManyWithoutTargetUserInput
     carts?: CartCreateNestedManyWithoutUserInput
@@ -21805,8 +23762,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -21815,6 +23774,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -21825,6 +23786,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyUncheckedCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogUncheckedCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogUncheckedCreateNestedManyWithoutTargetUserInput
     carts?: CartUncheckedCreateNestedManyWithoutUserInput
@@ -21887,8 +23849,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -21897,6 +23861,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21907,6 +23873,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUpdateManyWithoutTargetUserNestedInput
     carts?: CartUpdateManyWithoutUserNestedInput
@@ -21919,8 +23886,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -21929,6 +23898,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21939,6 +23910,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUncheckedUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUncheckedUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUncheckedUpdateManyWithoutTargetUserNestedInput
     carts?: CartUncheckedUpdateManyWithoutUserNestedInput
@@ -22136,8 +24108,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22146,6 +24120,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22155,6 +24131,7 @@ export namespace Prisma {
     phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    pixKeys?: PixKeyCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogCreateNestedManyWithoutTargetUserInput
     partner?: PartnerCreateNestedOneWithoutOwnerInput
@@ -22168,8 +24145,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22178,6 +24157,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22187,6 +24168,7 @@ export namespace Prisma {
     phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    pixKeys?: PixKeyUncheckedCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogUncheckedCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogUncheckedCreateNestedManyWithoutTargetUserInput
     partner?: PartnerUncheckedCreateNestedOneWithoutOwnerInput
@@ -22216,8 +24198,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22226,6 +24210,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22235,6 +24221,7 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pixKeys?: PixKeyUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUpdateOneWithoutOwnerNestedInput
@@ -22248,8 +24235,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22258,6 +24247,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22267,6 +24258,7 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pixKeys?: PixKeyUncheckedUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUncheckedUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUncheckedUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUncheckedUpdateOneWithoutOwnerNestedInput
@@ -22280,8 +24272,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22290,6 +24284,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22300,6 +24296,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogCreateNestedManyWithoutTargetUserInput
     partner?: PartnerCreateNestedOneWithoutOwnerInput
@@ -22312,8 +24309,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22322,6 +24321,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22332,6 +24333,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyUncheckedCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogUncheckedCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogUncheckedCreateNestedManyWithoutTargetUserInput
     partner?: PartnerUncheckedCreateNestedOneWithoutOwnerInput
@@ -22360,8 +24362,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22370,6 +24374,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22380,6 +24386,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUpdateOneWithoutOwnerNestedInput
@@ -22392,8 +24399,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22402,6 +24411,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22412,6 +24423,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUncheckedUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUncheckedUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUncheckedUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUncheckedUpdateOneWithoutOwnerNestedInput
@@ -22424,8 +24436,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22434,6 +24448,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22444,6 +24460,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyCreateNestedManyWithoutUserInput
     actionLogs?: AdminLogCreateNestedManyWithoutTargetUserInput
     partner?: PartnerCreateNestedOneWithoutOwnerInput
     carts?: CartCreateNestedManyWithoutUserInput
@@ -22456,8 +24473,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22466,6 +24485,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22476,6 +24497,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyUncheckedCreateNestedManyWithoutUserInput
     actionLogs?: AdminLogUncheckedCreateNestedManyWithoutTargetUserInput
     partner?: PartnerUncheckedCreateNestedOneWithoutOwnerInput
     carts?: CartUncheckedCreateNestedManyWithoutUserInput
@@ -22493,8 +24515,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22503,6 +24527,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22513,6 +24539,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogCreateNestedManyWithoutResponsibleInput
     partner?: PartnerCreateNestedOneWithoutOwnerInput
     carts?: CartCreateNestedManyWithoutUserInput
@@ -22525,8 +24552,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22535,6 +24564,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22545,6 +24576,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyUncheckedCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogUncheckedCreateNestedManyWithoutResponsibleInput
     partner?: PartnerUncheckedCreateNestedOneWithoutOwnerInput
     carts?: CartUncheckedCreateNestedManyWithoutUserInput
@@ -22573,8 +24605,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22583,6 +24617,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22593,6 +24629,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUpdateManyWithoutUserNestedInput
     actionLogs?: AdminLogUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUpdateOneWithoutOwnerNestedInput
     carts?: CartUpdateManyWithoutUserNestedInput
@@ -22605,8 +24642,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22615,6 +24654,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22625,6 +24666,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUncheckedUpdateManyWithoutUserNestedInput
     actionLogs?: AdminLogUncheckedUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUncheckedUpdateOneWithoutOwnerNestedInput
     carts?: CartUncheckedUpdateManyWithoutUserNestedInput
@@ -22648,8 +24690,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22658,6 +24702,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22668,6 +24714,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUpdateManyWithoutResponsibleNestedInput
     partner?: PartnerUpdateOneWithoutOwnerNestedInput
     carts?: CartUpdateManyWithoutUserNestedInput
@@ -22680,8 +24727,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22690,6 +24739,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22700,6 +24751,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUncheckedUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUncheckedUpdateManyWithoutResponsibleNestedInput
     partner?: PartnerUncheckedUpdateOneWithoutOwnerNestedInput
     carts?: CartUncheckedUpdateManyWithoutUserNestedInput
@@ -22712,8 +24764,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22722,6 +24776,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22732,6 +24788,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogCreateNestedManyWithoutTargetUserInput
     partner?: PartnerCreateNestedOneWithoutOwnerInput
@@ -22744,8 +24801,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -22754,6 +24813,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -22764,6 +24825,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyUncheckedCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogUncheckedCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogUncheckedCreateNestedManyWithoutTargetUserInput
     partner?: PartnerUncheckedCreateNestedOneWithoutOwnerInput
@@ -22814,8 +24876,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22824,6 +24888,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22834,6 +24900,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUpdateOneWithoutOwnerNestedInput
@@ -22846,8 +24913,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -22856,6 +24925,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -22866,6 +24937,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUncheckedUpdateManyWithoutUserNestedInput
     adminLogs?: AdminLogUncheckedUpdateManyWithoutResponsibleNestedInput
     actionLogs?: AdminLogUncheckedUpdateManyWithoutTargetUserNestedInput
     partner?: PartnerUncheckedUpdateOneWithoutOwnerNestedInput
@@ -23158,8 +25230,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -23168,6 +25242,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -23178,6 +25254,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogCreateNestedManyWithoutTargetUserInput
     partner?: PartnerCreateNestedOneWithoutOwnerInput
@@ -23190,8 +25267,10 @@ export namespace Prisma {
     name?: string | null
     email: string
     password?: string | null
+    image?: string | null
     role?: $Enums.UserRole
     status?: $Enums.UserStatus
+    bio?: string | null
     instagram?: string | null
     origin?: string | null
     riskScore?: number
@@ -23200,6 +25279,8 @@ export namespace Prisma {
     perTxLimit?: number
     pointsBalance?: number
     blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
     twoFactorEnabled?: boolean
     twoFactorSecret?: string | null
     lastIp?: string | null
@@ -23210,6 +25291,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    pixKeys?: PixKeyUncheckedCreateNestedManyWithoutUserInput
     adminLogs?: AdminLogUncheckedCreateNestedManyWithoutResponsibleInput
     actionLogs?: AdminLogUncheckedCreateNestedManyWithoutTargetUserInput
     partner?: PartnerUncheckedCreateNestedOneWithoutOwnerInput
@@ -23238,8 +25320,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -23248,6 +25332,172 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    lastIp?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycStatus?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    documentId?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUpdateManyWithoutUserNestedInput
+    adminLogs?: AdminLogUpdateManyWithoutResponsibleNestedInput
+    actionLogs?: AdminLogUpdateManyWithoutTargetUserNestedInput
+    partner?: PartnerUpdateOneWithoutOwnerNestedInput
+    carts?: CartUpdateManyWithoutUserNestedInput
+    paymentLinks?: PaymentLinkUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    instagram?: NullableStringFieldUpdateOperationsInput | string | null
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    riskScore?: IntFieldUpdateOperationsInput | number
+    dailyLimit?: IntFieldUpdateOperationsInput | number
+    monthlyLimit?: IntFieldUpdateOperationsInput | number
+    perTxLimit?: IntFieldUpdateOperationsInput | number
+    pointsBalance?: IntFieldUpdateOperationsInput | number
+    blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    lastIp?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kycStatus?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    documentId?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    pixKeys?: PixKeyUncheckedUpdateManyWithoutUserNestedInput
+    adminLogs?: AdminLogUncheckedUpdateManyWithoutResponsibleNestedInput
+    actionLogs?: AdminLogUncheckedUpdateManyWithoutTargetUserNestedInput
+    partner?: PartnerUncheckedUpdateOneWithoutOwnerNestedInput
+    carts?: CartUncheckedUpdateManyWithoutUserNestedInput
+    paymentLinks?: PaymentLinkUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutPixKeysInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password?: string | null
+    image?: string | null
+    role?: $Enums.UserRole
+    status?: $Enums.UserStatus
+    bio?: string | null
+    instagram?: string | null
+    origin?: string | null
+    riskScore?: number
+    dailyLimit?: number
+    monthlyLimit?: number
+    perTxLimit?: number
+    pointsBalance?: number
+    blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    lastIp?: string | null
+    lastLogin?: Date | string | null
+    kycStatus?: $Enums.KycStatus
+    documentId?: string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+    adminLogs?: AdminLogCreateNestedManyWithoutResponsibleInput
+    actionLogs?: AdminLogCreateNestedManyWithoutTargetUserInput
+    partner?: PartnerCreateNestedOneWithoutOwnerInput
+    carts?: CartCreateNestedManyWithoutUserInput
+    paymentLinks?: PaymentLinkCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutPixKeysInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password?: string | null
+    image?: string | null
+    role?: $Enums.UserRole
+    status?: $Enums.UserStatus
+    bio?: string | null
+    instagram?: string | null
+    origin?: string | null
+    riskScore?: number
+    dailyLimit?: number
+    monthlyLimit?: number
+    perTxLimit?: number
+    pointsBalance?: number
+    blockedBalance?: number
+    usdtBalance?: number
+    btcBalance?: bigint | number
+    twoFactorEnabled?: boolean
+    twoFactorSecret?: string | null
+    lastIp?: string | null
+    lastLogin?: Date | string | null
+    kycStatus?: $Enums.KycStatus
+    documentId?: string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    adminLogs?: AdminLogUncheckedCreateNestedManyWithoutResponsibleInput
+    actionLogs?: AdminLogUncheckedCreateNestedManyWithoutTargetUserInput
+    partner?: PartnerUncheckedCreateNestedOneWithoutOwnerInput
+    carts?: CartUncheckedCreateNestedManyWithoutUserInput
+    paymentLinks?: PaymentLinkUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutPixKeysInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPixKeysInput, UserUncheckedCreateWithoutPixKeysInput>
+  }
+
+  export type UserUpsertWithoutPixKeysInput = {
+    update: XOR<UserUpdateWithoutPixKeysInput, UserUncheckedUpdateWithoutPixKeysInput>
+    create: XOR<UserCreateWithoutPixKeysInput, UserUncheckedCreateWithoutPixKeysInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPixKeysInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPixKeysInput, UserUncheckedUpdateWithoutPixKeysInput>
+  }
+
+  export type UserUpdateWithoutPixKeysInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    instagram?: NullableStringFieldUpdateOperationsInput | string | null
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    riskScore?: IntFieldUpdateOperationsInput | number
+    dailyLimit?: IntFieldUpdateOperationsInput | number
+    monthlyLimit?: IntFieldUpdateOperationsInput | number
+    perTxLimit?: IntFieldUpdateOperationsInput | number
+    pointsBalance?: IntFieldUpdateOperationsInput | number
+    blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23263,15 +25513,18 @@ export namespace Prisma {
     partner?: PartnerUpdateOneWithoutOwnerNestedInput
     carts?: CartUpdateManyWithoutUserNestedInput
     paymentLinks?: PaymentLinkUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutNotificationsInput = {
+  export type UserUncheckedUpdateWithoutPixKeysInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     instagram?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     riskScore?: IntFieldUpdateOperationsInput | number
@@ -23280,6 +25533,8 @@ export namespace Prisma {
     perTxLimit?: IntFieldUpdateOperationsInput | number
     pointsBalance?: IntFieldUpdateOperationsInput | number
     blockedBalance?: IntFieldUpdateOperationsInput | number
+    usdtBalance?: IntFieldUpdateOperationsInput | number
+    btcBalance?: BigIntFieldUpdateOperationsInput | bigint | number
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
     twoFactorSecret?: NullableStringFieldUpdateOperationsInput | string | null
     lastIp?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23295,6 +25550,7 @@ export namespace Prisma {
     partner?: PartnerUncheckedUpdateOneWithoutOwnerNestedInput
     carts?: CartUncheckedUpdateManyWithoutUserNestedInput
     paymentLinks?: PaymentLinkUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionCreateManyUserInput = {
@@ -23311,6 +25567,18 @@ export namespace Prisma {
     externalId?: string | null
     txid?: string | null
     liquidationDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PixKeyCreateManyUserInput = {
+    id?: string
+    key: string
+    type: $Enums.PixKeyType
+    network?: string | null
+    category?: $Enums.PixKeyCategory
+    label?: string | null
+    isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -23412,6 +25680,42 @@ export namespace Prisma {
     externalId?: NullableStringFieldUpdateOperationsInput | string | null
     txid?: NullableStringFieldUpdateOperationsInput | string | null
     liquidationDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PixKeyUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    type?: EnumPixKeyTypeFieldUpdateOperationsInput | $Enums.PixKeyType
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumPixKeyCategoryFieldUpdateOperationsInput | $Enums.PixKeyCategory
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PixKeyUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    type?: EnumPixKeyTypeFieldUpdateOperationsInput | $Enums.PixKeyType
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumPixKeyCategoryFieldUpdateOperationsInput | $Enums.PixKeyCategory
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PixKeyUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    type?: EnumPixKeyTypeFieldUpdateOperationsInput | $Enums.PixKeyType
+    network?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumPixKeyCategoryFieldUpdateOperationsInput | $Enums.PixKeyCategory
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

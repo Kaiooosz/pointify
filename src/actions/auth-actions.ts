@@ -13,8 +13,13 @@ export async function checkEmailStatus(email: string): Promise<{
     const normalizedEmail = email.toLowerCase().trim();
 
     try {
-        const user = await prisma.user.findUnique({
-            where: { email: normalizedEmail },
+        const user = await prisma.user.findFirst({
+            where: {
+                email: {
+                    equals: normalizedEmail,
+                    mode: 'insensitive'
+                }
+            },
             select: { status: true },
         });
 
@@ -27,30 +32,28 @@ export async function checkEmailStatus(email: string): Promise<{
 }
 
 export async function loginAction(formData: FormData) {
-    try {
-        const email = formData.get("email") as string;
-        const password = formData.get("password") as string;
+    const email = (formData.get("email") as string).toLowerCase().trim();
+    const password = formData.get("password") as string;
 
+    try {
         await signIn("credentials", {
             email,
             password,
             redirectTo: "/dashboard",
         });
-
         return { success: true };
     } catch (error) {
         if (error instanceof AuthError) {
+            console.error("Auth Error:", error.type, error.message);
             switch (error.type) {
                 case "CredentialsSignin":
-                    return { success: false, error: "Credenciais inválidas. Verifique seu e-mail e senha." };
+                    return { success: false, error: "Credenciais inválidas. Verifique sua chave e identificador." };
                 default:
-                    return { success: false, error: "Ocorreu um erro ao tentar entrar. Tente novamente." };
+                    return { success: false, error: "Falha na autenticação. Tente novamente ou recupere sua chave." };
             }
         }
-        if ((error as any).message === "NEXT_REDIRECT") {
-            throw error;
-        }
 
-        return { success: false, error: "Conexão falhou. Verifique sua rede." };
+        // Rethrow everything else (including NEXT_REDIRECT)
+        throw error;
     }
 }

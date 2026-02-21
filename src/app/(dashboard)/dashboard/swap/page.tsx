@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ArrowUpDown, Wallet, AlertCircle, CheckCircle2,
@@ -8,6 +7,8 @@ import {
 } from "lucide-react";
 import { calcSwapFeePercent, FEES } from "@/lib/fees";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useEffect, useState } from "react";
+import { getUserBalance } from "@/actions/user-actions";
 
 // ─── Tokens & Redes disponíveis ───────────────────────────────────────────────
 const TOKENS = {
@@ -15,7 +16,7 @@ const TOKENS = {
         label: "USDT",
         name: "Tether USD",
         icon: "$",
-        color: "#26A17B",
+        color: "#1DB954",
         ratePerPts: 0.001, // 1000 PTS = 1 USDT
         networks: [
             { id: "TRC20", label: "TRC20", chain: "Tron Network", fee: "~0.1 USDT" },
@@ -32,6 +33,7 @@ const TOKENS = {
         ratePerPts: 0.0000001, // 1000 PTS = 0.0001 BTC (mock)
         networks: [
             { id: "BITCOIN", label: "Bitcoin", chain: "Bitcoin Network", fee: "~$2-10" },
+            { id: "BEP20_BTC", label: "BEP20", chain: "BNB Smart Chain (wBTC)", fee: "~0.0005 BNB" },
             { id: "SOLANA", label: "Solana", chain: "Solana (wBTC)", fee: "~0.000005 SOL" },
             { id: "POLYGON_BTC", label: "Polygon", chain: "Polygon (wBTC)", fee: "~0.01 MATIC" },
             { id: "ERC20_BTC", label: "ERC20", chain: "Ethereum (wBTC)", fee: "Gas Fee" },
@@ -49,6 +51,7 @@ const MIN_PTS = 100;
 export default function SwapPage() {
     const { t } = useLanguage();
 
+    const [mounted, setMounted] = useState(false);
     const [step, setStep] = useState<Step>("form");
     const [selectedToken, setSelectedToken] = useState<TokenKey>("USDT");
     const [selectedNetwork, setSelectedNetwork] = useState<Network>(TOKENS.USDT.networks[0]);
@@ -58,9 +61,19 @@ export default function SwapPage() {
     const [error, setError] = useState<string | null>(null);
     const [showTokenDropdown, setShowTokenDropdown] = useState(false);
     const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
+    const [userBalance, setUserBalance] = useState<number>(0);
 
-    // Mock balance
-    const userBalance = 12500;
+    const fetchData = async () => {
+        const res = await getUserBalance();
+        if (res.success) {
+            setUserBalance(res.balance ?? 0);
+        }
+    };
+
+    useEffect(() => {
+        setMounted(true);
+        fetchData();
+    }, []);
 
     const token = TOKENS[selectedToken];
     const FEE_PERCENT = calcSwapFeePercent(selectedToken as "USDT" | "BTC");
@@ -109,12 +122,13 @@ export default function SwapPage() {
         setPtsAmount("");
         setWalletAddress("");
         setError(null);
+        fetchData(); // Refresh balance after "success"
     };
 
     const cryptoDecimals = selectedToken === "BTC" ? 8 : 4;
 
     return (
-        <div className="min-h-screen bg-[#0B0B0B] p-6 md:p-10">
+        <div className="min-h-screen bg-black p-6 md:p-10">
             <div className="max-w-xl mx-auto">
 
                 {/* ── Header ──────────────────────────────────────────────── */}
@@ -129,11 +143,11 @@ export default function SwapPage() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 mt-4">
-                        <Info className="w-3.5 h-3.5 text-[#1DB954]" />
+                        <Info className="w-3.5 h-3.5 text-white/40" />
                         <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">
                             {t("swap_rate")}: <span className="text-white">1.000 PTS = {selectedToken === "USDT" ? "1 USDT" : "0.0001 BTC"}</span>
                             &nbsp;·&nbsp;
-                            {t("swap_fee")}: <span className="text-white">{selectedToken === "USDT" ? FEES.SWAP_USDT.PERCENT : FEES.SWAP_BTC.PERCENT}%</span>
+                            {t("swap_fee")}: <span className="text-[#1DB954]">{selectedToken === "USDT" ? FEES.SWAP_USDT.PERCENT : FEES.SWAP_BTC.PERCENT}%</span>
                         </p>
                     </div>
                 </motion.div>
@@ -144,14 +158,14 @@ export default function SwapPage() {
                         <motion.div key="form" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
 
                             {/* Balance */}
-                            <div className="p-6 rounded-[2rem] bg-[#0F0F0F] border border-white/5 mb-6 flex items-center justify-between">
+                            <div className="p-6 rounded-[2rem] bg-[#0A0A0A] border border-white/5 mb-6 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 rounded-xl bg-[#1DB954]/10 flex items-center justify-center">
                                         <Wallet className="w-4 h-4 text-[#1DB954]" />
                                     </div>
                                     <div>
                                         <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{t("available_balance")}</p>
-                                        <p className="text-lg font-black text-white">{userBalance.toLocaleString()} <span className="text-[#1DB954] text-sm">PTS</span></p>
+                                        <p className="text-lg font-black text-white">{mounted ? userBalance.toLocaleString() : "0"} <span className="text-[#A7A7A7] text-sm">PTS</span></p>
                                     </div>
                                 </div>
                                 <div className="text-right">
@@ -163,9 +177,9 @@ export default function SwapPage() {
                             {/* Error */}
                             <AnimatePresence>
                                 {error && (
-                                    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="mb-5 p-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 flex items-center gap-4">
-                                        <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
-                                        <p className="text-xs font-black text-rose-500/80 uppercase tracking-wide">{error}</p>
+                                    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="mb-5 p-5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4">
+                                        <AlertCircle className="w-4 h-4 text-[#1DB954] flex-shrink-0" />
+                                        <p className="text-xs font-black text-[#1DB954] uppercase tracking-wide">{error}</p>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -173,23 +187,23 @@ export default function SwapPage() {
                             <form onSubmit={handleSubmit} className="space-y-4">
 
                                 {/* FROM: PTS */}
-                                <div className="p-6 rounded-[2rem] bg-[#0F0F0F] border border-white/5 space-y-3">
+                                <div className="p-6 rounded-[2rem] bg-[#0A0A0A] border border-white/5 space-y-3">
                                     <div className="flex justify-between items-center">
                                         <span className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{t("swap_from")}</span>
-                                        <button type="button" onClick={handleMax} className="text-[9px] font-black text-[#1DB954] uppercase tracking-widest hover:text-[#1ED760] transition-colors px-3 py-1.5 rounded-full bg-[#1DB954]/10 border border-[#1DB954]/20">
+                                        <button type="button" onClick={handleMax} className="text-[9px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-colors px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
                                             MAX
                                         </button>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#1DB954]/10 border border-[#1DB954]/20 flex-shrink-0">
-                                            <div className="w-5 h-5 rounded-full bg-[#1DB954] flex items-center justify-center text-[8px] font-black text-black">P</div>
-                                            <span className="text-xs font-black text-[#1DB954] uppercase">PTS</span>
+                                        <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 flex-shrink-0">
+                                            <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center text-[8px] font-black text-black">P</div>
+                                            <span className="text-xs font-black text-white uppercase">PTS</span>
                                         </div>
                                         <input
                                             type="number" min={MIN_PTS} max={userBalance} placeholder="0"
                                             value={ptsAmount}
                                             onChange={(e) => { setPtsAmount(e.target.value); setError(null); }}
-                                            className="flex-1 bg-transparent text-2xl font-black text-white outline-none placeholder:text-white/10 text-right"
+                                            className="flex-1 bg-transparent text-2xl font-black text-white outline-none placeholder:text-white/10 text-right focus:text-[#1DB954] transition-colors"
                                         />
                                     </div>
                                     <p className="text-[9px] font-black text-[#A7A7A7]/50 uppercase tracking-widest text-right">{t("swap_min")}: {MIN_PTS} PTS</p>
@@ -197,13 +211,13 @@ export default function SwapPage() {
 
                                 {/* Arrow */}
                                 <div className="flex justify-center">
-                                    <div className="w-10 h-10 rounded-2xl bg-[#1DB954]/10 border border-[#1DB954]/20 flex items-center justify-center">
+                                    <div className="w-10 h-10 rounded-2xl bg-[#1DB954]/5 border border-[#1DB954]/10 flex items-center justify-center">
                                         <ArrowUpDown className="w-4 h-4 text-[#1DB954]" />
                                     </div>
                                 </div>
 
                                 {/* TO: Token selector + amount */}
-                                <div className="p-6 rounded-[2rem] bg-[#0F0F0F] border border-white/5 space-y-4">
+                                <div className="p-6 rounded-[2rem] bg-[#0A0A0A] border border-white/5 space-y-4">
                                     <span className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{t("swap_to")}</span>
 
                                     {/* Token selector */}
@@ -211,13 +225,12 @@ export default function SwapPage() {
                                         <button
                                             type="button"
                                             onClick={() => setShowTokenDropdown(!showTokenDropdown)}
-                                            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border transition-all"
-                                            style={{ backgroundColor: `${token.color}15`, borderColor: `${token.color}30` }}
+                                            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-white/10 bg-white/5 transition-all"
                                         >
-                                            <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black text-black" style={{ backgroundColor: token.color }}>
+                                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black text-black ${selectedToken === 'BTC' ? 'bg-[#F7931A]' : 'bg-[#1DB954]'}`}>
                                                 {token.icon}
                                             </div>
-                                            <span className="text-sm font-black uppercase tracking-wider" style={{ color: token.color }}>{token.label}</span>
+                                            <span className="text-sm font-black uppercase tracking-wider text-white">{token.label}</span>
                                             <span className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{token.name}</span>
                                             <ChevronDown className={`w-3.5 h-3.5 text-[#A7A7A7] transition-transform ml-1 ${showTokenDropdown ? "rotate-180" : ""}`} />
                                         </button>
@@ -233,14 +246,14 @@ export default function SwapPage() {
                                                                 onClick={() => handleSelectToken(key)}
                                                                 className="w-full flex items-center gap-3 px-5 py-4 hover:bg-white/5 transition-all text-left"
                                                             >
-                                                                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black text-black" style={{ backgroundColor: tk.color }}>
+                                                                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black text-black ${key === 'BTC' ? 'bg-[#F7931A]' : 'bg-[#1DB954]'}`}>
                                                                     {tk.icon}
                                                                 </div>
                                                                 <div>
                                                                     <p className="text-xs font-black text-white uppercase tracking-wider">{tk.label}</p>
                                                                     <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{tk.name}</p>
                                                                 </div>
-                                                                {selectedToken === key && <div className="ml-auto w-2 h-2 rounded-full bg-[#1DB954] shadow-[0_0_6px_#1DB954]" />}
+                                                                {selectedToken === key && <div className={`ml-auto w-2 h-2 rounded-full shadow-[0_0_6px_rgba(29,185,84,0.4)] ${key === 'BTC' ? 'bg-[#F7931A]' : 'bg-[#1DB954]'}`} />}
                                                             </button>
                                                         );
                                                     })}
@@ -252,7 +265,7 @@ export default function SwapPage() {
                                     {/* Amount preview */}
                                     <p className="text-2xl font-black text-white text-right">
                                         {cryptoFinal > 0 ? cryptoFinal.toFixed(cryptoDecimals) : "0." + "0".repeat(cryptoDecimals)}
-                                        <span className="text-sm ml-2" style={{ color: token.color }}>{token.label}</span>
+                                        <span className="text-sm ml-2 text-[#A7A7A7]">{token.label}</span>
                                     </p>
 
                                     {ptsValue > 0 && (
@@ -270,7 +283,7 @@ export default function SwapPage() {
                                         <button
                                             type="button"
                                             onClick={() => setShowNetworkDropdown(!showNetworkDropdown)}
-                                            className="w-full flex items-center justify-between px-6 py-4 rounded-[2rem] bg-[#0F0F0F] border border-white/5 hover:border-[#1DB954]/30 transition-all"
+                                            className="w-full flex items-center justify-between px-6 py-4 rounded-[2rem] bg-[#0A0A0A] border border-white/5 hover:border-white/10 transition-all"
                                         >
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-xl bg-[#1DB954]/10 flex items-center justify-center">
@@ -291,7 +304,7 @@ export default function SwapPage() {
                                                         <button
                                                             key={net.id} type="button"
                                                             onClick={() => { setSelectedNetwork(net); setShowNetworkDropdown(false); }}
-                                                            className={`w-full flex items-center gap-3 px-6 py-4 text-left transition-all hover:bg-[#1DB954]/5 ${selectedNetwork.id === net.id ? "text-[#1DB954]" : "text-[#A7A7A7]"}`}
+                                                            className={`w-full flex items-center gap-3 px-6 py-4 text-left transition-all hover:bg-white/5 ${selectedNetwork.id === net.id ? "text-white" : "text-[#A7A7A7]"}`}
                                                         >
                                                             <Shield className="w-4 h-4 flex-shrink-0" />
                                                             <div>
@@ -317,7 +330,7 @@ export default function SwapPage() {
                                             placeholder={t("swap_wallet_ph")}
                                             value={walletAddress}
                                             onChange={(e) => { setWalletAddress(e.target.value); setError(null); }}
-                                            className="w-full h-16 pl-16 pr-6 rounded-[2rem] bg-[#0F0F0F] border border-white/5 hover:border-[#1DB954]/30 focus:border-[#1DB954] focus:outline-none text-white font-black text-xs uppercase tracking-widest placeholder:text-[#A7A7A7]/20 transition-all"
+                                            className="w-full h-16 pl-16 pr-6 rounded-[2rem] bg-[#0A0A0A] border border-white/5 hover:border-white/10 focus:border-white/20 focus:outline-none text-white font-black text-xs uppercase tracking-widest placeholder:text-[#A7A7A7]/20 transition-all focus-visible:ring-0"
                                         />
                                     </div>
                                 </div>
@@ -331,7 +344,7 @@ export default function SwapPage() {
                             </form>
 
                             <div className="mt-6 p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-start gap-3">
-                                <Shield className="w-4 h-4 text-[#1DB954] flex-shrink-0 mt-0.5" />
+                                <Shield className="w-4 h-4 text-white/40 flex-shrink-0 mt-0.5" />
                                 <p className="text-[9px] font-black text-[#A7A7A7]/60 uppercase tracking-widest leading-relaxed">{t("swap_security_note")}</p>
                             </div>
                         </motion.div>
@@ -340,11 +353,11 @@ export default function SwapPage() {
                     {/* ── CONFIRM ──────────────────────────────────────────── */}
                     {step === "confirm" && (
                         <motion.div key="confirm" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }} className="space-y-5">
-                            <div className="p-8 rounded-[2.5rem] bg-[#0F0F0F] border border-white/5 space-y-6">
+                            <div className="p-8 rounded-[2.5rem] bg-[#0A0A0A] border border-white/5 space-y-6">
                                 <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{t("swap_review")}</p>
                                 <div className="space-y-4">
                                     {[
-                                        { label: t("swap_from"), value: `${ptsValue.toLocaleString()} PTS` },
+                                        { label: t("swap_from"), value: `${mounted ? ptsValue.toLocaleString() : ptsValue} PTS` },
                                         { label: t("swap_to"), value: `${cryptoFinal.toFixed(cryptoDecimals)} ${token.label}` },
                                         { label: t("swap_fee_label"), value: `${fee.toFixed(cryptoDecimals)} ${token.label} (${FEE_PERCENT}%)` },
                                         { label: t("swap_network"), value: `${selectedNetwork.label} · ${selectedNetwork.chain}` },
@@ -357,16 +370,16 @@ export default function SwapPage() {
                                     ))}
                                 </div>
                             </div>
-                            <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-center gap-3">
-                                <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                                <p className="text-[9px] font-black text-amber-400/70 uppercase tracking-widest leading-relaxed">{t("swap_confirm_warning")}</p>
+                            <div className="p-5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+                                <AlertCircle className="w-4 h-4 text-white/70 flex-shrink-0" />
+                                <p className="text-[9px] font-black text-white/70 uppercase tracking-widest leading-relaxed">{t("swap_confirm_warning")}</p>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <button onClick={() => setStep("form")} className="py-5 rounded-full font-black text-[10px] uppercase tracking-widest border border-white/10 text-[#A7A7A7] hover:text-white hover:border-white/20 transition-all">
                                     {t("back_and_edit")}
                                 </button>
                                 <button onClick={handleConfirm} disabled={isLoading} className="py-5 rounded-full font-black text-[10px] uppercase tracking-widest bg-[#1DB954] text-black hover:bg-[#1ED760] transition-all disabled:opacity-60 flex items-center justify-center gap-2">
-                                    {isLoading ? (<><RefreshCw className="w-4 h-4 animate-spin" />{t("swap_processing")}</>) : t("confirm_and_send")}
+                                    {isLoading ? (<><RefreshCw className="w-4 h-4 animate-spin text-black" />{t("swap_processing")}</>) : t("confirm_and_send")}
                                 </button>
                             </div>
                         </motion.div>
@@ -375,16 +388,16 @@ export default function SwapPage() {
                     {/* ── SUCCESS ──────────────────────────────────────────── */}
                     {step === "success" && (
                         <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className="text-center space-y-8">
-                            <div className="p-10 rounded-[3rem] bg-[#0F0F0F] border border-[#1DB954]/10 space-y-6">
-                                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }} className="w-20 h-20 rounded-full bg-[#1DB954]/10 border border-[#1DB954]/20 flex items-center justify-center mx-auto">
-                                    <CheckCircle2 className="w-9 h-9 text-[#1DB954]" />
+                            <div className="p-10 rounded-[3rem] bg-[#0A0A0A] border border-white/5 space-y-6">
+                                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }} className="w-20 h-20 rounded-full bg-[#1DB954] flex items-center justify-center mx-auto shadow-2xl">
+                                    <CheckCircle2 className="w-9 h-9 text-black" />
                                 </motion.div>
                                 <div>
-                                    <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.4em] mb-2">{t("swap_success_title")}</p>
+                                    <p className="text-[10px] font-black text-white uppercase tracking-[0.4em] mb-2">{t("swap_success_title")}</p>
                                     <h2 className="text-3xl font-black text-white tracking-tight">
-                                        {cryptoFinal.toFixed(cryptoDecimals)} <span style={{ color: token.color }}>{token.label}</span>
+                                        {cryptoFinal.toFixed(cryptoDecimals)} <span className="text-[#A7A7A7]">{token.label}</span>
                                     </h2>
-                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-2">{ptsValue.toLocaleString()} PTS {t("swap_converted")}</p>
+                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-2">{mounted ? ptsValue.toLocaleString() : ptsValue} PTS {t("swap_converted")}</p>
                                 </div>
                                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 text-left space-y-2">
                                     <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{t("swap_wallet_label")}</p>

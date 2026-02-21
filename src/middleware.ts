@@ -7,7 +7,7 @@ export default auth((req) => {
     const userRole = (req.auth?.user as any)?.role;
 
     const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
-    const isPublicRoute = ["/", "/login", "/register"].includes(nextUrl.pathname);
+    const isPublicRoute = ["/", "/login", "/register", "/forgot-password", "/reset-password"].includes(nextUrl.pathname);
     const isAdminRoute = nextUrl.pathname.startsWith("/admin") || nextUrl.pathname.startsWith("/dashboard/admin");
 
     if (isApiAuthRoute) return NextResponse.next();

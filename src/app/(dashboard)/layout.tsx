@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DashboardNavbar } from "@/components/layout/dashboard-navbar";
+import { UserProvider } from "@/components/providers/user-provider";
 
 export const dynamic = "force-dynamic";
 
@@ -29,15 +30,17 @@ export default async function DashboardLayout({
     }
 
     return (
-        <div className="min-h-screen bg-[#FCFCFD] dark:bg-[#0B0B0B] transition-colors duration-500">
-            <DashboardNavbar />
+        <UserProvider user={user}>
+            <div className="min-h-screen bg-[#000000] text-white transition-colors duration-500">
+                <DashboardNavbar initialUser={user} />
 
-            {/* Main Content */}
-            <main className="max-w-[1600px] mx-auto min-h-[calc(100vh-80px)] overflow-x-hidden">
-                <div className="flex-1 p-6 md:p-12">
-                    {children}
-                </div>
-            </main>
-        </div>
+                {/* Main Content */}
+                <main className="max-w-[1600px] mx-auto min-h-[calc(100vh-80px)] overflow-x-hidden">
+                    <div className="flex-1 p-6 md:p-12">
+                        {children}
+                    </div>
+                </main>
+            </div>
+        </UserProvider>
     );
 }

@@ -234,9 +234,8 @@ export async function rejectUser(adminId: string, userId: string) {
 }
 
 // ─── FINANCIAL LEDGER ────────────────────────────────────────────────────────
-export async function getGlobalActivity(filters?: { method?: string; status?: string; search?: string }) {
+export async function getGlobalActivity(filters?: { method?: string; status?: string; search?: string; dateFrom?: string; dateTo?: string }) {
     try {
-        // Monta filtros de forma segura
         const where: Record<string, any> = {};
 
         if (filters?.method && filters.method !== "ALL") {
@@ -245,10 +244,22 @@ export async function getGlobalActivity(filters?: { method?: string; status?: st
         if (filters?.status && filters.status !== "ALL") {
             where.status = filters.status;
         }
-        // Busca por email sem mode insensitive (compatível com Neon/Postgres)
+
+        // Filtro de Data
+        if (filters?.dateFrom || filters?.dateTo) {
+            where.createdAt = {};
+            if (filters.dateFrom) where.createdAt.gte = new Date(filters.dateFrom);
+            if (filters.dateTo) where.createdAt.lte = new Date(filters.dateTo + "T23:59:59");
+        }
+
+        // Busca por email ou nome
         if (filters?.search?.trim()) {
+            const search = filters.search.trim().toLowerCase();
             where.user = {
-                email: { contains: filters.search.trim().toLowerCase() }
+                OR: [
+                    { email: { contains: search } },
+                    { name: { contains: search } }
+                ]
             };
         }
 

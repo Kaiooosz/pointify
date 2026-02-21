@@ -29,7 +29,7 @@ export function Logo({ className, width = 40, height = 40, withText = true }: Lo
       </div>
       {withText && (
         <span className="text-xl font-black tracking-tighter text-white">
-          Pointify<span className="text-[#1DB954]">.</span>
+          Pointify<span>.</span>
         </span>
       )}
     </Link>

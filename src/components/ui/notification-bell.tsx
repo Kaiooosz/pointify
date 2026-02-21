@@ -6,8 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     getUserNotifications,
     markNotificationsRead,
-    NOTIF_META,
 } from "@/actions/notification-actions";
+import { NOTIF_META } from "@/lib/notifications";
 
 type Notif = {
     id: string;
@@ -73,7 +73,7 @@ export function NotificationBell() {
                 {unread > 0 && (
                     <motion.span
                         initial={{ scale: 0 }} animate={{ scale: 1 }}
-                        className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-[#1DB954] text-black text-[8px] font-black flex items-center justify-center shadow-[0_0_8px_rgba(29,185,84,0.6)]"
+                        className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-white text-black text-[8px] font-black flex items-center justify-center shadow-[0_0_8px_rgba(255,255,255,0.4)]"
                     >
                         {unread > 9 ? "9+" : unread}
                     </motion.span>
@@ -88,17 +88,17 @@ export function NotificationBell() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.97 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-12 w-80 max-h-[480px] overflow-y-auto rounded-[2rem] bg-[#111] border border-white/10 shadow-2xl z-50 flex flex-col"
+                        className="absolute right-0 top-12 w-80 max-h-[480px] overflow-y-auto rounded-[2rem] bg-[#0A0A0A] border border-white/10 shadow-2xl z-50 flex flex-col"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 sticky top-0 bg-[#111] z-10">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 sticky top-0 bg-[#0A0A0A] z-10">
                             <p className="text-[10px] font-black text-white uppercase tracking-widest">
-                                Notificações {unread > 0 && <span className="text-[#1DB954]">· {unread} nova{unread > 1 ? "s" : ""}</span>}
+                                Notificações {unread > 0 && <span className="text-white/40">· {unread} nova{unread > 1 ? "s" : ""}</span>}
                             </p>
                             <div className="flex items-center gap-2">
                                 {unread > 0 && (
                                     <button onClick={handleMarkAll}
-                                        className="text-[9px] font-black text-[#1DB954] uppercase tracking-widest hover:opacity-70 transition-opacity flex items-center gap-1">
+                                        className="text-[9px] font-black text-white uppercase tracking-widest hover:opacity-70 transition-opacity flex items-center gap-1">
                                         <Check className="w-3 h-3" /> Marcar todas
                                     </button>
                                 )}
@@ -111,7 +111,7 @@ export function NotificationBell() {
                         {/* Lista */}
                         {loading && notifs.length === 0 ? (
                             <div className="flex items-center justify-center py-12">
-                                <div className="w-6 h-6 rounded-full border-2 border-[#1DB954]/30 border-t-[#1DB954] animate-spin" />
+                                <div className="w-6 h-6 rounded-full border-2 border-white/10 border-t-white animate-spin" />
                             </div>
                         ) : notifs.length === 0 ? (
                             <div className="text-center py-12 px-6">
@@ -125,8 +125,7 @@ export function NotificationBell() {
                                     return (
                                         <div key={n.id}
                                             className={`flex items-start gap-3 px-5 py-4 transition-colors ${!n.isRead ? "bg-white/[0.03]" : "hover:bg-white/[0.02]"}`}>
-                                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-sm"
-                                                style={{ backgroundColor: `${meta.color}15`, border: `1px solid ${meta.color}20` }}>
+                                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-sm bg-white/5 border border-white/10">
                                                 {meta.emoji}
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -137,8 +136,7 @@ export function NotificationBell() {
                                                 </p>
                                             </div>
                                             {!n.isRead && (
-                                                <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5 shadow-[0_0_6px_rgba(29,185,84,0.6)]"
-                                                    style={{ backgroundColor: meta.color }} />
+                                                <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5 bg-white shadow-[0_0_6px_rgba(255,255,255,0.4)]" />
                                             )}
                                         </div>
                                     );

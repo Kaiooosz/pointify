@@ -125,8 +125,10 @@ exports.Prisma.UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
+  image: 'image',
   role: 'role',
   status: 'status',
+  bio: 'bio',
   instagram: 'instagram',
   origin: 'origin',
   riskScore: 'riskScore',
@@ -135,6 +137,8 @@ exports.Prisma.UserScalarFieldEnum = {
   perTxLimit: 'perTxLimit',
   pointsBalance: 'pointsBalance',
   blockedBalance: 'blockedBalance',
+  usdtBalance: 'usdtBalance',
+  btcBalance: 'btcBalance',
   twoFactorEnabled: 'twoFactorEnabled',
   twoFactorSecret: 'twoFactorSecret',
   lastIp: 'lastIp',
@@ -267,6 +271,19 @@ exports.Prisma.NotificationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.PixKeyScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  type: 'type',
+  network: 'network',
+  category: 'category',
+  label: 'label',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -325,6 +342,21 @@ exports.TransactionStatus = exports.$Enums.TransactionStatus = {
   LIQUIDATING: 'LIQUIDATING'
 };
 
+exports.PixKeyType = exports.$Enums.PixKeyType = {
+  CPF: 'CPF',
+  CNPJ: 'CNPJ',
+  EMAIL: 'EMAIL',
+  PHONE: 'PHONE',
+  RANDOM: 'RANDOM',
+  BTC: 'BTC',
+  USDT: 'USDT'
+};
+
+exports.PixKeyCategory = exports.$Enums.PixKeyCategory = {
+  RECEIVING: 'RECEIVING',
+  WITHDRAWAL: 'WITHDRAWAL'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Partner: 'Partner',
@@ -338,7 +370,8 @@ exports.Prisma.ModelName = {
   Order: 'Order',
   OrderItem: 'OrderItem',
   VerificationToken: 'VerificationToken',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  PixKey: 'PixKey'
 };
 
 /**

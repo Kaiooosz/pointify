@@ -17,7 +17,7 @@ export function ThemeAndLanguageToggle() {
     if (!mounted) return null;
 
     return (
-        <div className="flex items-center gap-2 bg-[#121212] p-1 rounded-full border border-white/5 backdrop-blur-xl shadow-2xl">
+        <div className="flex items-center gap-2 bg-[#0A0A0A] p-1 rounded-full border border-white/5 backdrop-blur-xl">
             {/* Language Toggle */}
             <div className="flex gap-1">
                 {(["pt", "en", "es"] as Language[]).map((lang) => (
@@ -25,7 +25,7 @@ export function ThemeAndLanguageToggle() {
                         key={lang}
                         onClick={() => setLanguage(lang)}
                         className={`w-9 h-9 flex items-center justify-center text-[10px] font-black rounded-full transition-all uppercase tracking-widest ${language === lang
-                            ? "bg-[#1DB954] text-black shadow-[0_0_20px_rgba(29,185,84,0.3)] scale-105"
+                            ? "bg-white text-black scale-105"
                             : "text-[#A7A7A7] hover:text-white hover:bg-white/5"
                             }`}
                     >
@@ -34,6 +34,5 @@ export function ThemeAndLanguageToggle() {
                 ))}
             </div>
         </div>
-
     );
 }

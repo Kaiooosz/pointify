@@ -13,6 +13,7 @@ import {
     getAdminStats, getAdminUsers, getGlobalActivity,
     getAdminLogs, approveUserKyc, approveUser, terminateUser, rejectUser
 } from "@/actions/admin-actions";
+import { getMarketRates } from "@/actions/market-actions";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "@/components/ui/react-bits/CountUp";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -27,7 +28,29 @@ const ADMIN_ID = "SUPER_ADMIN";
 
 export default function AdminDashboardPage() {
     const { t } = useLanguage();
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<any>({
+        totalUsers: 0,
+        newUsersToday: 0,
+        newUsersMonth: 0,
+        pendingKyc: 0,
+        totalVolume: 0,
+        volToday: 0,
+        volMonth: 0,
+        volLastMonth: 0,
+        volGrowth: 0,
+        netRevenue: 0,
+        spreadToday: 0,
+        spreadMonth: 0,
+        spreadLastMonth: 0,
+        spreadGrowth: 0,
+        feeFromTransactions: 0,
+        feeFromSwapsUSDT: 0,
+        feeFromSwapsBTC: 0,
+        txCount: 0,
+        txToday: 0,
+        txMonth: 0,
+        ticketMedio: 0
+    });
     const [users, setUsers] = useState<any[]>([]);
     const [activity, setActivity] = useState<any[]>([]);
     const [logs, setLogs] = useState<any[]>([]);
@@ -36,6 +59,9 @@ export default function AdminDashboardPage() {
     const [filterMethod, setFilterMethod] = useState("ALL");
     const [filterStatus, setFilterStatus] = useState("ALL");
     const [searchQuery, setSearchQuery] = useState("");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
+    const [marketRates, setMarketRates] = useState<any>(null);
 
     // Modal de confirmação
     const [modalAction, setModalAction] = useState<ModalAction>(null);
@@ -72,27 +98,48 @@ export default function AdminDashboardPage() {
 
     const refresh = async () => {
         setIsLoading(true);
-        const [sRes, uRes, aRes, lRes] = await Promise.all([
+        const [sRes, uRes, aRes, lRes, mRes] = await Promise.all([
             getAdminStats(),
             getAdminUsers(),
-            getGlobalActivity(),
+            getGlobalActivity({
+                method: filterMethod,
+                status: filterStatus,
+                search: searchQuery,
+                dateFrom,
+                dateTo
+            }),
             getAdminLogs(),
+            getMarketRates()
         ]);
         if (sRes.success) setStats(sRes.stats);
         if (uRes.success && uRes.users) setUsers(uRes.users);
         if (aRes.success && aRes.transactions) setActivity(aRes.transactions);
         if (lRes.success && lRes.logs) setLogs(lRes.logs);
+        if (mRes.success) setMarketRates(mRes);
         setIsLoading(false);
     };
 
-    useEffect(() => { refresh(); }, []);
+    useEffect(() => { refresh(); }, [filterMethod, filterStatus, searchQuery, dateFrom, dateTo]);
 
-    const filteredTx = activity.filter(tx => {
-        if (filterMethod !== "ALL" && tx.method !== filterMethod) return false;
-        if (filterStatus !== "ALL" && tx.status !== filterStatus) return false;
-        if (searchQuery && !tx.user?.email?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-        return true;
-    });
+    const filteredTx = activity;
+
+
+    // ─── Analytics das movimentações filtradas ────────────────────────────────
+    const totalGross = filteredTx.reduce((s, tx) => s + (tx.grossAmount || 0), 0);
+    const totalSpread = filteredTx.reduce((s, tx) => s + (tx.spread || 0), 0);
+    const totalNet = totalGross - totalSpread;
+
+    // Provedor cobra R$ 0,50 fixo por transação
+    const PROVIDER_FEE_FIXED = 50;
+    const totalProviderFee = filteredTx.filter(tx => tx.status === "COMPLETED").length * PROVIDER_FEE_FIXED;
+    const netProfit = totalSpread - totalProviderFee;
+
+    const volumeByMethod = ["PIX", "BOLETO", "LINK", "SWAP"].map(m => ({
+        method: m,
+        count: filteredTx.filter(tx => tx.method === m).length,
+        gross: filteredTx.filter(tx => tx.method === m).reduce((s, tx) => s + (tx.grossAmount || 0), 0),
+        spread: filteredTx.filter(tx => tx.method === m).reduce((s, tx) => s + (tx.spread || 0), 0),
+    }));
 
     const fmt = (v: number) => `R$ ${(v / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
     const fmtN = (v: number) => v?.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) ?? "0,00";
@@ -107,26 +154,79 @@ export default function AdminDashboardPage() {
     ];
 
     return (
-        <div className="space-y-10 max-w-[1700px] mx-auto pb-32 px-4 md:px-8">
-            {/* ── Header ─────────────────────────────────────────────────── */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pt-12">
-                <div>
-                    <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">{t("command_center")}</h2>
-                    <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.5em] mt-3 flex items-center gap-2">
-                        <ShieldCheck className="w-3.5 h-3.5" /> {t("admin_shield_status")}
-                    </p>
-                </div>
-                <div className="flex items-center gap-2 bg-[#121212] p-1.5 rounded-full border border-white/5 shadow-2xl flex-wrap">
-                    {tabs.map((tItem) => (
-                        <button key={tItem.id} onClick={() => setTab(tItem.id)}
-                            className={`h-11 px-6 rounded-full font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-2 ${tab === tItem.id ? "bg-[#1DB954] text-black shadow-[0_0_20px_rgba(29,185,84,0.3)]" : "text-[#A7A7A7] hover:text-white hover:bg-white/5"}`}>
-                            <tItem.icon className="w-3.5 h-3.5" />{tItem.label}
-                        </button>
-                    ))}
-                    <button onClick={refresh} className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-[#A7A7A7] hover:text-white transition-all">
+        <div className="space-y-6 max-w-[1700px] mx-auto pb-32 px-4 md:px-8">
+
+            {/* ── Header compacto ──────────────────────────────────────── */}
+            <div className="flex flex-col gap-4 pt-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tighter uppercase leading-none">
+                            {t("command_center")}
+                        </h1>
+                        <p className="text-[10px] font-black text-[#1DB954] uppercase tracking-[0.5em] mt-2 flex items-center gap-2">
+                            <ShieldCheck className="w-3.5 h-3.5" /> {t("admin_shield_status")}
+                        </p>
+                    </div>
+                    <button onClick={refresh} className="self-start sm:self-auto w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-[#A7A7A7] hover:text-white transition-all border border-white/5">
                         <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
                     </button>
                 </div>
+
+                {/* Tabs */}
+                <div className="flex items-center gap-1.5 bg-[#0F0F0F] p-1.5 rounded-2xl border border-white/5 shadow-xl flex-wrap">
+                    {tabs.map((tItem) => (
+                        <button key={tItem.id} onClick={() => setTab(tItem.id)}
+                            className={`h-10 px-5 rounded-xl font-black uppercase text-[9px] tracking-widest transition-all flex items-center gap-2 ${tab === tItem.id ? "bg-[#1DB954] text-black shadow-[0_0_20px_rgba(29,185,84,0.25)]" : "text-[#A7A7A7] hover:text-white hover:bg-white/5"}`}>
+                            <tItem.icon className="w-3.5 h-3.5" />{tItem.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Filtros contextuais — só na aba Movimentações */}
+                {tab === "financial" && (
+                    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col xl:flex-row gap-3 items-start xl:items-center justify-between bg-[#0F0F0F] p-4 rounded-2xl border border-white/5">
+                        <div className="flex flex-wrap items-center gap-2">
+                            {/* Método */}
+                            {["ALL", "PIX", "BOLETO", "LINK", "SWAP"].map(m => (
+                                <button key={m} onClick={() => setFilterMethod(m)}
+                                    className={`h-8 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${filterMethod === m ? "bg-[#1DB954] text-black border-[#1DB954]" : "border-white/10 text-[#A7A7A7] hover:text-white hover:border-white/20"}`}>
+                                    {m === "ALL" ? "Todos" : m}
+                                </button>
+                            ))}
+                            <div className="w-px h-6 bg-white/10 mx-1" />
+                            {/* Status */}
+                            {["ALL", "COMPLETED", "PENDING", "FAILED"].map(s => (
+                                <button key={s} onClick={() => setFilterStatus(s)}
+                                    className={`h-8 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${filterStatus === s
+                                        ? s === "COMPLETED" ? "bg-[#1DB954] text-black border-[#1DB954]"
+                                            : s === "FAILED" ? "bg-rose-500 text-white border-rose-500"
+                                                : s === "PENDING" ? "bg-amber-400 text-black border-amber-400"
+                                                    : "bg-white text-black border-white"
+                                        : "border-white/10 text-[#A7A7A7] hover:text-white hover:border-white/20"}`}>
+                                    {s === "ALL" ? "Todos" : s === "COMPLETED" ? "Concluído" : s === "PENDING" ? "Pendente" : "Falhou"}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {/* Data de início */}
+                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
+                                className="h-8 px-3 rounded-xl bg-white/[0.03] border border-white/10 text-[9px] font-black text-white uppercase outline-none focus:border-[#1DB954]/30 transition-all" />
+                            <span className="text-[9px] font-black text-[#A7A7A7] uppercase">até</span>
+                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
+                                className="h-8 px-3 rounded-xl bg-white/[0.03] border border-white/10 text-[9px] font-black text-white uppercase outline-none focus:border-[#1DB954]/30 transition-all" />
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#A7A7A7]/40" />
+                                <input className="h-8 w-44 bg-white/[0.03] border border-white/10 rounded-xl pl-9 pr-3 text-[9px] font-black text-white uppercase tracking-widest placeholder:text-[#A7A7A7]/30 outline-none focus:border-[#1DB954]/30 transition-all"
+                                    placeholder="Usuário / email" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                            </div>
+                            <button onClick={() => { setFilterMethod("ALL"); setFilterStatus("ALL"); setSearchQuery(""); setDateFrom(""); setDateTo(""); }}
+                                className="h-8 px-4 rounded-xl border border-white/10 text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest hover:text-white hover:border-white/20 transition-all">
+                                Limpar
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
             </div>
 
             <AnimatePresence mode="wait">
@@ -178,6 +278,48 @@ export default function AdminDashboardPage() {
                                     <p className="text-[9px] font-black text-[#1DB954]/60 uppercase tracking-widest mt-4">{s.sub}</p>
                                 </Card>
                             ))}
+                        </div>
+
+                        {/* Market Rates Card (New) */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 group hover:border-[#1DB954]/20 transition-all overflow-hidden relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#1DB954]/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="flex items-center gap-6">
+                                    <div className="w-14 h-14 rounded-2xl bg-[#1DB954]/10 flex items-center justify-center text-[#1DB954] border border-[#1DB954]/20">
+                                        <Bitcoin className="w-8 h-8" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] mb-1">Taxas de Câmbio Atuais</p>
+                                        <h3 className="text-xl font-black text-white uppercase tracking-tight">Market Analytics v2</h3>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-10">
+                                    <div className="text-right">
+                                        <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">USD / BRL</p>
+                                        <p className="text-xl font-black text-white tabular-nums">R$ {marketRates?.usd?.toFixed(2) || "5.45"}</p>
+                                    </div>
+                                    <div className="w-px h-10 bg-white/5" />
+                                    <div className="text-right">
+                                        <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">BTC / BRL</p>
+                                        <p className="text-xl font-black text-white tabular-nums">R$ {(marketRates?.btc || 300000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}</p>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] p-8 flex items-center justify-between group hover:border-amber-500/20 transition-all">
+                                <div className="flex items-center gap-6">
+                                    <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+                                        <AlertCircle className="w-8 h-8" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] mb-1">Monitoramento de Risco</p>
+                                        <h3 className="text-xl font-black text-white uppercase tracking-tight">{stats?.pendingKyc || 0} Pendentes</h3>
+                                    </div>
+                                </div>
+                                <button onClick={() => setTab("users")} className="px-6 py-3 rounded-full bg-white/5 text-white font-black text-[9px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/5">
+                                    Ver Todos
+                                </button>
+                            </Card>
                         </div>
 
                         {/* Métricas de usuários */}
@@ -347,82 +489,110 @@ export default function AdminDashboardPage() {
                     </motion.div>
                 )}
 
-                {/* ══ FINANCIAL LEDGER ══════════════════════════════════════ */}
+                {/* ══ MOVIMENTAÇÕES ══════════════════════════════════════════ */}
                 {tab === "financial" && (
-                    <motion.div key="financial" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                        {/* Filtros */}
-                        <div className="flex flex-col xl:flex-row gap-4 items-center justify-between bg-[#121212] p-6 rounded-[2.5rem] border border-white/5">
-                            <div className="flex flex-wrap items-center gap-3">
-                                <div className="flex items-center gap-2 px-5 py-2.5 bg-white/5 rounded-full border border-white/10 text-[#A7A7A7]">
-                                    <Filter className="w-3.5 h-3.5" />
-                                    <span className="text-[9px] font-black uppercase tracking-widest">Filtros</span>
-                                </div>
-                                {["ALL", "PIX", "BOLETO", "LINK", "SWAP"].map(m => (
-                                    <button key={m} onClick={() => setFilterMethod(m)}
-                                        className={`px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${filterMethod === m ? "bg-[#1DB954] text-black border-[#1DB954]" : "border-white/10 text-[#A7A7A7] hover:text-white"}`}>
-                                        {m}
-                                    </button>
-                                ))}
-                                {["ALL", "COMPLETED", "PENDING", "FAILED"].map(s => (
-                                    <button key={s} onClick={() => setFilterStatus(s)}
-                                        className={`px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border ${filterStatus === s ? "bg-white text-black border-white" : "border-white/10 text-[#A7A7A7] hover:text-white"}`}>
-                                        {s}
-                                    </button>
-                                ))}
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A7A7A7]" />
-                                    <input className="h-11 w-60 bg-white/[0.03] border border-white/5 rounded-full pl-12 pr-5 text-[10px] font-black text-white uppercase tracking-widest placeholder:text-[#A7A7A7]/40 outline-none focus:border-[#1DB954]/30"
-                                        placeholder="Email do usuário..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                                </div>
-                                <button className="h-11 px-6 rounded-full bg-[#1DB954] text-black font-black text-[9px] uppercase tracking-widest flex items-center gap-2 hover:bg-[#1ED760] transition-all">
-                                    <Download className="w-4 h-4" /> Export
-                                </button>
-                            </div>
+                    <motion.div key="financial" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+
+                        {/* KPIs analíticos */}
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            {[
+                                { label: "Volume Bruto", value: totalGross / 100, prefix: "R$", sub: `${filteredTx.length} transações`, color: "#1DB954", icon: Activity },
+                                { label: "Spread Capturado", value: totalSpread / 100, prefix: "R$", sub: `${totalGross > 0 ? ((totalSpread / totalGross) * 100).toFixed(2) : "0.00"}% do bruto`, color: "#60A5FA", icon: TrendingUp },
+                                { label: "Taxa Provedor (est.)", value: totalProviderFee / 100, prefix: "R$", sub: `0.99% do volume bruto`, color: "#F59E0B", icon: ArrowDownRight },
+                                { label: "Lucro Líquido", value: netProfit / 100, prefix: "R$", sub: "Spread − Taxa Provedor", color: netProfit >= 0 ? "#1DB954" : "#EF4444", icon: DollarSign },
+                            ].map((kpi, i) => (
+                                <Card key={i} className="bg-[#0F0F0F] border-white/5 rounded-[2rem] p-6 relative overflow-hidden group hover:border-white/10 transition-all">
+                                    <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: kpi.color }} />
+                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: `${kpi.color}15`, border: `1px solid ${kpi.color}25` }}>
+                                        <kpi.icon className="w-4 h-4" style={{ color: kpi.color }} />
+                                    </div>
+                                    <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mb-1">{kpi.label}</p>
+                                    <p className="text-2xl font-black text-white tracking-tighter tabular-nums">{kpi.prefix} <CountUp to={kpi.value} decimals={2} /></p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest mt-2 opacity-60" style={{ color: kpi.color }}>{kpi.sub}</p>
+                                </Card>
+                            ))}
                         </div>
 
-                        <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] overflow-hidden">
+                        {/* Volume por canal */}
+                        <Card className="bg-[#0F0F0F] border-white/5 rounded-[2rem] p-6">
+                            <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mb-5">Distribuição por Canal</p>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                {volumeByMethod.map((row) => {
+                                    const pct = totalGross > 0 ? (row.gross / totalGross) * 100 : 0;
+                                    const MCOLORS: Record<string, string> = { PIX: "#1DB954", BOLETO: "#60A5FA", LINK: "#F59E0B", SWAP: "#26A17B" };
+                                    const color = MCOLORS[row.method] || "#A7A7A7";
+                                    return (
+                                        <div key={row.method} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="text-[9px] font-black uppercase tracking-widest" style={{ color }}>{row.method}</span>
+                                                <span className="text-[9px] font-black text-[#A7A7A7]">{row.count} ops</span>
+                                            </div>
+                                            <div className="h-1.5 rounded-full bg-white/5 mb-3">
+                                                <motion.div className="h-full rounded-full" style={{ backgroundColor: color }}
+                                                    initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8, delay: 0.1 }} />
+                                            </div>
+                                            <p className="text-sm font-black text-white">{fmt(row.gross)}</p>
+                                            <p className="text-[9px] font-black mt-1" style={{ color }}>Spread: {fmt(row.spread)}</p>
+                                            <p className="text-[9px] font-black text-[#A7A7A7]/50 mt-0.5">{pct.toFixed(1)}% do volume</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </Card>
+
+                        {/* Tabela */}
+                        <Card className="bg-[#0F0F0F] border-white/5 rounded-[2rem] overflow-hidden">
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                                <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">
+                                    {filteredTx.length} registros · Bruto: {fmt(totalGross)} · Spread: {fmt(totalSpread)}
+                                </p>
+                                <button className="h-8 px-4 rounded-xl bg-[#1DB954] text-black text-[9px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-[#1ED760] transition-all">
+                                    <Download className="w-3.5 h-3.5" /> Export CSV
+                                </button>
+                            </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full">
                                     <thead>
                                         <tr className="border-b border-white/5">
-                                            {["ID / Data", "Usuário", "Método", "Gross / Taxa", "Líquido", "Status"].map(h => (
-                                                <th key={h} className="px-8 py-5 text-left text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest last:text-right">{h}</th>
+                                            {["ID / Data", "Usuário", "Canal", "Bruto", "Spread", "Taxa Prov.", "Líquido", "Status"].map(h => (
+                                                <th key={h} className="px-6 py-4 text-left text-[8px] font-black text-[#A7A7A7] uppercase tracking-widest last:text-right">{h}</th>
                                             ))}
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/[0.03]">
                                         {filteredTx.length === 0 ? (
-                                            <tr><td colSpan={6} className="px-8 py-16 text-center text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">Nenhuma transação encontrada</td></tr>
+                                            <tr><td colSpan={8} className="px-6 py-16 text-center text-[10px] font-black text-[#A7A7A7]/40 uppercase tracking-widest">
+                                                Nenhuma transação encontrada para os filtros selecionados
+                                            </td></tr>
                                         ) : filteredTx.map((tx, i) => {
                                             const gross = tx.grossAmount || 0;
                                             const spread = tx.spread || 0;
-                                            const net = gross - spread;
+                                            const prov = tx.status === "COMPLETED" ? 50 : 0; // R$ 0,50 fixos em centavos
+                                            const net = gross - spread - prov;
+                                            const MCOLORS: Record<string, string> = { PIX: "#1DB954", BOLETO: "#60A5FA", LINK: "#F59E0B", SWAP: "#26A17B" };
+                                            const mColor = MCOLORS[tx.method] || "#A7A7A7";
                                             return (
-                                                <tr key={i} className="hover:bg-white/[0.01] transition-all group">
-                                                    <td className="px-8 py-6">
-                                                        <p className="text-[10px] font-black text-white font-mono">{tx.id?.substring(0, 10)}...</p>
-                                                        <p className="text-[9px] font-black text-[#A7A7A7] mt-1">{new Date(tx.createdAt).toLocaleString("pt-BR")}</p>
+                                                <tr key={i} className="hover:bg-white/[0.015] transition-all">
+                                                    <td className="px-6 py-5">
+                                                        <p className="text-[10px] font-black text-white font-mono">{tx.id?.substring(0, 8)}…</p>
+                                                        <p className="text-[9px] font-black text-[#A7A7A7] mt-0.5">{new Date(tx.createdAt).toLocaleString("pt-BR")}</p>
                                                     </td>
-                                                    <td className="px-8 py-6">
-                                                        <p className="text-xs font-black text-white">{tx.user?.name || "—"}</p>
+                                                    <td className="px-6 py-5">
+                                                        <p className="text-[10px] font-black text-white">{tx.user?.name || "—"}</p>
                                                         <p className="text-[9px] font-black text-[#A7A7A7]">{tx.user?.email}</p>
                                                     </td>
-                                                    <td className="px-8 py-6">
-                                                        <span className="flex items-center gap-1.5 text-[9px] font-black text-white uppercase bg-white/5 px-3 py-1.5 rounded-full border border-white/10 w-fit">
-                                                            <Zap className="w-3 h-3 text-[#1DB954]" />{tx.method || "OTHER"}
+                                                    <td className="px-6 py-5">
+                                                        <span className="text-[9px] font-black uppercase px-3 py-1.5 rounded-xl border w-fit"
+                                                            style={{ color: mColor, borderColor: `${mColor}25`, backgroundColor: `${mColor}10` }}>
+                                                            {tx.method || "OTHER"}
                                                         </span>
                                                     </td>
-                                                    <td className="px-8 py-6">
-                                                        <p className="text-sm font-black text-white">{fmt(gross)}</p>
-                                                        <p className="text-[9px] font-black text-[#1DB954] mt-1">Taxa: {fmt(spread)}</p>
-                                                    </td>
-                                                    <td className="px-8 py-6">
-                                                        <p className="text-sm font-black text-white">{fmt(net)}</p>
-                                                    </td>
-                                                    <td className="px-8 py-6 text-right">
-                                                        <span className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase border ${tx.status === "COMPLETED" ? "text-[#1DB954] bg-[#1DB954]/5 border-[#1DB954]/10" : tx.status === "FAILED" ? "text-rose-500 bg-rose-500/5 border-rose-500/10" : "text-amber-400 bg-amber-400/5 border-amber-400/10"}`}>
+                                                    <td className="px-6 py-5 text-sm font-black text-white tabular-nums">{fmt(gross)}</td>
+                                                    <td className="px-6 py-5 font-black tabular-nums text-[#1DB954] text-sm">{fmt(spread)}</td>
+                                                    <td className="px-6 py-5 font-black tabular-nums text-amber-400 text-[10px]">{fmt(prov)}</td>
+                                                    <td className="px-6 py-5 text-sm font-black text-white tabular-nums">{fmt(net)}</td>
+                                                    <td className="px-6 py-5 text-right">
+                                                        <span className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase border ${tx.status === "COMPLETED" ? "text-[#1DB954] bg-[#1DB954]/5 border-[#1DB954]/10" : tx.status === "FAILED" ? "text-rose-500 bg-rose-500/5 border-rose-500/10" : "text-amber-400 bg-amber-400/5 border-amber-400/10"}`}>
                                                             {tx.status}
                                                         </span>
                                                     </td>
@@ -488,12 +658,10 @@ export default function AdminDashboardPage() {
                                             <p className="text-xs font-black text-white uppercase tracking-tight">{card.title}</p>
                                         </div>
                                     </div>
-
                                     <div className="p-5 rounded-2xl border" style={{ backgroundColor: `${card.color}08`, borderColor: `${card.color}20` }}>
                                         <p className="text-lg font-black tracking-tight" style={{ color: card.color }}>{card.rule}</p>
                                         <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-2">{card.detail}</p>
                                     </div>
-
                                     <div className="space-y-3">
                                         <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">Exemplos</p>
                                         {card.examples.map((ex, j) => (
@@ -506,8 +674,6 @@ export default function AdminDashboardPage() {
                                 </Card>
                             ))}
                         </div>
-
-                        {/* Receita por tipo */}
                         <Card className="bg-[#121212] border-white/5 rounded-[2.5rem] p-10 space-y-6">
                             <h3 className="text-lg font-black text-white uppercase tracking-tight">Receita por Tipo de Taxa</h3>
                             {[
@@ -540,7 +706,7 @@ export default function AdminDashboardPage() {
                             <div className="divide-y divide-white/[0.03]">
                                 {logs.length === 0 ? (
                                     <div className="py-16 text-center text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">Nenhum log registrado</div>
-                                ) : logs.map((log, i) => (
+                                ) : logs.map((log: any, i: number) => (
                                     <div key={i} className="px-8 py-5 flex items-center gap-6 hover:bg-white/[0.01] transition-all">
                                         <div className="w-9 h-9 rounded-xl bg-[#1DB954]/10 flex items-center justify-center flex-shrink-0">
                                             <ShieldCheck className="w-4 h-4 text-[#1DB954]" />
@@ -579,15 +745,12 @@ export default function AdminDashboardPage() {
                             transition={{ type: "spring", duration: 0.3 }}
                             className="w-full max-w-md bg-[#111] border border-white/10 rounded-[2.5rem] p-8 space-y-6 shadow-2xl"
                         >
-                            {/* Ícone */}
                             <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center ${modalAction === "terminate" ? "bg-rose-500/10 border border-rose-500/20" : "bg-amber-500/10 border border-amber-500/20"}`}>
                                 {modalAction === "terminate"
                                     ? <XCircle className="w-7 h-7 text-rose-500" />
                                     : <AlertCircle className="w-7 h-7 text-amber-400" />
                                 }
                             </div>
-
-                            {/* Título */}
                             <div className="text-center space-y-2">
                                 <p className={`text-xs font-black uppercase tracking-[0.4em] ${modalAction === "terminate" ? "text-rose-500" : "text-amber-400"}`}>
                                     {modalAction === "terminate" ? t("admin_confirm_terminate") : t("admin_confirm_reject")}
@@ -595,17 +758,11 @@ export default function AdminDashboardPage() {
                                 <p className="text-xl font-black text-white">{modalUser.name || modalUser.email}</p>
                                 <p className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-widest">{modalUser.email}</p>
                             </div>
-
-                            {/* Aviso */}
                             <div className={`p-4 rounded-2xl ${modalAction === "terminate" ? "bg-rose-500/5 border border-rose-500/10" : "bg-amber-500/5 border border-amber-500/10"}`}>
                                 <p className={`text-[9px] font-black uppercase tracking-widest leading-relaxed ${modalAction === "terminate" ? "text-rose-400/70" : "text-amber-400/70"}`}>
-                                    {modalAction === "terminate"
-                                        ? t("admin_terminate_warning")
-                                        : t("admin_reject_warning")}
+                                    {modalAction === "terminate" ? t("admin_terminate_warning") : t("admin_reject_warning")}
                                 </p>
                             </div>
-
-                            {/* Campo de confirmação */}
                             <div className="space-y-2">
                                 <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">
                                     {t("admin_type_to_confirm")}: <span className="text-white">{modalConfirmWord.toUpperCase()}</span>
@@ -619,8 +776,6 @@ export default function AdminDashboardPage() {
                                     autoFocus
                                 />
                             </div>
-
-                            {/* Ações */}
                             <div className="grid grid-cols-2 gap-3">
                                 <button onClick={closeModal}
                                     className="py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-white/10 text-[#A7A7A7] hover:text-white hover:border-white/20 transition-all">
@@ -639,6 +794,7 @@ export default function AdminDashboardPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 }
+

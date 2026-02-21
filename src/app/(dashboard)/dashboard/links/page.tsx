@@ -88,10 +88,10 @@ export default function PaymentLinksPage() {
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black text-[#A7A7A7] uppercase tracking-[0.3em] px-4">{t("payment_value")}</label>
                                 <div className="relative group">
-                                    <div className="absolute left-8 top-1/2 -translate-y-1/2 text-2xl font-black text-[#1DB954]">R$</div>
+                                    <div className="absolute left-8 top-1/2 -translate-y-1/2 text-2xl font-black text-white">R$</div>
                                     <Input
                                         type="text"
-                                        className="h-24 pl-20 pr-10 rounded-[2rem] bg-[#181818] border-white/5 text-5xl font-black text-white tracking-tighter transition-all focus-visible:ring-[#1DB954]/20"
+                                        className="h-24 pl-20 pr-10 rounded-[2rem] bg-[#181818] border-white/5 text-5xl font-black text-white tracking-tighter transition-all focus-visible:ring-white/20"
                                         value={amount}
                                         onChange={(e) => setAmount(e.target.value)}
                                     />
@@ -101,7 +101,7 @@ export default function PaymentLinksPage() {
                                         <Button
                                             key={v}
                                             variant="outline"
-                                            className="h-10 px-6 rounded-full border-white/5 bg-[#181818] text-[#A7A7A7] hover:text-white hover:border-[#1DB954]/30 font-black text-[10px] transition-all"
+                                            className="h-10 px-6 rounded-full border-white/5 bg-[#181818] text-[#A7A7A7] hover:text-[#1DB954] hover:border-[#1DB954]/20 font-black text-[10px] transition-all"
                                             onClick={() => setAmount(v + ",00")}
                                         >
                                             R$ {v}
@@ -118,7 +118,7 @@ export default function PaymentLinksPage() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="w-12 h-12 rounded-full text-[#A7A7A7] hover:text-white"
+                                            className="w-12 h-12 rounded-full text-[#A7A7A7] hover:text-[#1DB954]"
                                             onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                         >
                                             <Minus className="w-5 h-5" />
@@ -127,7 +127,7 @@ export default function PaymentLinksPage() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="w-12 h-12 rounded-full text-[#A7A7A7] hover:text-white"
+                                            className="w-12 h-12 rounded-full text-[#A7A7A7] hover:text-[#1DB954]"
                                             onClick={() => setQuantity(quantity + 1)}
                                         >
                                             <Plus className="w-5 h-5" />
@@ -147,7 +147,7 @@ export default function PaymentLinksPage() {
                             </div>
                         </CardContent>
                         <CardFooter className="p-10 pt-0">
-                            <Button className="w-full h-16 rounded-full bg-white text-black hover:bg-white/90 font-black uppercase text-[11px] tracking-[0.3em] shadow-xl border-none">
+                            <Button className="w-full h-16 rounded-full bg-[#1DB954] text-black hover:bg-[#1ED760] font-black uppercase text-[11px] tracking-[0.3em] shadow-xl border-none">
                                 <LinkIcon className="w-4 h-4 mr-3" />
                                 {t("create_link")}
                             </Button>
@@ -169,7 +169,7 @@ export default function PaymentLinksPage() {
                             {summaryItems.map((item, i) => (
                                 <div key={i} className="space-y-1">
                                     <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest">{item.label}</p>
-                                    <p className={`text-xl font-black ${item.isPrice ? 'text-[#1DB954]' : 'text-white'}`}>{item.value}</p>
+                                    <p className={`text-xl font-black text-white`}>{item.value}</p>
                                 </div>
                             ))}
                         </CardContent>
@@ -191,7 +191,7 @@ export default function PaymentLinksPage() {
                                     { s: 3, t: "Receba em DePix", d: "Pagamentos creditados automaticamente" }
                                 ].map((item) => (
                                     <div key={item.s} className="flex gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-[10px] font-black text-white flex-shrink-0">{item.s}</div>
+                                        <div className="w-8 h-8 rounded-full bg-[#1DB954]/5 border border-[#1DB954]/10 flex items-center justify-center text-[10px] font-black text-[#1DB954] flex-shrink-0">{item.s}</div>
                                         <div>
                                             <p className="text-[10px] font-black text-white uppercase tracking-widest">{item.t}</p>
                                             <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest opacity-60">{item.d}</p>
@@ -203,7 +203,7 @@ export default function PaymentLinksPage() {
                                 <div className="flex gap-4">
                                     <Clock className="w-5 h-5 text-[#1DB954] flex-shrink-0" />
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black text-[#1DB954] uppercase tracking-widest">Validade</p>
+                                        <p className="text-[9px] font-black text-white uppercase tracking-widest">Validade</p>
                                         <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest leading-loose opacity-60">
                                             Links expiram em 12h. QR Codes são regenerados automaticamente se necessário.
                                         </p>
@@ -219,15 +219,15 @@ export default function PaymentLinksPage() {
                     <Card className="bg-[#121212] border-white/5 shadow-2xl rounded-[3rem] overflow-hidden">
                         <CardHeader className="p-10 pb-6 border-b border-white/5 bg-white/[0.02] flex flex-row items-center justify-between">
                             <div className="flex items-center gap-5">
-                                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                                    <LinkIcon className="w-5 h-5 text-[#A7A7A7]" />
+                                <div className="w-10 h-10 rounded-xl bg-[#1DB954]/10 flex items-center justify-center">
+                                    <LinkIcon className="w-5 h-5 text-[#1DB954]" />
                                 </div>
                                 <div>
                                     <CardTitle className="text-sm font-black text-white uppercase tracking-widest">{t("my_links")}</CardTitle>
                                     <p className="text-[9px] font-black text-[#A7A7A7] uppercase tracking-widest mt-1">{t("links_created").replace("{count}", "0")}</p>
                                 </div>
                             </div>
-                            <Button variant="ghost" className="h-10 px-6 rounded-full text-[#A7A7A7] hover:text-[#1DB954] font-black uppercase text-[9px] tracking-widest">
+                            <Button variant="ghost" className="h-10 px-6 rounded-full text-[#A7A7A7] hover:text-white font-black uppercase text-[9px] tracking-widest">
                                 <RefreshCw className="w-4 h-4 mr-2" /> {t("reset")}
                             </Button>
                         </CardHeader>
