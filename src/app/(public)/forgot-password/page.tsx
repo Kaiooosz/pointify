@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/ui/logo";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -20,7 +20,7 @@ import { sendPasswordResetCode, resetPasswordAction } from "@/actions/password-r
 
 type Step = "verify-email" | "verify-code" | "new-password" | "success";
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -319,5 +319,17 @@ export default function ForgotPasswordPage() {
                 </SpotlightCard>
             </div>
         </div>
+    );
+}
+
+export default function ForgotPasswordPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#0B0B0B] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border-2 border-[#FFC107] border-t-transparent animate-spin" />
+            </div>
+        }>
+            <ForgotPasswordContent />
+        </Suspense>
     );
 }
